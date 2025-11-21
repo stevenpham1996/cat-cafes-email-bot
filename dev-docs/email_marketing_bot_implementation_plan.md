@@ -11,12 +11,14 @@
         ```
         supabase
         python-dotenv
+        jinja2
         ```
     - Install dependencies.
 - [x] **Configure Environment Variables**
     - Create `.env` file.
     - Add `SUPABASE_URL` and `SUPABASE_KEY`.
-    - Add `SENDER_EMAIL` (mock/placeholder).
+    - Add `SENDER_EMAIL`.
+    - Add SMTP credentials: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`.
 - [x] **Create Database Table**
     - Create SQL script `scripts/create_email_tracking_table.sql` with the schema from PRD.
     - Execute the script to create `email_tracking` table in Supabase.
@@ -39,25 +41,31 @@
         - Handle missing slugs gracefully (log warning and skip or return None).
 
 ## 4. Email & Logging System
-- [ ] **Email Service (`src/email_service.py`)**
-    - Implement `send_email_mock(recipient, subject, body)`:
-        - Print email details to console (simulating sending).
-        - Return `True` (success) or `False` (failure).
-- [ ] **Logging Service (`src/logger.py` or inside `db_client.py`)**
-    - Implement `log_email_attempt(listing_id, recipient, status, error_message=None)`:
-        - Insert record into `email_tracking` table.
+- [x] **Email Templates**
+    - Create `templates/` directory.
+    - Create `templates/email_template.html` with Jinja2 placeholders (`{{ title }}`, `{{ url }}`).
+- [x] **Email Sender (`src/email_sender.py`)**
+    - Refactor `send_email` to use `smtplib` and `Jinja2`.
+    - Load SMTP config from env.
+    - Render template with provided context.
+    - Send multipart email (HTML + Plain Text).
+- [x] **Email Logger (`src/email_logger.py`)**
+    - Implement `log_email_attempt(recipient, listing_id, description, sender, status, error_message)`.
+    - Insert record into `email_tracking` table.
 
 ## 5. Integration & Verification
 - [ ] **Main Script (`src/main.py`)**
     - Import all modules.
+    - Import all modules.
     - Implement `main()` function:
         - Call `fetch_listings()`.
         - Loop through listings:
+            - **Duplicate Check**: Query `email_tracking` to see if `(recipient, listing_id, status='sent')` exists. Skip if true.
             - Construct URL.
-            - Check if email already sent (optional optimization for Phase 1).
-            - Construct Email Body (simple text with inserted values).
-            - Call `send_email_mock()`.
+            - Prepare Email Context (Title, URL).
+            - Call `send_email()`.
             - Call `log_email_attempt()`.
+            - **Rate Limit**: `time.sleep(2)` to be polite.
 - [ ] **Dry Run & Verification**
     - Run `main.py`.
     - Verify console output for constructed URLs.

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Partnership Opportunity</h2>
+        </div>
+        <div class="content">
+            <p>Hi {{ title }},</p>
+            
+            <p>We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.</p>
+            
+            <p>We have created a dedicated listing page for your business. You can view and claim it here:</p>
+            
+            <p style="text-align: center;">
+                <a href="{{ url }}" class="button">View Your Listing</a>
+            </p>
+            
+            <p>Claiming your listing allows you to update your information, add photos, and connect with our community.</p>
+            
+            <p>Best regards,<br>The Hot Yoga Studios Team</p>
+        </div>
+        <div class="footer">
+            <p>You are receiving this email because your business is listed in our public directory.</p>
+            <p><a href="#">Unsubscribe</a></p>
+        </div>
+    </div>
+</body>
+</html>

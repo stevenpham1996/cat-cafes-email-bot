@@ -32,3 +32,18 @@ Task: URL Constructor (src/url_constructor.py)
 Status: Completed
 Date: 2025-11-22
 Details: Implemented `construct_listing_url()` handling both state and no-state logic.
+
+Task: Email Logger (src/email_logger.py)
+Status: Completed
+Date: 2025-11-22
+Details: Implemented `log_email_attempt()` to insert records into `email_tracking`.
+
+Task: Email Sender (src/email_sender.py)
+Status: Completed
+Date: 2025-11-22
+Details: Refactored `send_email()` to use SMTP and Jinja2 templates.
+
+Task: Email Templates
+Status: Completed
+Date: 2025-11-22
+Details: Installed `jinja2` and created `templates/email_template.html`.

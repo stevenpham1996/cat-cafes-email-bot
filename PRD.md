@@ -39,12 +39,16 @@ The Listing Detail Page URL must be constructed dynamically based on the locatio
 -   **Recipient**: The email address from `coworking_places.email`.
 -   **Sender**: Configurable sender address (e.g., `marketing@hotyogastudios.com`).
 -   **Content**:
-    -   Subject: (To be defined)
+    -   Subject: (To be defined, e.g., "Partnership Opportunity with Hot Yoga Studios")
     -   Body: Eloquent, call-to-action style template.
+    -   **Format**: HTML (primary) with Plain Text fallback.
+    -   **Templating Engine**: `Jinja2` for dynamic content insertion.
     -   **Dynamic Insertions**:
         -   Business Title (`coworking_places.title`)
         -   Listing Detail URL (constructed above)
--   *Note*: The actual email template implementation is a follow-up development. This phase focuses on the logic and data preparation.
+    -   **Compliance**: Must include an "Unsubscribe" footer (e.g., mailto link or generic text for now).
+-   **Delivery Method**: SMTP (Simple Mail Transfer Protocol) with TLS encryption.
+    -   *Future Upgrade*: Switch to a Transactional Email API (e.g., Resend, SendGrid) for better deliverability.
 
 ### 3.4. Logging & Tracking
 A new database table `email_tracking` will be created to log every email attempt.
@@ -65,8 +69,10 @@ A new database table `email_tracking` will be created to log every email attempt
 
 ### 4.1. Technology Stack
 -   **Language**: Python 3.12
--   **Database Client**: `supabase-py` (or `psycopg2` if direct connection is preferred, but `supabase-py` is recommended for consistency).
--   **Environment Management**: `python-dotenv` for managing API keys and DB credentials.
+-   **Database Client**: `supabase-py`
+-   **Environment Management**: `python-dotenv`
+-   **Templating**: `Jinja2`
+-   **Email Library**: `smtplib` (Standard Lib) + `email.mime`
 
 ### 4.2. Database Interactions
 -   **Read**: Perform a join query (or multiple queries if using ORM) to fetch `coworking_places` with their associated `cities`, `states`, and `countries`.
@@ -75,7 +81,8 @@ A new database table `email_tracking` will be created to log every email attempt
 ### 4.3. Error Handling
 -   Gracefully handle missing location data (e.g., a city missing a slug).
 -   Log failures in the `email_tracking` table with an error message.
--   Ensure the script can be re-run without spamming (check `email_tracking` before sending).
+-   **Duplicate Prevention**: Check `email_tracking` for an existing 'sent' record for the `(recipient, listing_id)` pair before sending.
+-   **Rate Limiting**: Implement a delay (e.g., 2-5 seconds) between emails to avoid hitting SMTP rate limits.
 
 ## 5. Implementation Plan (Phase 1)
 1.  **Setup**: Initialize Python environment and install dependencies.
