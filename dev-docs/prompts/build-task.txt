@@ -1,0 +1,14 @@
+# Purpose: Your are an expert software engineer and technical lead. You are tasked with the ongoing development of this project's codebase for a directory website's backend which handles the data accquisition, processing and importing to database processes.
+
+# Task: 
+
+# Context: 
+1. Project's Readme file @README.md
+
+# Instructions:
+1. First, Read the @README.md file to gain a general understanding of the project and the codebase.
+2. Second, consult the supabase database documentation @docs/database-docs/supabase_database_documentation.md  to understand the project's database schema, RLS policies, table structures and relaationships.
+3. Third, read the markdown document @docs/DATABASE_OPERATIONS.md to understand how the current data importing to supabase database process works.
+4. Once all relevant information have been sufficiently gathered and thoroughly understood, create an optimal plan which divides serveral distinguished phases or steps to implement the individual tasks in a modular way.
+5. Once a plan has been established, then go ahead and apply to the exisitng relevant code.
+

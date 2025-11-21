@@ -1,0 +1,31 @@
+Purpose: Your are an expert software engineer and technical lead. You are tasked with modifying current implementation and fixing existing issues found in the codebase of this project's codebase for a directory website's backend which handles the data accquisition, processing and importing to database processes.
+
+- Task Description: based on the provided terminal error log instance and the csv sample input data to identify the root cause(s) of the issue in the script @split_address.py.
+- Terminal error log:
+"""
+2025-09-12 04:35:25,619 - __main__ - INFO - Running address splitting with replace=False
+2025-09-12 04:35:25,620 - __main__ - INFO - Loaded 5 states for France
+2025-09-12 04:35:25,620 - __main__ - INFO - Loaded 1 states for Usa
+2025-09-12 04:35:25,620 - __main__ - INFO - Loaded 5 states for Switzerland
+2025-09-12 04:35:25,620 - __main__ - INFO - Loaded 5 states for Australia
+2025-09-12 04:35:25,621 - __main__ - INFO - Loaded 5 states for Germany
+2025-09-12 04:35:25,621 - __main__ - INFO - Loaded 5 states for Canada
+2025-09-12 04:35:25,621 - __main__ - INFO - Loaded 4 states for England
+2025-09-12 04:35:25,621 - __main__ - INFO - Total state aliases loaded: 30
+2025-09-12 04:35:26,236 - __main__ - ERROR - Error splitting addresses: 'email'
+2025-09-12 04:35:26,237 - __main__ - ERROR - Failed to split addresses
+"""
+- Input data samples: @data-samples/scraped_data_cleaned_addresses.csv
+
+- Instructions:
+1. First, Read the @README.md file to gain a general understanding of the project and the codebase.
+2. Second, consult the supabase database documentation @docs/database-docs/supabase_database_documentation.md  to understand the project's database schema, RLS policies, table structures and relaationships.
+3. Third, read the markdown document @docs/DATABASE_OPERATIONS.md to understand how the current data importing to supabase database process works.
+4. Once all relevant information have been sufficiently gathered and thoroughly understood, create an optimal plan which divides serveral distinguished phases or steps to implement the individual tasks in a modular way.
+
+- Context: 
+1. Project's Readme file @README.md
+2. Project's Database documen: @docs/database-docs/supabase_database_documentation.md
+3. Directory which contains the database table structures in csv documents: @dev-docs/database-docs/table-structures/ 
+4. Relevant tables :  @dev-docs/database-docs/table-structures/coworking_places_first_5_rows.csv  @dev-docs/database-docs/table-structures/cities_first_5_rows.csv
+    * TWO Location Relationship Patterns: With States - `coworking_places.city_id` to `cities.id` and `cities.state_id` to `states.id` (case `cities.state_id` is NOT NULL), AND Without States - `states.country_id` to `countries.id` (case `cities.state_id` is NULL, cities.country_id used directly).  

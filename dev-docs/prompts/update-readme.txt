@@ -1,0 +1,1 @@
+now please revise everything we have done in this session, then read the project description document - README.md to update accordingly to where they are relevant to the changes made in this session

@@ -1,0 +1,6 @@
+user_id,role_id,full_name,avatar_url,created_at,updated_at,birthday,location,about_me,supervisor_pending,supervisor_request_letter,rejection_reason,status_reason,status
+0beadf0d-969a-4bf4-9e86-8d2d87e087b0,4,,,2025-05-03 18:00:32.931028+00,2025-05-03 18:00:32.931028+00,,,,false,,,,active
+10ffafe7-5f37-4cc0-94b6-735c2e6a0a6a,3,Steven Pham,,2025-04-21 15:37:40.330269+00,2025-05-01 17:04:13.437+00,1996-01-06,Vietnam,A human,true,relly love you,f,,active
+325031ef-85b7-4a6a-91df-c18119bfe625,1,Albert,,2025-04-29 15:59:38.057623+00,2025-04-29 15:59:38.057623+00,,,,false,,,,active
+7c3e54a2-4297-49ce-bdc9-e88acf0a5150,2,Pham,,2025-04-28 12:51:01.008781+00,2025-04-29 12:09:58.636+00,1992-01-06,,hiha,false,,,,active
+ee60ae61-de3b-4d57-a904-932687da8329,4,,,2025-05-03 18:02:33.74464+00,2025-05-03 18:02:33.74464+00,,,,false,,,,active
