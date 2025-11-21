@@ -31,11 +31,11 @@
     - Filter by `email IS NOT NULL`.
 
 ## 3. Business Logic Implementation
-- [ ] **URL Constructor (`src/url_constructor.py`)**
-    - Define base domain constant (e.g., `https://hotyogastudios.com` - placeholder).
-    - Implement `construct_listing_url(listing_data)`:
-        - **Scenario A (With State)**: If `state_id` is present, use format `/{country_slug}/{state_slug}/{city_slug}/{listing_slug}`.
-        - **Scenario B (No State)**: If `state_id` is NULL, use format `/{country_slug}/{city_slug}/{listing_slug}`.
+- [x] **URL Constructor (`src/url_constructor.py`)**
+    - Implement `construct_listing_url(listing_data)` function.
+    - Logic:
+        - If `cities.state_id` is NOT NULL: `/{country_slug}/{state_slug}/{city_slug}/{listing_slug}`
+        - If `cities.state_id` is NULL: `/{country_slug}/{city_slug}/{listing_slug}`.
         - Handle missing slugs gracefully (log warning and skip or return None).
 
 ## 4. Email & Logging System

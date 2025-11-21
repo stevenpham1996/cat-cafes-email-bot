@@ -27,3 +27,8 @@ Task: Fetch Listings Logic
 Status: Completed
 Date: 2025-11-22
 Details: Implemented `fetch_listings()` in `src/db_client.py` with nested joins.
+
+Task: URL Constructor (src/url_constructor.py)
+Status: Completed
+Date: 2025-11-22
+Details: Implemented `construct_listing_url()` handling both state and no-state logic.
