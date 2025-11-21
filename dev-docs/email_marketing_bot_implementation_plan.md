@@ -22,9 +22,9 @@
     - Execute the script to create `email_tracking` table in Supabase.
 
 ## 2. Data Access Layer
-- [ ] **Database Client (`src/db_client.py`)**
+- [x] **Database Client (`src/db_client.py`)**
     - Implement `get_supabase_client()` to return the Supabase client instance.
-- [ ] **Fetch Listings Logic**
+- [x] **Fetch Listings Logic**
     - Implement `fetch_listings()` function in `src/db_client.py`.
     - Query `coworking_places` and join with `cities`, `states`, `countries`.
     - Select required columns: `id`, `title`, `email`, `slug`, `cities.slug`, `states.slug`, `countries.slug`, `states.country_id`, `cities.country_id`, `cities.state_id`.

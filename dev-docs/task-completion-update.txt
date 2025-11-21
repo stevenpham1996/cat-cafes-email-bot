@@ -17,3 +17,13 @@ Task: Create Database Table
 Status: Completed
 Date: 2025-11-22
 Details: Created SQL script `scripts/create_email_tracking_table.sql`.
+
+Task: Database Client (src/db_client.py)
+Status: Completed
+Date: 2025-11-22
+Details: Implemented `get_supabase_client()` in `src/db_client.py`.
+
+Task: Fetch Listings Logic
+Status: Completed
+Date: 2025-11-22
+Details: Implemented `fetch_listings()` in `src/db_client.py` with nested joins.
