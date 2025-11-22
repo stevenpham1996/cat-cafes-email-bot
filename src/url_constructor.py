@@ -20,6 +20,13 @@ def construct_listing_url(listing: dict) -> str:
         city_slug = city_data.get("slug")
         state_id = city_data.get("state_id")
         
+        # Common: Get Country Slug from City's relation
+        # We simplified the query to always fetch countries via cities
+        country_data = city_data.get("countries")
+        if not country_data:
+            return None
+        country_slug = country_data.get("slug")
+
         # Case 1: With State
         # Path: /{country_slug}/{state_slug}/{city_slug}/{listing_slug}
         if state_id:
@@ -28,25 +35,12 @@ def construct_listing_url(listing: dict) -> str:
                 return None
                 
             state_slug = state_data.get("slug")
-            # In the "With State" path, country comes from the state's relation
-            country_data = state_data.get("countries")
-            if not country_data:
-                return None
-                
-            country_slug = country_data.get("slug")
             
             return f"/{country_slug}/{state_slug}/{city_slug}/{listing_slug}"
             
         # Case 2: Without State
         # Path: /{country_slug}/{city_slug}/{listing_slug}
         else:
-            # In the "Without State" path, country comes directly from the city's relation
-            country_data = city_data.get("countries")
-            if not country_data:
-                return None
-                
-            country_slug = country_data.get("slug")
-            
             return f"/{country_slug}/{city_slug}/{listing_slug}"
             
     except Exception as e:

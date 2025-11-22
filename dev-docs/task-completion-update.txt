@@ -47,3 +47,13 @@ Task: Email Templates
 Status: Completed
 Date: 2025-11-22
 Details: Installed `jinja2` and created `templates/email_template.html`.
+
+Task: Main Script (src/main.py)
+Status: Completed
+Date: 2025-11-22
+Details: Implemented `main()` with full logic loop (fetch, check, construct, send, log, sleep).
+
+Task: Dry Run & Verification
+Status: Completed
+Date: 2025-11-22
+Details: Ran `main.py` and verified output.

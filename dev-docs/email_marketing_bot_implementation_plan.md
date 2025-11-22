@@ -54,8 +54,7 @@
     - Insert record into `email_tracking` table.
 
 ## 5. Integration & Verification
-- [ ] **Main Script (`src/main.py`)**
-    - Import all modules.
+- [x] **Main Script (`src/main.py`)**
     - Import all modules.
     - Implement `main()` function:
         - Call `fetch_listings()`.
@@ -66,7 +65,7 @@
             - Call `send_email()`.
             - Call `log_email_attempt()`.
             - **Rate Limit**: `time.sleep(2)` to be polite.
-- [ ] **Dry Run & Verification**
+- [x] **Dry Run & Verification**
     - Run `main.py`.
     - Verify console output for constructed URLs.
     - Verify `email_tracking` table has new records.
