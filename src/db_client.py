@@ -29,7 +29,7 @@ def fetch_listings() -> list[dict]:
     # We rely on cities.country_id for the country slug in all cases.
     
     query = """
-        id, title, email, slug,
+        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url,
         cities (
             slug,
             state_id,

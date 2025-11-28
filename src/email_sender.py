@@ -22,6 +22,19 @@ template_env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
+def render_email_html(context: dict) -> str:
+    """
+    Renders the HTML email template with the provided context.
+    
+    Args:
+        context (dict): Dictionary containing data for the template.
+        
+    Returns:
+        str: Rendered HTML string.
+    """
+    template = template_env.get_template("hotyoga_email_template.html")
+    return template.render(**context)
+
 def send_email(recipient: str, subject: str, context: dict) -> bool:
     """
     Sends an email using SMTP and Jinja2 templating.
@@ -40,17 +53,23 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
 
     try:
         # Render HTML content
-        template = template_env.get_template("email_template.html")
-        html_content = template.render(**context)
+        html_content = render_email_html(context)
         
         # Create Plain Text Fallback
         text_content = f"""
 Hi {context.get('title', 'Partner')},
 
 We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.
-We have created a dedicated listing page for your business. You can view and claim it here:
+We have created a dedicated listing page for your business.
 
-{context.get('url', '#')}
+Details:
+Address: {context.get('full_address', 'N/A')}
+Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
+Description: {context.get('description', 'N/A')[:100]}...
+
+You can view and claim it here:
+
+{context.get('listing_url', '#')}
 
 Claiming your listing allows you to update your information, add photos, and connect with our community.
 
