@@ -5,6 +5,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from dotenv import load_dotenv
+import requests
+from premailer import transform
 
 load_dotenv()
 
@@ -37,7 +39,7 @@ def render_email_html(context: dict) -> str:
 
 def send_email(recipient: str, subject: str, context: dict) -> bool:
     """
-    Sends an email using SMTP and Jinja2 templating.
+    Sends an email using SMTP and Jinja2 templating with inlined CSS.
     
     Args:
         recipient (str): The email address of the recipient.
@@ -52,9 +54,18 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
         return False
 
     try:
-        # Render HTML content
-        html_content = render_email_html(context)
+        # 1. Render HTML content
+        rendered_html = render_email_html(context)
         
+        # 2. Fetch Tailwind CSS from CDN
+        # Using a specific version for consistency
+        css_url = "https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+        response = requests.get(css_url)
+        css_string = response.text
+
+        # 3. Use premailer to inline the CSS
+        inlined_html = transform(rendered_html, external_styles=css_string)
+
         # Create Plain Text Fallback
         text_content = f"""
 Hi {context.get('title', 'Partner')},
@@ -83,9 +94,9 @@ The Hot Yoga Studios Team
         message["From"] = SENDER_EMAIL
         message["To"] = recipient
 
-        # Attach parts
+        # Attach parts - plain text and the new inlined HTML
         part1 = MIMEText(text_content, "plain")
-        part2 = MIMEText(html_content, "html")
+        part2 = MIMEText(inlined_html, "html")
         message.attach(part1)
         message.attach(part2)
 
