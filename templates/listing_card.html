@@ -7,11 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-10">
+  {% from '_star_rating.html' import render_star_rating %}
+
   <div class="light:bg-white dark:bg-darkTheme-card-background dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 overflow-hidden flex flex-row relative">
     <div class="absolute top-2 right-2 z-10">
       <!-- FavoriteButton (contrasting circular background + filled heart) -->
       <button aria-label="Save listing" class="bg-white/90 dark:bg-darkTheme-card-background/70 rounded-full p-1.5 shadow-md hover:scale-105 transition-transform duration-150 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" class="h-8 w-8" role="img" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="h-6 w-6" role="img" aria-hidden="true">
           <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
                 fill="#BF40BF" stroke="#BF40BF" stroke-width="0.8" stroke-linejoin="round" />
         </svg>
@@ -56,14 +58,8 @@
               <svg class="h-3.5 w-3.5 mr-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               {{ full_address }}
             </p>
-            <div class="mt-1 font-semibold text-sm text-slate-700 dark:text-slate-300 light:text-lightTheme-text-paragraph flex items-center">
-              <svg class="h-4 w-4 text-yellow-500 mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span class="text-slate-700 dark:text-slate-200 light:text-lightTheme-text-title">
-                {{ average_rating }}
-              </span>
-              <span class="ml-1 text-slate-900 dark:text-slate-400 light:text-lightTheme-text-paragraph">
-                ({{ review_count }} reviews)
-              </span>
+            <div class="mt-1">
+              {{ render_star_rating(average_rating, review_count, star_size='h-4 w-4') }}
             </div>
             <p class="text-sm mt-2 text-gray line-clamp-4">
               {{ description }}
@@ -73,7 +69,8 @@
         <div class="mt-3 mb-3">
           <div class="flex flex-wrap gap-1">
             {% for enum in primary_yoga_style %}
-            <span class="text-sm bg-primary/10 text-primary rounded-full px-3 py-1">
+            <span class="inline-flex items-center gap-1.5 font-medium text-white rounded-full shadow-sm hover:opacity-90 transition-all duration-200" style="background-color: #3797bf; font-size: 0.65rem; padding: 0.25rem 0.65rem;">
+              <span class="rounded-full" style="width: 6px; height: 6px; background-color: #01ec16;"></span>
               {{ enum }}
             </span>
             {% endfor %}

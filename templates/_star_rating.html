@@ -1,0 +1,52 @@
+{# templates/cards/_star_rating.html #}
+{% macro render_star_rating(average_rating, review_count, star_size='h-5 w-5', text_size='text-sm', show_count=True) %}
+    {# Ensure rating is a number and between 0 and 5 #}
+    {% set rating_float = average_rating | float %}
+    {% set clamped_rating = [[0, rating_float] | max, 5] | min %}
+    {# Round to nearest 0.5 #}
+    {% set rounded_rating = (clamped_rating * 2) | round / 2 %}
+
+    <div class="flex items-center star-rating-display {{ text_size }}">
+        <div class="flex items-center mr-1" aria-label="Rating: {{ clamped_rating | round(1) }} out of 5 stars">
+            {% for i in range(5) %}
+                {% set value = i + 1 %}
+                {% set is_full = rounded_rating >= value %}
+                {% set is_half = rounded_rating == value - 0.5 %}
+                
+                <div class="relative inline-block {{ star_size }}">
+                    <!-- Background Star (Empty) -->
+                    <svg class="text-gray-400" fill="transparent" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path>
+                    </svg>
+                    
+                    <!-- Foreground Star (Full or Half) -->
+                    {% if is_full or is_half %}
+                        <div class="absolute top-0 left-0 overflow-hidden" style="width: {% if is_full %}100%{% else %}50%{% endif %};">
+                            <svg class="text-yellow-500 {{ star_size }}" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path>
+                            </svg>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if clamped_rating > 0 %}
+            <span class="font-semibold text-slate-700 dark:text-slate-200 light:text-lightTheme-text-title">
+                {{ clamped_rating | round(1) }}
+            </span>
+        {% endif %}
+        
+        {% if show_count and review_count is defined and review_count > 0 %}
+            <span class="ml-1 text-slate-500 dark:text-slate-400 light:text-lightTheme-text-paragraph">
+                ({{ review_count }} reviews)
+            </span>
+        {% endif %}
+        
+        {% if clamped_rating == 0 %}
+            <span class="text-slate-500 dark:text-slate-400 light:text-lightTheme-text-paragraph">
+                No ratings and reviews
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
