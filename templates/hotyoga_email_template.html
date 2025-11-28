@@ -1,38 +1,291 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
-        .content { padding: 20px; }
-        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
-        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6; 
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+        }
+        .email-wrapper { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background-color: #ffffff;
+        }
+        .header { 
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .logo { 
+            font-size: 28px;https://hotyogafinder.com/
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .content { 
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+        .intro {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-left: 4px solid #248f84;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .highlight-box p {
+            font-size: 15px;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 35px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        .benefits {
+            margin: 30px 0;
+        }
+        .benefits-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .benefit-text {
+            font-size: 15px;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 35px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #248f84;
+            display: block;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+        .signature {
+            margin-top: 25px;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+        .signature-name {
+            font-weight: 600;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .footer-links {
+            margin-top: 15px;
+        }
+        .footer-link {
+            color: #248f84;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        @media only screen and (max-width: 600px) {
+            .content { padding: 30px 20px; }
+            .header { padding: 30px 20px; }
+            .stats { flex-direction: column; gap: 20px; }
+            .cta-button { padding: 14px 30px; font-size: 15px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="email-wrapper">
         <div class="header">
-            <h2>Partnership Opportunity</h2>
+            <div class="logo">
+                <img src="hotyoga-logo.png" alt="Hot Yoga Finder" style="height: 40px; vertical-align: middle; margin-right: 10px;">
+                Hot Yoga Finder
+            </div>
+            <div class="tagline">The World's Largest Hot Yoga Studio Directory</div>
         </div>
+        
         <div class="content">
-            <p>Hi {{ title }},</p>
+            <div class="greeting">Hello {{ title }},</div>
             
-            <p>We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.</p>
-            
-            <p>We have created a dedicated listing page for your business. You can view and claim it here:</p>
-            
-            <p style="text-align: center;">
-                <a href="{{ url }}" class="button">View Your Listing</a>
+            <p class="intro">
+                We're excited to share that your studio has been selected to feature on <strong>Hot Yoga Finder</strong>, 
+                our premier global directory connecting hot yoga enthusiasts with studios across the globle.
             </p>
             
-            <p>Claiming your listing allows you to update your information, add photos, and connect with our community.</p>
+            <div class="cta-section">
+                <a href="{{ url }}" class="cta-button">View Your Studio Listing</a>
+            </div>
+
+                        
+            <div class="benefits">
+                <div class="benefits-title">Claim Your Listing to Unlock Premium Features:</div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Priority Placement:</strong> Get featured higher in listing results and attract more visitors
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Full Control:</strong> Update studio details, images, class schedules, pricing, and amenities anytime
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Engage Your Community:</strong> Respond to reviews and build trust with potential students
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Promotional Tools:</strong> Access special promotion features to grow your audience and boost visibility
+                    </div>
+                </div>
+            </div>
             
-            <p>Best regards,<br>The Hot Yoga Studios Team</p>
+            {% include 'listing_card.html' %}
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #888888; padding: 10px 0;">
+              Your claimed studio will have a "Verified" badge and be prioritized in listing results.
+            </p>
+            
+            <div class="cta-section">
+                <a href="{{ url }}" class="cta-button">Claim Your Studio Now</a>
+            </div>
+            
+            <div class="signature">
+                <div>Namaste,</div>
+                <div class="signature-name">Hot Yoga Finder</div>
+                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                    <a href="https://hotyogafinder.com" style="color: #248f84; text-decoration: none;">hotyogafinder.com</a>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">1,857</span>
+                    <span class="stat-label">Studios Listed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">585+</span>
+                    <span class="stat-label">Active Users</span>
+                </div>
+            </div>
         </div>
+        
         <div class="footer">
-            <p>You are receiving this email because your business is listed in our public directory.</p>
-            <p><a href="#">Unsubscribe</a></p>
+            <p class="footer-text">
+                You're receiving this email because your studio is listed in our public directory. 
+                We're committed to building a global community to connect studio owners with hot yoga enthusiasts worldwide.
+            </p>
+            <div class="footer-links">
+                <a href="https://hotyogafinder.com/about" class="footer-link">About Us</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="https://hotyogafinder.com/contact" class="footer-link">Contact</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">Unsubscribe</a>
+            </div>
+            <p class="footer-text" style="font-size: 12px;">
+                © 2025 Hot Yoga Finder. All rights reserved.
+            </p>
         </div>
     </div>
 </body>

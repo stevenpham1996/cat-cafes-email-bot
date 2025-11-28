@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listing Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+  <div class="light:bg-white dark:bg-darkTheme-card-background dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 overflow-hidden flex flex-row relative">
+    <div class="absolute top-2 right-2 z-10">
+      <!-- FavoriteButton (contrasting circular background + filled heart) -->
+      <button aria-label="Save listing" class="bg-white/90 dark:bg-darkTheme-card-background/70 rounded-full p-1.5 shadow-md hover:scale-105 transition-transform duration-150 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" class="h-8 w-8" role="img" aria-hidden="true">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                fill="#BF40BF" stroke="#BF40BF" stroke-width="0.8" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+    <div class="absolute top-2 left-2 z-10 px-2.5 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow-md flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      Verified
+    </div>
+    <div class="absolute bottom-0 right-0 z-10 pointer-events-none">
+      <svg width="90" height="90" viewBox="0 0 110 110" class="drop-shadow-lg">
+        <defs>
+          <linearGradient id="triangleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #f59e0bff; stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: #d6540eff; stop-opacity: 1" />
+          </linearGradient>
+        </defs>
+        <polygon points="0,110 110,0 110,110" fill="url(#triangleGradient)" />
+      </svg>
+      <div class="absolute bottom-2 right-2 flex flex-col items-center justify-center text-white pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 20 20" fill="currentColor">
+           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+        <span class="text-[10px] font-bold leading-tight text-center whitespace-nowrap" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3)">
+          Editor's<br/>Pick
+        </span>
+      </div>
+    </div>
+    <a href="{{ listing_url }}" class="grid grid-cols-3 gap-[5px] w-full group">
+      <div class="relative col-span-1 overflow-hidden h-full min-h-[160px] md:min-h-[180px]">
+        <img src="{{ thumbnail_url }}" alt="{{ title }}" class="object-cover h-full w-full">
+      </div>
+      <div class="col-span-2 p-4 flex flex-col h-full">
+        <div class="mb-2">
+          <div>
+            <h3 class="text-lg font-semibold text-black line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+              {{ title }}
+            </h3>
+            <p class="text-sm text-gray mt-0.5 flex items-center">
+              <svg class="h-3.5 w-3.5 mr-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ full_address }}
+            </p>
+            <div class="mt-1 font-semibold text-sm text-slate-700 dark:text-slate-300 light:text-lightTheme-text-paragraph flex items-center">
+              <svg class="h-4 w-4 text-yellow-500 mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span class="text-slate-700 dark:text-slate-200 light:text-lightTheme-text-title">
+                {{ average_rating }}
+              </span>
+              <span class="ml-1 text-slate-900 dark:text-slate-400 light:text-lightTheme-text-paragraph">
+                ({{ review_count }} reviews)
+              </span>
+            </div>
+            <p class="text-sm mt-2 text-gray line-clamp-4">
+              {{ description }}
+            </p>
+          </div>
+        </div>
+        <div class="mt-3 mb-3">
+          <div class="flex flex-wrap gap-1">
+            {% for enum in primary_yoga_style %}
+            <span class="text-sm bg-primary/10 text-primary rounded-full px-3 py-1">
+              {{ enum }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</body>
+</html>
