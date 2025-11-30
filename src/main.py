@@ -8,6 +8,7 @@ from src.db_client import fetch_listings
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html
 from src.email_logger import log_email_attempt, check_if_email_sent
+from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
 
 # Load environment variables
 load_dotenv()
@@ -118,7 +119,9 @@ def main():
             "average_rating": listing.get("average_rating", 0),
             "review_count": listing.get("review_count", 0),
             "description": listing.get("description", ""),
-            "primary_yoga_style": listing.get("primary_yoga_style", [])
+            "primary_yoga_style": listing.get("filters", {}).get("primary_yoga_style", []),
+            "badge_html_code": get_badge_html_code(full_url),
+            "text_html_code": get_text_link_html_code(full_url)
         }
         subject = "Partnership Opportunity with Hot Yoga Studios"
 

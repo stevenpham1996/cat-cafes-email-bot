@@ -68,24 +68,24 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
 
         # Create Plain Text Fallback
         text_content = f"""
-Hi {context.get('title', 'Partner')},
+            Hi {context.get('title', 'Partner')},
 
-We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.
-We have created a dedicated listing page for your business.
+            We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.
+            We have created a dedicated listing page for your business.
 
-Details:
-Address: {context.get('full_address', 'N/A')}
-Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
-Description: {context.get('description', 'N/A')[:100]}...
+            Details:
+            Address: {context.get('full_address', 'N/A')}
+            Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
+            Description: {context.get('description', 'N/A')[:100]}...
 
-You can view and claim it here:
+            You can view and claim it here:
 
-{context.get('listing_url', '#')}
+            {context.get('listing_url', '#')}
 
-Claiming your listing allows you to update your information, add photos, and connect with our community.
+            Claiming your listing allows you to update your information, add photos, and connect with our community.
 
-Best regards,
-The Hot Yoga Studios Team
+            Best regards,
+            The Hot Yoga Studios Team
         """
 
         # Create MIME message
