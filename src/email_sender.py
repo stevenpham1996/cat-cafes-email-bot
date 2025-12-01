@@ -57,14 +57,9 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
         # 1. Render HTML content
         rendered_html = render_email_html(context)
         
-        # 2. Fetch Tailwind CSS from CDN
-        # Using a specific version for consistency
-        css_url = "https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
-        response = requests.get(css_url)
-        css_string = response.text
-
-        # 3. Use premailer to inline the CSS
-        inlined_html = transform(rendered_html, external_styles=css_string)
+        # 2. Use premailer to inline internal CSS (from <style> block)
+        # We no longer fetch external Tailwind CSS as the templates now use robust inline styles.
+        inlined_html = transform(rendered_html)
 
         # Create Plain Text Fallback
         text_content = f"""

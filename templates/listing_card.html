@@ -1,64 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Listing Card</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-10">
-  {% from '_star_rating.html' import render_star_rating %}
+{# templates/listing_card.html - Email-compatible listing card partial #}
+{% from '_star_rating.html' import render_star_rating %}
 
-  <div class="light:bg-white dark:bg-darkTheme-card-background dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 overflow-hidden flex flex-row relative">
-    <div class="absolute top-2 right-2 z-10">
-      <!-- FavoriteButton (contrasting circular background + filled heart) -->
-      <button aria-label="Save listing" class="bg-white/90 dark:bg-darkTheme-card-background/70 rounded-full p-1.5 shadow-md hover:scale-105 transition-transform duration-150 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="h-6 w-6" role="img" aria-hidden="true">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-                fill="#BF40BF" stroke="#BF40BF" stroke-width="0.8" stroke-linejoin="round" />
+<table border="0" cellspacing="0" cellpadding="0" style="width: 100%; max-width: 700px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; flex: flex-row; position: relative; margin: 20px auto;">
+  <tr>
+    {# Verified Badge (Absolute positioning) #}
+    <td colspan="2" style="position: relative; height: 0; padding: 0;">
+      <div style="position: absolute; top: 8px; left: 8px; z-index: 10; padding: 4px 10px; background-color: #16a34a; color: #ffffff; font-size: 11px; font-weight: 700; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); display: inline-flex; align-items: center; gap: 4px;">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
-      </button>
-    </div>
-    <div class="absolute top-2 left-2 z-10 px-2.5 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow-md flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-      </svg>
-      Verified
-    </div>
-    <a href="{{ listing_url }}" class="grid grid-cols-3 gap-[5px] w-full group">
-      <div class="relative col-span-1 overflow-hidden h-full min-h-[160px] md:min-h-[180px]">
-        <img src="{{ thumbnail_url }}" alt="{{ title }}" class="object-cover h-full w-full">
+        <span>Verified</span>
       </div>
-      <div class="col-span-2 p-4 flex flex-col h-full">
-        <div class="mb-2">
-          <div>
-            <h3 class="text-lg font-semibold text-black line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-              {{ title }}
-            </h3>
-            <p class="text-sm text-gray mt-0.5 flex items-center">
-              <svg class="h-3.5 w-3.5 mr-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+    </td>
+  </tr>
+  <tr>
+    {# Favorite Button (Absolute positioning) #}
+    <td colspan="2" style="position: relative; height: 0; padding: 0;">
+      <div style="position: absolute; top: 8px; right: 8px; z-index: 10;">
+        <button aria-label="Save listing" style="background-color: rgba(255,255,255,0.9); border-radius: 50%; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" role="img" aria-hidden="true">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                  fill="#BF40BF" stroke="#BF40BF" stroke-width="0.8" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    {# Image Column #}
+    <td width="33%" valign="top" style="padding: 0;">
+      <a href="{{ listing_url }}" style="display: block; text-decoration: none;">
+        <img src="{{ thumbnail_url }}" alt="{{ title }}" style="width: 100%; height: 210px; object-fit: cover; display: block; border: 0;">
+      </a>
+    </td>
+    
+    {# Content Column #}
+    <td width="67%" valign="top" style="padding: 16px;">
+      <a href="{{ listing_url }}" style="text-decoration: none; color: inherit; display: block;">
+        {# Title #}
+        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #000000; line-height: 1.2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+          {{ title }}
+        </h3>
+        
+        {# Address Row (Table-based) #}
+        <table border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 6px;">
+          <tr>
+            <td width="18" valign="middle" style="padding-right: 4px;">
+              <svg style="width: 14px; height: 14px; display: block; color: #6b7280;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </td>
+            <td valign="middle" style="font-size: 13px; color: #6b7280; line-height: 1.4;">
               {{ full_address }}
-            </p>
-            <div class="mt-1">
-              {{ render_star_rating(average_rating, review_count, star_size='h-4 w-4') }}
-            </div>
-            <p class="text-sm mt-2 text-gray line-clamp-4">
-              {{ description }}
-            </p>
-          </div>
+            </td>
+          </tr>
+        </table>
+        
+        {# Star Rating #}
+        <div style="margin-bottom: 8px;">
+          {{ render_star_rating(average_rating, review_count, star_size='h-4 w-4') }}
         </div>
-        <div class="mt-3 mb-3">
-          <div class="flex flex-wrap gap-1">
-            {% for enum in primary_yoga_style %}
-            <span class="inline-flex items-center gap-1.5 font-medium text-white rounded-full shadow-sm hover:opacity-90 transition-all duration-200" style="background-color: #3797bf; font-size: 0.65rem; padding: 0.25rem 0.65rem;">
-              <span class="rounded-full" style="width: 6px; height: 6px; background-color: #01ec16;"></span>
-              {{ enum }}
-            </span>
-            {% endfor %}
-          </div>
+        
+        {# Description #}
+        <p style="margin: 8px 0 12px 0; font-size: 13px; color: #6b7280; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+          {{ description }}
+        </p>
+        
+        {# Yoga Style Badges #}
+        <div style="margin-top: 12px;">
+          <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              {% for enum in primary_yoga_style %}
+              <td style="padding-right: 4px; padding-bottom: 4px;">
+                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: #ffffff; background-color: #3797bf; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 10.5px; padding: 4px 10px; white-space: nowrap;">
+                  <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #01ec16;"></span>
+                  <span>{{ enum }}</span>
+                </span>
+              </td>
+              {% endfor %}
+            </tr>
+          </table>
         </div>
-      </div>
-    </a>
-  </div>
-</body>
-</html>
+      </a>
+    </td>
+  </tr>
+</table>
