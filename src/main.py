@@ -22,6 +22,21 @@ def setup_dry_run_directory() -> str:
     return path
 
 
+def get_template_name(country_code: str) -> str:
+    """Determines the email template based on country code."""
+    country_code = country_code.upper() if country_code else ""
+    lang_map = {
+        "CH": "de", # Switzerland -> German
+        "DE": "de",
+        "ES": "es",
+        "FR": "fr",
+        "NL": "nl",
+        "RU": "ru",
+    }
+    lang = lang_map.get(country_code, "en")
+    return f"hotyoga_email_template_{lang}.html"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Email Marketing Bot")
     parser.add_argument(
@@ -128,9 +143,13 @@ def main():
         # 5. Send Email (or Simulate)
         sender_email = os.environ.get("SENDER_EMAIL")
 
+        # Determine Template
+        country_code = listing.get("cities", {}).get("countries", {}).get("code")
+        template_name = get_template_name(country_code)
+
         if is_dry_run:
             try:
-                html_content = render_email_html(context)
+                html_content = render_email_html(context, template_name)
                 filename = f"{dry_run_count + 1:03d}_{slug}.html"
                 filepath = os.path.join(dry_run_dir, filename)
 
@@ -145,7 +164,7 @@ def main():
                 errors_count += 1
             continue
 
-        success = send_email(recipient, subject, context)
+        success = send_email(recipient, subject, context, template_name)
 
         # 6. Log Result
         status = "sent" if success else "failed"

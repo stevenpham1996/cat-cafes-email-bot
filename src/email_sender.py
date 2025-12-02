@@ -24,20 +24,21 @@ template_env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-def render_email_html(context: dict) -> str:
+def render_email_html(context: dict, template_name: str = "hotyoga_email_template_en.html") -> str:
     """
     Renders the HTML email template with the provided context.
     
     Args:
         context (dict): Dictionary containing data for the template.
+        template_name (str): The name of the template file to use.
         
     Returns:
         str: Rendered HTML string.
     """
-    template = template_env.get_template("hotyoga_email_template.html")
+    template = template_env.get_template(template_name)
     return template.render(**context)
 
-def send_email(recipient: str, subject: str, context: dict) -> bool:
+def send_email(recipient: str, subject: str, context: dict, template_name: str = "hotyoga_email_template_en.html") -> bool:
     """
     Sends an email using SMTP and Jinja2 templating with inlined CSS.
     
@@ -45,6 +46,7 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
         recipient (str): The email address of the recipient.
         subject (str): The subject of the email.
         context (dict): Dictionary containing data for the template (e.g., {'title': '...', 'url': '...'}).
+        template_name (str): The name of the template file to use.
         
     Returns:
         bool: True if sent successfully, False otherwise.
@@ -55,7 +57,7 @@ def send_email(recipient: str, subject: str, context: dict) -> bool:
 
     try:
         # 1. Render HTML content
-        rendered_html = render_email_html(context)
+        rendered_html = render_email_html(context, template_name)
         
         # 2. Use premailer to inline internal CSS (from <style> block)
         # We no longer fetch external Tailwind CSS as the templates now use robust inline styles.

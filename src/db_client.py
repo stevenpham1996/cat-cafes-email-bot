@@ -38,7 +38,8 @@ def fetch_listings() -> list[dict]:
                 slug
             ),
             countries (
-                slug
+                slug,
+                code
             )
         )
     """
