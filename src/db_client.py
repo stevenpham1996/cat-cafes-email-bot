@@ -47,3 +47,34 @@ def fetch_listings() -> list[dict]:
     response = supabase.table("coworking_places").select(query).neq("email", "null").execute()
     
     return response.data
+
+def get_platform_stats() -> dict:
+    """
+    Fetches platform statistics for email templates.
+    Returns a dictionary with:
+    - platform_studios_count (int)
+    - platform_cities_count (int)
+    - platform_active_users_count (str)
+    """
+    supabase = get_supabase_client()
+    
+    # 1. Get Studios Count (Head request for exact count)
+    # select("*", count="exact", head=True) returns the count without the data rows
+    studios_response = supabase.table("coworking_places").select("*", count="exact", head=True).execute()
+    studios_count = studios_response.count if studios_response.count is not None else 0
+    
+    # 2. Get Unique Cities Count
+    # Fetch all city_ids to count unique ones in Python
+    cities_response = supabase.table("cities").select("*", count="exact", head=True).execute()
+    # unique_cities = {item['city_id'] for item in cities_response.data if item.get('city_id')}
+    cities_count = cities_response.count if cities_response.count is not None else 0
+    
+    # 3. Get Active Users Count
+    # For now is hardcoded to 2033+ per business requirements
+    active_users_count = 2033
+    
+    return {
+        "platform_studios_count": studios_count,
+        "platform_cities_count": cities_count,
+        "platform_active_users_count": active_users_count  # Hardcoded for now per business requirements
+    }

@@ -4,7 +4,7 @@ import os
 import datetime
 from dotenv import load_dotenv
 
-from src.db_client import fetch_listings
+from src.db_client import fetch_listings, get_platform_stats
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html
 from src.email_logger import log_email_attempt, check_if_email_sent
@@ -73,6 +73,19 @@ def main():
     listings = fetch_listings()
     print(f"Found {len(listings)} listings with emails.")
 
+    # Fetch Platform Stats
+    print("Fetching platform stats...")
+    try:
+        platform_stats = get_platform_stats()
+        print(f"Stats fetched: {platform_stats}")
+    except Exception as e:
+        print(f"Error fetching stats: {e}. Using defaults.")
+        platform_stats = {
+            "platform_studios_count": 1857,
+            "platform_cities_count": 293,
+            "platform_active_users_count": "2033+"
+        }
+
     emails_sent_count = 0
     errors_count = 0
     skipped_count = 0
@@ -138,6 +151,9 @@ def main():
             "badge_html_code": get_badge_html_code(full_url),
             "text_html_code": get_text_link_html_code(full_url)
         }
+        # Add platform stats to context
+        context.update(platform_stats)
+
         subject = "Partnership Opportunity with Hot Yoga Studios"
 
         # 5. Send Email (or Simulate)

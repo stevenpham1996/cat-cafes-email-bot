@@ -392,7 +392,7 @@
             </div>
 
             {% include 'listing_card.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Your claimed studio will have a "Verified" badge and be prioritized in listing results.
             </p>
 
@@ -581,9 +581,9 @@
                             <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Send us
                                 the URL</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Email us at <a href="mailto:hotyogafinder@gmail.com"
+                                Email us at <a href="mailto:connect@hotyogafinder.com"
                                     style="color: #667eea; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><strong
-                                        style="font-weight: 900; font-size: 16px;">hotyogafinder@gmail.com</strong></a>
+                                        style="font-weight: 900; font-size: 16px;">connect@hotyogafinder.com</strong></a>
                                 with the link to where you've added the badge or text.
                             </div>
                         </div>
@@ -609,7 +609,7 @@
             <div style="margin-bottom: 20px;"> </div>
 
             {% include 'listing_card_featured_badge.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Promoted studio will have an "Editor's Pick" badge and always appear at the top of listing results.
             </p>
 
@@ -624,15 +624,15 @@
 
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">1,857</span>
+                    <span class="stat-number">{{ platform_studios_count }}</span>
                     <span class="stat-label">Studios Listed</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">10</span>
-                    <span class="stat-label">Countries</span>
+                    <span class="stat-number">{{ platform_cities_count }}</span>
+                    <span class="stat-label">Cities</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">2033+</span>
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
                     <span class="stat-label">Active Users</span>
                 </div>
             </div>

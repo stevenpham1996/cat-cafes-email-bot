@@ -389,7 +389,7 @@
             </div>
 
             {% include 'listing_card.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Uw geclaimde studio krijgt een "Geverifieerd"-badge en krijgt voorrang in de resultaten.
             </p>
 
@@ -566,9 +566,9 @@
                         <div style="flex: 1;">
                             <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Stuur ons de URL</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Mail ons op <a href="mailto:hotyogafinder@gmail.com"
+                                Mail ons op <a href="mailto:connect@hotyogafinder.com"
                                     style="color: #667eea; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><strong
-                                        style="font-weight: 900; font-size: 16px;">hotyogafinder@gmail.com</strong></a>
+                                        style="font-weight: 900; font-size: 16px;">connect@hotyogafinder.com</strong></a>
                                 met de link waar u de badge of tekst heeft toegevoegd.
                             </div>
                         </div>
@@ -592,7 +592,7 @@
             <div style="margin-bottom: 20px;"> </div>
 
             {% include 'listing_card_featured_badge.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Gepromote studio's krijgen een "Redactiekeuze"-badge en verschijnen altijd bovenaan de resultaten.
             </p>
 
@@ -607,15 +607,15 @@
 
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">1,857</span>
+                    <span class="stat-number">{{ platform_studios_count }}</span>
                     <span class="stat-label">Studio's vermeld</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">10</span>
+                    <span class="stat-number">{{ platform_cities_count }}</span>
                     <span class="stat-label">Landen</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">2033+</span>
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
                     <span class="stat-label">Actieve gebruikers</span>
                 </div>
             </div>

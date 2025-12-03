@@ -388,7 +388,7 @@
             </div>
 
             {% include 'listing_card.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Ihr beanspruchtes Studio erhält ein „Verifiziert“-Abzeichen und wird in den Ergebnissen priorisiert.
             </p>
 
@@ -565,9 +565,9 @@
                         <div style="flex: 1;">
                             <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Senden Sie uns die URL</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Senden Sie uns eine E-Mail an <a href="mailto:hotyogafinder@gmail.com"
+                                Senden Sie uns eine E-Mail an <a href="mailto:connect@hotyogafinder.com"
                                     style="color: #667eea; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><strong
-                                        style="font-weight: 900; font-size: 16px;">hotyogafinder@gmail.com</strong></a>
+                                        style="font-weight: 900; font-size: 16px;">connect@hotyogafinder.com</strong></a>
                                 mit dem Link, wo Sie das Abzeichen oder den Text hinzugefügt haben.
                             </div>
                         </div>
@@ -591,7 +591,7 @@
             <div style="margin-bottom: 20px;"> </div>
 
             {% include 'listing_card_featured_badge.html' %}
-            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f; padding: 10px 0;">
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
                 Geförderte Studios erhalten ein „Tipp der Redaktion“-Abzeichen und erscheinen immer ganz oben in den Ergebnissen.
             </p>
 
@@ -606,15 +606,15 @@
 
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">1,857</span>
+                    <span class="stat-number">{{ platform_studios_count }}</span>
                     <span class="stat-label">Gelistete Studios</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">10</span>
+                    <span class="stat-number">{{ platform_cities_count }}</span>
                     <span class="stat-label">Länder</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">2033+</span>
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
                     <span class="stat-label">Aktive Nutzer</span>
                 </div>
             </div>
