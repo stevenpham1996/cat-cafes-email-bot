@@ -33,8 +33,15 @@ uv pip install -r requirements.txt
 ### Step 2: Run the Script
 Execute the main script using `uv run`.
 
+### Step 2: Run the Script
+Execute the main script using `uv run`.
+
 **Dry Run (Recommended for testing):**
 ```bash
+# Generate 5 sample emails (saved to dry-run/ directory)
+uv run python -m src.main --dry-run 5
+
+# Generate all emails (no sending)
 uv run python -m src.main --dry-run
 ```
 
