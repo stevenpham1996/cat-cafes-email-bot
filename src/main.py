@@ -37,6 +37,51 @@ def get_template_name(country_code: str) -> str:
     return f"hotyoga_email_template_{lang}.html"
 
 
+def setup_session_log(resume_path: str = None) -> tuple[str, set]:
+    """
+    Sets up the session logging.
+    1. Creates a new timestamped log file in log/.
+    2. If resume_path is provided, reads processed IDs from it.
+    3. Writes the resumed IDs to the new log file (history preservation).
+    
+    Returns:
+        tuple: (new_log_path, processed_ids_set)
+    """
+    # Ensure log directory exists
+    os.makedirs("log", exist_ok=True)
+    
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    new_log_path = os.path.join("log", f"session_{timestamp}.txt")
+    processed_ids = set()
+
+    # Load resume data if provided
+    if resume_path:
+        if os.path.exists(resume_path):
+            print(f"Resuming from log: {resume_path}")
+            try:
+                with open(resume_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        lid = line.strip()
+                        if lid:
+                            processed_ids.add(lid)
+                print(f"Loaded {len(processed_ids)} IDs from resume file.")
+            except Exception as e:
+                print(f"Error reading resume file: {e}")
+        else:
+            print(f"Warning: Resume file {resume_path} not found. Starting fresh.")
+
+    # Initialize new log file (with resume data if any)
+    try:
+        with open(new_log_path, "w", encoding="utf-8") as f:
+            for lid in processed_ids:
+                f.write(f"{lid}\n")
+        print(f"Session log initialized: {new_log_path}")
+    except Exception as e:
+        print(f"Error creating log file: {e}")
+        
+    return new_log_path, processed_ids
+
+
 def main():
     parser = argparse.ArgumentParser(description="Email Marketing Bot")
     parser.add_argument(
@@ -49,6 +94,18 @@ def main():
         help="Dry run mode. Generates N HTML emails to dry-run/ directory "
              "(omit N for all)."
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Maximum number of emails to send in this run."
+    )
+    parser.add_argument(
+        "--resume",
+        type=str,
+        default=None,
+        help="Path to a log file to resume from (skips IDs listed in the file)."
+    )
     args = parser.parse_args()
 
     # Determine dry run mode and limit
@@ -56,6 +113,22 @@ def main():
     dry_run_limit = args.dry_run if isinstance(args.dry_run, int) else None
     dry_run_dir = None
     dry_run_count = 0
+    
+    # Production Limit
+    production_limit = args.limit
+
+    # Rate Limit Configuration
+    try:
+        rate_limit = int(os.environ.get("RATE_LIMIT", 5))
+        if rate_limit <= 0:
+            print(f"Warning: Invalid RATE_LIMIT {rate_limit}. Using default 5.")
+            rate_limit = 5
+    except ValueError:
+        print("Warning: RATE_LIMIT must be an larger than 0. Using default 5.")
+        rate_limit = 5
+    
+    sleep_interval = 60.0 / rate_limit * 3
+    print(f"Rate Limit: {rate_limit} emails/min (Sleep: {sleep_interval:.2f}s)")
 
     if is_dry_run:
         dry_run_dir = setup_dry_run_directory()
@@ -65,13 +138,30 @@ def main():
             print(f"Limit: {dry_run_limit} emails")
         else:
             print("Limit: Unlimited")
+    elif production_limit:
+        print(f"--- PRODUCTION LIMIT: {production_limit} emails ---")
+
+    # Session Logging Setup (Only for production runs usually, but valid for all)
+    # For dry-runs, we might not want to mess with the resume history,
+    # but the requirement implies "execution" which usually means live.
+    # We will enable it for live runs mainly.
+    processed_ids = set()
+    session_log_path = None
+    
+    if not is_dry_run:
+        session_log_path, processed_ids = setup_session_log(args.resume)
 
     print("Starting Email Marketing Bot...")
 
     # 1. Fetch Listings
     print("Fetching listings...")
     listings = fetch_listings()
-    print(f"Found {len(listings)} listings with emails.")
+    print(f"Found {len(listings)} total listings.")
+    
+    # Filter listings if resuming
+    if not is_dry_run and processed_ids:
+        listings = [l for l in listings if str(l.get("id")) not in processed_ids]
+        print(f"Filtered down to {len(listings)} listings (removed {len(processed_ids)} processed).")
 
     # Fetch Platform Stats
     print("Fetching platform stats...")
@@ -89,120 +179,154 @@ def main():
     emails_sent_count = 0
     errors_count = 0
     skipped_count = 0
+    
+    # Open log file for appending
+    log_file = None
+    if session_log_path:
+        try:
+            log_file = open(session_log_path, "a", encoding="utf-8")
+        except Exception as e:
+            print(f"CRITICAL: Failed to open session log for appending: {e}")
+            print("Aborting to prevent data loss.")
+            return
 
-    for listing in listings:
-        # Check dry run limit
-        if (is_dry_run and dry_run_limit is not None
-                and dry_run_count >= dry_run_limit):
-            print(f"Dry run limit of {dry_run_limit} reached. Stopping.")
-            break
+    try:
+        for listing in listings:
+            # Check dry run limit
+            if (is_dry_run and dry_run_limit is not None
+                    and dry_run_count >= dry_run_limit):
+                print(f"Dry run limit of {dry_run_limit} reached. Stopping.")
+                break
+                
+            # Check Production Limit
+            if (not is_dry_run and production_limit is not None 
+                    and emails_sent_count >= production_limit):
+                print(f"Production limit of {production_limit} reached. Stopping.")
+                break
 
-        listing_id = listing.get("id")
-        recipient = listing.get("email")
-        title = listing.get("title")
-        slug = listing.get("slug")
+            listing_id = str(listing.get("id"))
+            recipient = listing.get("email")
+            title = listing.get("title")
+            slug = listing.get("slug")
 
-        if not recipient:
-            continue
+            if not recipient:
+                continue
 
-        print(f"\nProcessing listing: {title} ({listing_id})")
+            print(f"\nProcessing listing: {title} ({listing_id})")
 
-        # 2. Duplicate Check
-        # In dry-run, we check what WOULD happen, and skip to simulate
-        # a real run.
-        if check_if_email_sent(recipient, listing_id):
-            print(f"Skipping: Email already sent to {recipient} for listing "
-                  f"{listing_id}.")
-            skipped_count += 1
-            continue
+            # 2. Duplicate Check (Database level)
+            # We still keep this as a safety net even with local logs
+            if check_if_email_sent(recipient, listing_id):
+                print(f"Skipping: Email already sent to {recipient} for listing "
+                      f"{listing_id}.")
+                skipped_count += 1
+                # If it was in DB but not in our local log, we should probably log it to sync state?
+                # For now, we just skip.
+                continue
 
-        # 3. Construct URL
-        url = construct_listing_url(listing)
-        if not url:
-            print(f"Error: Could not construct URL for listing {listing_id}. "
-                  "Skipping.")
-            if not is_dry_run:
-                log_email_attempt(
-                    recipient=recipient,
-                    listing_id=listing_id,
-                    description="Marketing Outreach",
-                    sender=os.environ.get("SENDER_EMAIL"),
-                    status="failed",
-                    error_message=("Failed to construct URL (missing location"
-                                   " data)")
-                )
-            errors_count += 1
-            continue
-
-        # Prepend Domain
-        domain = os.environ.get("WEBSITE_DOMAIN", "https://hotyogafinder.com")
-        full_url = f"{domain}{url}"
-
-        # 4. Prepare Email Context
-        context = {
-            "title": title,
-            "listing_url": full_url,
-            "thumbnail_url": listing.get("thumbnail_url", ""),
-            "full_address": listing.get("full_address", ""),
-            "average_rating": listing.get("average_rating", 0),
-            "review_count": listing.get("review_count", 0),
-            "description": listing.get("description", ""),
-            "primary_yoga_style": listing.get("filters", {}).get("primary_yoga_style", []),
-            "badge_html_code": get_badge_html_code(full_url),
-            "text_html_code": get_text_link_html_code(full_url)
-        }
-        # Add platform stats to context
-        context.update(platform_stats)
-
-        subject = "Partnership Opportunity with Hot Yoga Studios"
-
-        # 5. Send Email (or Simulate)
-        sender_email = os.environ.get("SENDER_EMAIL")
-
-        # Determine Template
-        country_code = listing.get("cities", {}).get("countries", {}).get("code")
-        template_name = get_template_name(country_code)
-
-        if is_dry_run:
-            try:
-                html_content = render_email_html(context, template_name)
-                filename = f"{dry_run_count + 1:03d}_{slug}.html"
-                filepath = os.path.join(dry_run_dir, filename)
-
-                with open(filepath, "w", encoding="utf-8") as f:
-                    f.write(html_content)
-
-                print(f"[Dry Run] Saved email to: {filepath}")
-                dry_run_count += 1
-                emails_sent_count += 1
-            except Exception as e:
-                print(f"[Dry Run] Error rendering/saving email: {e}")
+            # 3. Construct URL
+            url = construct_listing_url(listing)
+            if not url:
+                print(f"Error: Could not construct URL for listing {listing_id}. "
+                      "Skipping.")
+                if not is_dry_run:
+                    log_email_attempt(
+                        recipient=recipient,
+                        listing_id=listing_id,
+                        description="Marketing Outreach",
+                        sender=os.environ.get("SENDER_EMAIL"),
+                        status="failed",
+                        error_message=("Failed to construct URL (missing location"
+                                       " data)")
+                    )
                 errors_count += 1
-            continue
+                continue
 
-        success = send_email(recipient, subject, context, template_name)
+            # Prepend Domain
+            domain = os.environ.get("WEBSITE_DOMAIN", "https://hotyogafinder.com")
+            full_url = f"{domain}{url}"
 
-        # 6. Log Result
-        status = "sent" if success else "failed"
-        error_msg = None if success else "SMTP sending failed"
+            # 4. Prepare Email Context
+            context = {
+                "title": title,
+                "listing_url": full_url,
+                "thumbnail_url": listing.get("thumbnail_url", ""),
+                "full_address": listing.get("full_address", ""),
+                "average_rating": listing.get("average_rating", 0),
+                "review_count": listing.get("review_count", 0),
+                "description": listing.get("description", ""),
+                "primary_yoga_style": listing.get("filters", {}).get("primary_yoga_style", []),
+                "badge_html_code": get_badge_html_code(full_url),
+                "text_html_code": get_text_link_html_code(full_url)
+            }
+            # Add platform stats to context
+            context.update(platform_stats)
 
-        log_email_attempt(
-            recipient=recipient,
-            listing_id=listing_id,
-            description="Marketing Outreach",
-            sender=sender_email,
-            status=status,
-            error_message=error_msg
-        )
+            subject = "Partnership Opportunity with Hot Yoga Studios"
 
-        if success:
-            print(f"Email sent successfully to {recipient}.")
-            emails_sent_count += 1
-            # 7. Rate Limit
-            time.sleep(2)
-        else:
-            print(f"Failed to send email to {recipient}.")
-            errors_count += 1
+            # 5. Send Email (or Simulate)
+            sender_email = os.environ.get("SENDER_EMAIL")
+
+            # Determine Template
+            country_code = listing.get("cities", {}).get("countries", {}).get("code")
+            template_name = get_template_name(country_code)
+
+            if is_dry_run:
+                try:
+                    html_content = render_email_html(context, template_name)
+                    filename = f"{dry_run_count + 1:03d}_{slug}.html"
+                    filepath = os.path.join(dry_run_dir, filename)
+
+                    with open(filepath, "w", encoding="utf-8") as f:
+                        f.write(html_content)
+
+                    print(f"[Dry Run] Saved email to: {filepath}")
+                    dry_run_count += 1
+                    emails_sent_count += 1
+                except Exception as e:
+                    print(f"[Dry Run] Error rendering/saving email: {e}")
+                    errors_count += 1
+                continue
+
+            success = send_email(recipient, subject, context, template_name)
+
+            # 6. Log Result
+            status = "sent" if success else "failed"
+            error_msg = None if success else "SMTP sending failed"
+
+            log_email_attempt(
+                recipient=recipient,
+                listing_id=listing_id,
+                description="Marketing Outreach",
+                sender=sender_email,
+                status=status,
+                error_message=error_msg
+            )
+
+            if success:
+                print(f"Email sent successfully to {recipient}.")
+                emails_sent_count += 1
+                
+                # REAL-TIME LOGGING (Critical for Resume/Data Safety)
+                if log_file:
+                    try:
+                        log_file.write(f"{listing_id}\n")
+                        log_file.flush()
+                        os.fsync(log_file.fileno())
+                    except Exception as e:
+                        print(f"CRITICAL ERROR: Failed to write to log file: {e}")
+
+                # 7. Rate Limit
+                time.sleep(sleep_interval)
+            else:
+                print(f"Failed to send email to {recipient}.")
+                errors_count += 1
+
+    except KeyboardInterrupt:
+        print("\n\n--- Process Interrupted by User ---")
+    finally:
+        if log_file:
+            log_file.close()
 
     print("\n--- Job Complete ---")
     if is_dry_run:
@@ -212,6 +336,8 @@ def main():
         print(f"Sent: {emails_sent_count}")
         print(f"Skipped: {skipped_count}")
         print(f"Errors: {errors_count}")
+        if session_log_path:
+            print(f"Session Log: {session_log_path}")
 
 
 if __name__ == "__main__":
