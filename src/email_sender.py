@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from dotenv import load_dotenv
+import logging
 import requests
 from premailer import transform
 
@@ -61,7 +62,8 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
         
         # 2. Use premailer to inline internal CSS (from <style> block)
         # We no longer fetch external Tailwind CSS as the templates now use robust inline styles.
-        inlined_html = transform(rendered_html)
+        # Disable validation to suppress warnings about modern CSS (flex, gradients) which premailer/cssutils doesn't support.
+        inlined_html = transform(rendered_html, disable_validation=True, cssutils_logging_level=logging.CRITICAL)
 
         # Create Plain Text Fallback
         text_content = f"""

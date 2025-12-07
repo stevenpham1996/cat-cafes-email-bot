@@ -9,7 +9,7 @@ def get_supabase_client() -> Client:
     Initializes and returns the Supabase client.
     """
     url: str = os.environ.get("SUPABASE_URL")
-    key: str = os.environ.get("SUPABASE_KEY")
+    key: str = os.environ.get("SUPABASE_SECRET_KEY")
 
     if not url or not key:
         raise ValueError("Supabase URL and Key must be set in environment variables.")
