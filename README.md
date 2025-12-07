@@ -65,7 +65,7 @@ uv run python -m src.main --resume log/session_YYYYMMDD_HHMMSS.txt --limit 50
     -   Construct the unique Listing Detail URL.
     -   Render the email template with the business name and URL.
     -   Send the email via SMTP.
-    -   **Real-time Logging**: After successful sending, the `listing_id` will be immediately written to a timestamped session log file in the `log/` directory. This ensures robust progress tracking even in case of unexpected termination.
+    -   **Real-time Logging**: After successful sending, the entry (`index,listing_id`) will be immediately written to a timestamped CSV session log file in the `log/` directory. This ensures robust progress tracking even in case of unexpected termination.
     -   Log the attempt to the `email_tracking` table (database level).
 4.  **Rate Limiting**: The bot will pause between emails based on the `RATE_LIMIT` environment variable (defaults to 30 emails/minute) to manage sending speed and avoid spam filters.
 5.  **Output**: The console will show the progress, including sent emails, skips, and errors. The final session log file path will also be displayed for future `--resume` use.

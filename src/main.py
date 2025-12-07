@@ -37,15 +37,15 @@ def get_template_name(country_code: str) -> str:
     return f"hotyoga_email_template_{lang}.html"
 
 
-def setup_session_log(resume_path: str = None) -> tuple[str, set]:
+def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
     """
     Sets up the session logging.
     1. Creates a new timestamped log file in log/.
-    2. If resume_path is provided, reads processed IDs from it.
-    3. Writes the resumed IDs to the new log file (history preservation).
+    2. If resume_path is provided, reads processed IDs from it (handling both CSV and legacy formats).
+    3. Writes the resumed IDs to the new log file with CSV indexing (History Preservation).
     
     Returns:
-        tuple: (new_log_path, processed_ids_set)
+        tuple: (new_log_path, processed_ids_set, next_index)
     """
     # Ensure log directory exists
     os.makedirs("log", exist_ok=True)
@@ -53,6 +53,7 @@ def setup_session_log(resume_path: str = None) -> tuple[str, set]:
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     new_log_path = os.path.join("log", f"session_{timestamp}.txt")
     processed_ids = set()
+    history_list = [] # Maintain order for re-indexing
 
     # Load resume data if provided
     if resume_path:
@@ -61,25 +62,50 @@ def setup_session_log(resume_path: str = None) -> tuple[str, set]:
             try:
                 with open(resume_path, "r", encoding="utf-8") as f:
                     for line in f:
-                        lid = line.strip()
+                        line = line.strip()
+                        if not line:
+                            continue
+                            
+                        # Parse line (handles legacy "id" and new "index,id")
+                        parts = line.split(',')
+                        if len(parts) > 1:
+                            # Likely CSV: try to detect if first part is index or header
+                            # If header "index", skip
+                            if parts[0].lower() == "index":
+                                continue
+                            lid = parts[-1].strip()
+                        else:
+                            # Legacy: just the ID
+                            lid = line
+                        
                         if lid:
-                            processed_ids.add(lid)
+                            if lid not in processed_ids:
+                                processed_ids.add(lid)
+                                history_list.append(lid)
+                                
                 print(f"Loaded {len(processed_ids)} IDs from resume file.")
             except Exception as e:
                 print(f"Error reading resume file: {e}")
         else:
             print(f"Warning: Resume file {resume_path} not found. Starting fresh.")
 
-    # Initialize new log file (with resume data if any)
+    # Initialize new log file (with resume data re-indexed)
+    next_index = 1
     try:
         with open(new_log_path, "w", encoding="utf-8") as f:
-            for lid in processed_ids:
-                f.write(f"{lid}\n")
-        print(f"Session log initialized: {new_log_path}")
+            # Write Header
+            f.write("index,listing_id\n")
+            
+            # Write History
+            for lid in history_list:
+                f.write(f"{next_index},{lid}\n")
+                next_index += 1
+                
+        print(f"Session log initialized: {new_log_path} (Next Index: {next_index})")
     except Exception as e:
         print(f"Error creating log file: {e}")
         
-    return new_log_path, processed_ids
+    return new_log_path, processed_ids, next_index
 
 
 def main():
@@ -147,9 +173,10 @@ def main():
     # We will enable it for live runs mainly.
     processed_ids = set()
     session_log_path = None
+    current_index = 1
     
     if not is_dry_run:
-        session_log_path, processed_ids = setup_session_log(args.resume)
+        session_log_path, processed_ids, current_index = setup_session_log(args.resume)
 
     print("Starting Email Marketing Bot...")
 
@@ -312,9 +339,10 @@ def main():
                 # REAL-TIME LOGGING (Critical for Resume/Data Safety)
                 if log_file:
                     try:
-                        log_file.write(f"{listing_id}\n")
+                        log_file.write(f"{current_index},{listing_id}\n")
                         log_file.flush()
                         os.fsync(log_file.fileno())
+                        current_index += 1
                     except Exception as e:
                         print(f"CRITICAL ERROR: Failed to write to log file: {e}")
 
