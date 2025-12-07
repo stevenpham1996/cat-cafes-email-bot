@@ -245,11 +245,13 @@ def main():
             # Prepend Domain
             domain = os.environ.get("WEBSITE_DOMAIN", "https://hotyogafinder.com")
             full_url = f"{domain}{url}"
+            referral_promotion_url = f"https://www.hotyogafinder.com/referral-promotion/{listing_id}"
 
             # 4. Prepare Email Context
             context = {
                 "title": title,
                 "listing_url": full_url,
+                "referral_promotion_url": referral_promotion_url,
                 "thumbnail_url": listing.get("thumbnail_url", ""),
                 "full_address": listing.get("full_address", ""),
                 "average_rating": listing.get("average_rating", 0),
@@ -262,7 +264,7 @@ def main():
             # Add platform stats to context
             context.update(platform_stats)
 
-            subject = "Partnership Opportunity with Hot Yoga Studios"
+            subject = "A warn welcome from Hot Yoga Finder"
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")
