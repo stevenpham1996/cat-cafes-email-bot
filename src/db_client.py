@@ -70,8 +70,8 @@ def get_platform_stats() -> dict:
     cities_count = cities_response.count if cities_response.count is not None else 0
     
     # 3. Get Active Users Count
-    # For now is hardcoded to 2033+ per business requirements
-    active_users_count = 2033
+    # For now is hardcoded to 3033+
+    active_users_count = 5033
     
     return {
         "platform_studios_count": studios_count,

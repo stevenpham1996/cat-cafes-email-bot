@@ -1,2 +1,3 @@
 .env
 dry-run/
+*/__pycache__/*
