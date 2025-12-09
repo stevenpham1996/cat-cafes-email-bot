@@ -284,7 +284,7 @@ def main():
                 "average_rating": listing.get("average_rating", 0),
                 "review_count": listing.get("review_count", 0),
                 "description": listing.get("description", ""),
-                "primary_yoga_style": listing.get("filters", {}).get("primary_yoga_style", []),
+                "primary_yoga_style": (listing.get("filters") or {}).get("primary_yoga_style", []),
                 "badge_html_code": get_badge_html_code(full_url),
                 "text_html_code": get_text_link_html_code(full_url)
             }
@@ -297,7 +297,7 @@ def main():
             sender_email = os.environ.get("SENDER_EMAIL")
 
             # Determine Template
-            country_code = listing.get("cities", {}).get("countries", {}).get("code")
+            country_code = ((listing.get("cities") or {}).get("countries") or {}).get("code")
             template_name = get_template_name(country_code)
 
             if is_dry_run:
