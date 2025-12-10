@@ -291,7 +291,7 @@ def main():
             # Add platform stats to context
             context.update(platform_stats)
 
-            subject = "A warn welcome from Hot Yoga Finder"
+            subject = "Your yoga studio was added for community visibility"
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")

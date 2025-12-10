@@ -95,7 +95,7 @@ def get_platform_stats() -> dict:
     
     # 3. Get Active Users Count
     # For now is hardcoded to 3033+
-    active_users_count = 5033
+    active_users_count = 9043
     
     return {
         "platform_studios_count": studios_count,
