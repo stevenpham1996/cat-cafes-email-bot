@@ -21,13 +21,11 @@ def fetch_listings() -> list[dict]:
     Fetches listings from the database with their associated location data.
     Joins with cities, states, and countries tables.
     Filters for listings with a valid email address.
+    Uses pagination to retrieve all records beyond the default 1000 limit.
     """
     supabase = get_supabase_client()
 
     # Query to fetch listings and join with location tables
-    # We fetch cities, and from cities we fetch states and countries.
-    # We rely on cities.country_id for the country slug in all cases.
-    
     query = """
         id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url,
         cities (
@@ -44,9 +42,35 @@ def fetch_listings() -> list[dict]:
         )
     """
     
-    response = supabase.table("coworking_places").select(query).neq("email", "null").execute()
+    all_listings = []
+    start = 0
+    batch_size = 1000
     
-    return response.data
+    while True:
+        print(f"Fetching listings batch: {start} to {start + batch_size}...")
+        try:
+            response = (
+                supabase.table("coworking_places")
+                .select(query)
+                .neq("email", "null")
+                .range(start, start + batch_size - 1)
+                .execute()
+            )
+            
+            batch = response.data
+            all_listings.extend(batch)
+            
+            # If we fetched fewer than batch_size, we've reached the end
+            if len(batch) < batch_size:
+                break
+                
+            start += batch_size
+            
+        except Exception as e:
+            print(f"Error fetching batch starting at {start}: {e}")
+            break
+            
+    return all_listings
 
 def get_platform_stats() -> dict:
     """
