@@ -72,6 +72,41 @@ def fetch_listings() -> list[dict]:
             
     return all_listings
 
+def fetch_preview_listings(limit: int = 100) -> list[dict]:
+    """
+    Fetches a limited number of listings for dry-run/testing purposes.
+    Does not use pagination; strictly limits the query to the specified count.
+    """
+    supabase = get_supabase_client()
+    
+    # Query to fetch listings and join with location tables
+    query = """
+        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url,
+        cities (
+            slug,
+            state_id,
+            country_id,
+            states (
+                slug
+            ),
+            countries (
+                slug,
+                code
+            )
+        )
+    """
+    
+    print(f"Fetching preview batch of {limit} listings...")
+    response = (
+        supabase.table("coworking_places")
+        .select(query)
+        .neq("email", "null")
+        .limit(limit)
+        .execute()
+    )
+    
+    return response.data
+
 def get_platform_stats() -> dict:
     """
     Fetches platform statistics for email templates.

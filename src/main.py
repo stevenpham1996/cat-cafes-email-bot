@@ -2,9 +2,10 @@ import argparse
 import time
 import os
 import datetime
+import random
 from dotenv import load_dotenv
 
-from src.db_client import fetch_listings, get_platform_stats
+from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html
 from src.email_logger import log_email_attempt, check_if_email_sent
@@ -167,41 +168,64 @@ def main():
     elif production_limit:
         print(f"--- PRODUCTION LIMIT: {production_limit} emails ---")
 
-    # Session Logging Setup (Only for production runs usually, but valid for all)
-    # For dry-runs, we might not want to mess with the resume history,
-    # but the requirement implies "execution" which usually means live.
-    # We will enable it for live runs mainly.
+    print("Starting Email Marketing Bot...")
+
+    # Fetch Listings (Bifurcated Logic)
+    listings = []
+    
+    # Session Logging (only relevant for production)
     processed_ids = set()
     session_log_path = None
     current_index = 1
-    
-    if not is_dry_run:
+
+    if is_dry_run:
+        # --- DRY RUN PATH ---
+        print("--- DRY RUN: Fetching preview batch (fast mode) ---")
+        listings = fetch_preview_listings(limit=500)
+        total_available = len(listings)
+        print(f"Preview fetched: {total_available} listings.")
+        
+        # Determine target count
+        dry_run_limit = dry_run_limit if dry_run_limit else 5
+        
+        if total_available > 0:
+            print(f"Shuffling preview batch to select up to {dry_run_limit} valid listings...")
+            random.shuffle(listings)        
+    else:
+        # --- PRODUCTION PATH ---
+        # 1. Setup Session
         session_log_path, processed_ids, current_index = setup_session_log(args.resume)
-
-    print("Starting Email Marketing Bot...")
-
-    # 1. Fetch Listings
-    print("Fetching listings...")
-    listings = fetch_listings()
-    print(f"Found {len(listings)} total listings.")
-    
-    # Filter listings if resuming
-    if not is_dry_run and processed_ids:
-        listings = [l for l in listings if str(l.get("id")) not in processed_ids]
-        print(f"Filtered down to {len(listings)} listings (removed {len(processed_ids)} processed).")
+        
+        # 2. Fetch All
+        print("Fetching ALL listings (Production Mode)...")
+        listings = fetch_listings()
+        print(f"Found {len(listings)} total listings.")
+        
+        # 3. Filter
+        if processed_ids:
+            listings = [l for l in listings if str(l.get("id")) not in processed_ids]
+            print(f"Filtered down to {len(listings)} listings (removed {len(processed_ids)} processed).")
 
     # Fetch Platform Stats
-    print("Fetching platform stats...")
-    try:
-        platform_stats = get_platform_stats()
-        print(f"Stats fetched: {platform_stats}")
-    except Exception as e:
-        print(f"Error fetching stats: {e}. Using defaults.")
+    if is_dry_run:
+        print("--- DRY RUN: Using mock platform stats ---")
         platform_stats = {
             "platform_studios_count": 1857,
             "platform_cities_count": 293,
             "platform_active_users_count": "2033+"
         }
+    else:
+        print("Fetching platform stats...")
+        try:
+            platform_stats = get_platform_stats()
+            print(f"Stats fetched: {platform_stats}")
+        except Exception as e:
+            print(f"Error fetching stats: {e}. Using defaults.")
+            platform_stats = {
+                "platform_studios_count": 1857,
+                "platform_cities_count": 293,
+                "platform_active_users_count": "2033+"
+            }
 
     emails_sent_count = 0
     errors_count = 0
@@ -242,13 +266,12 @@ def main():
             print(f"\nProcessing listing: {title} ({listing_id})")
 
             # 2. Duplicate Check (Database level)
-            # We still keep this as a safety net even with local logs
-            if check_if_email_sent(recipient, listing_id):
+            # Only check database history for production runs.
+            # Dry runs should generate artifacts regardless of past activity.
+            if not is_dry_run and check_if_email_sent(recipient, listing_id):
                 print(f"Skipping: Email already sent to {recipient} for listing "
                       f"{listing_id}.")
                 skipped_count += 1
-                # If it was in DB but not in our local log, we should probably log it to sync state?
-                # For now, we just skip.
                 continue
 
             # 3. Construct URL
