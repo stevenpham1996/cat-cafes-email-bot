@@ -63,8 +63,19 @@
         .intro {
             font-size: 16px;
             color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
             margin-bottom: 25px;
             line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
         }
 
         .highlight-box {
@@ -334,6 +345,10 @@
                 нашем ведущем глобальном каталоге, объединяющем любителей горячей йоги со студиями по всему миру.
             </p>
 
+            <p class="caveat">
+                Мы хотим заверить вас, что вся информация, использованная для размещения вашей студии, была тщательно получена исключительно из общедоступных и официальных источников, обеспечивая точность и уважение к вашему бизнесу.
+            </p>
+
             <div class="cta-section">
                 <a href="{{ listing_url }}" class="cta-text">Посмотреть профиль вашей студии</a>
             </div>
@@ -439,7 +454,7 @@
                         <div>
                             <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Топ-позиция со специальным значком</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Всегда в топе результатов поиска с заметным значком <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">«Выбор редакции»</strong>.</div>
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">«В центре внимания»</strong>.</div>
                         </div>
                     </div>
 
@@ -577,7 +592,7 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Продвигаемая студия получит значок «Выбор редакции» и будет всегда в топе.
+                Продвигаемая студия получит значок «В центре внимания» и будет всегда в топе.
             </p>
 
             <div class="signature">

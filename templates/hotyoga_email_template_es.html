@@ -63,8 +63,19 @@
         .intro {
             font-size: 16px;
             color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
             margin-bottom: 25px;
             line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
         }
 
         .highlight-box {
@@ -334,6 +345,10 @@
                 nuestro directorio global líder que conecta a entusiastas del hot yoga con estudios de todo el mundo.
             </p>
 
+            <p class="caveat">
+                Queremos asegurarle que toda la información utilizada para su listado de estudio fue cuidadosamente obtenida exclusivamente de canales públicos y oficiales, garantizando la precisión y el respeto por su negocio.
+            </p>
+
             <div class="cta-section">
                 <a href="{{ listing_url }}" class="cta-text">Ver el perfil de su estudio</a>
             </div>
@@ -439,7 +454,7 @@
                         <div>
                             <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Primera posición con insignia especial</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Siempre listado en la parte superior de los resultados de búsqueda con una insignia especial de <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Elección del Editor"</strong> que destaca.</div>
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Destacado"</strong> que destaca.</div>
                         </div>
                     </div>
 
@@ -577,7 +592,7 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                El estudio promocionado tendrá una insignia de "Elección del Editor" y siempre aparecerá en la parte superior de los resultados.
+                El estudio promocionado tendrá una insignia de "Destacado" y siempre aparecerá en la parte superior de los resultados.
             </p>
 
             <div class="signature">

@@ -63,8 +63,19 @@
         .intro {
             font-size: 16px;
             color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
             margin-bottom: 25px;
             line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
         }
 
         .highlight-box {
@@ -334,6 +345,10 @@
                 our premier global directory connecting hot yoga enthusiasts with studios across the globle.
             </p>
 
+            <p class="caveat">
+                We want to assure you that all information used for your studio listing was carefully sourced exclusively from publicly available and official channels, ensuring accuracy and respect for your business.
+            </p>
+
             <div class="cta-section">
                 <a href="{{ listing_url }}" class="cta-text">View Your Studio Listing</a>
             </div>
@@ -444,8 +459,7 @@
                                 Position with Special Badge</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Always listed at the top of
                                 search results with a special <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Editor's
-                                    Pick"</strong> badge that stands out.</div>
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Spotlight"</strong> badge that stands out.</div>
                         </div>
                     </div>
 
@@ -591,7 +605,7 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Promoted studio will have an "Editor's Pick" badge and always appear at the top of listing results.
+                Promoted studio will have a "Spotlight" badge and always appear at the top of listing results.
             </p>
 
             <div class="signature">

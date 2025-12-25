@@ -63,8 +63,19 @@
         .intro {
             font-size: 16px;
             color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
             margin-bottom: 25px;
             line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
         }
 
         .highlight-box {
@@ -334,6 +345,10 @@
                 notre premier annuaire mondial connectant les passionnés de hot yoga aux studios du monde entier.
             </p>
 
+            <p class="caveat">
+                Nous tenons à vous assurer que toutes les informations utilisées pour la liste de votre studio ont été soigneusement obtenues exclusivement à partir de sources publiques et officielles, garantissant l'exactitude et le respect de votre entreprise.
+            </p>
+
             <div class="cta-section">
                 <a href="{{ listing_url }}" class="cta-text">Voir la fiche de votre studio</a>
             </div>
@@ -439,7 +454,7 @@
                         <div>
                             <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Première position avec badge spécial</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Toujours listé en haut des résultats de recherche avec un badge spécial <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Sélection de l'éditeur"</strong> qui se démarque.</div>
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Mettre en lumière"</strong> qui se démarque.</div>
                         </div>
                     </div>
 
@@ -577,7 +592,7 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Le studio promu aura un badge "Sélection de l'éditeur" et apparaîtra toujours en haut des résultats.
+                Le studio promu aura un badge "Mettre en lumière" et apparaîtra toujours en haut des résultats.
             </p>
 
             <div class="signature">
