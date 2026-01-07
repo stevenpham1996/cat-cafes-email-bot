@@ -25,7 +25,7 @@ template_env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-def render_email_html(context: dict, template_name: str = "hotyoga_email_template_en.html") -> str:
+def render_email_html(context: dict, template_name: str = "catcafe_email_template_en.html") -> str:
     """
     Renders the HTML email template with the provided context.
     
@@ -39,7 +39,7 @@ def render_email_html(context: dict, template_name: str = "hotyoga_email_templat
     template = template_env.get_template(template_name)
     return template.render(**context)
 
-def send_email(recipient: str, subject: str, context: dict, template_name: str = "hotyoga_email_template_en.html") -> bool:
+def send_email(recipient: str, subject: str, context: dict, template_name: str = "catcafe_email_template_en.html") -> bool:
     """
     Sends an email using SMTP and Jinja2 templating with inlined CSS.
     
@@ -69,7 +69,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
         text_content = f"""
             Hi {context.get('title', 'Partner')},
 
-            We noticed your studio on our directory and would love to help you reach more yoga enthusiasts.
+            We noticed your cafe on our directory and would love to help you reach more cat lovers.
             We have created a dedicated listing page for your business.
 
             Details:
@@ -84,7 +84,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
             Claiming your listing allows you to update your information, add photos, and connect with our community.
 
             Best regards,
-            The Hot Yoga Studios Team
+            The Cat Cafe Directory Team
         """
 
         # Create MIME message

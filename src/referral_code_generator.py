@@ -21,7 +21,7 @@ def get_badge_html_code(listing_url: str) -> str:
     Returns:
         str: HTML code as a string
     """
-    template = template_env.get_template("hotyoga_referral_badge.html")
+    template = template_env.get_template("catcafe_referral_badge.html")
     return template.render(listing_url=listing_url)
 
 
@@ -36,5 +36,5 @@ def get_text_link_html_code(listing_url: str) -> str:
     Returns:
         str: HTML code as a string
     """
-    template = template_env.get_template("hotyoga_referral_text.html")
+    template = template_env.get_template("catcafe_referral_text.html")
     return template.render(listing_url=listing_url)

@@ -3,6 +3,7 @@ import time
 import os
 import datetime
 import random
+import json
 from dotenv import load_dotenv
 
 from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats
@@ -17,25 +18,56 @@ load_dotenv()
 
 def setup_dry_run_directory() -> str:
     """Creates a timestamped directory for dry run outputs."""
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = os.path.join("dry-run", timestamp)
+    path = os.path.join("dry-run", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
     os.makedirs(path, exist_ok=True)
     return path
 
 
-def get_template_name(country_code: str) -> str:
-    """Determines the email template based on country code."""
+def get_target_language(country_code: str) -> str:
+    """Maps a country code to a target language code."""
     country_code = country_code.upper() if country_code else ""
     lang_map = {
-        "CH": "de", # Switzerland -> German
+        "CH": "de",  # Switzerland -> German
         "DE": "de",
         "ES": "es",
         "FR": "fr",
         "NL": "nl",
         "RU": "ru",
+        "PT": "pt",
+        "JP": "ja",
+        "KR": "ko",
+        "CN": "cn",
     }
-    lang = lang_map.get(country_code, "en")
-    return f"hotyoga_email_template_{lang}.html"
+    return lang_map.get(country_code, "en")
+
+
+def extract_localized_string(data: any, target_lang: str) -> str:
+    """Extracts localized text from a string or dictionary with fallback to English."""
+    if not data:
+        return ""
+
+    # If it's a string, check if it's a serialized JSON object
+    if isinstance(data, str) and data.strip().startswith("{"):
+        try:
+            data = json.loads(data)
+        except (json.JSONDecodeError, TypeError):
+            # If parsing fails, treat it as a plain legacy string
+            pass
+
+    # Handle legacy plain strings
+    if isinstance(data, str):
+        return data
+
+    # Handle dictionary (either original or parsed from JSON string)
+    if isinstance(data, dict):
+        return data.get(target_lang) or data.get("en") or ""
+
+    return str(data)
+
+
+def get_template_name(lang: str) -> str:
+    """Determines the email template based on language code."""
+    return f"catcafe_email_template_{lang}.html"
 
 
 def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
@@ -263,6 +295,10 @@ def main():
             if not recipient:
                 continue
 
+            # Determine Language early for content and template resolution
+            country_code = ((listing.get("cities") or {}).get("countries") or {}).get("code")
+            target_lang = get_target_language(country_code)
+
             print(f"\nProcessing listing: {title} ({listing_id})")
 
             # 2. Duplicate Check (Database level)
@@ -293,9 +329,9 @@ def main():
                 continue
 
             # Prepend Domain
-            domain = os.environ.get("WEBSITE_DOMAIN", "https://hotyogafinder.com")
+            domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafenearme.org")
             full_url = f"{domain}{url}"
-            referral_promotion_url = f"https://www.hotyogafinder.com/referral-promotion/{listing_id}"
+            referral_promotion_url = f"https://www.catcafenearme.org/referral-promotion/{listing_id}"
 
             # 4. Prepare Email Context
             context = {
@@ -306,22 +342,21 @@ def main():
                 "full_address": listing.get("full_address", ""),
                 "average_rating": listing.get("average_rating", 0),
                 "review_count": listing.get("review_count", 0),
-                "description": listing.get("description", ""),
-                "primary_yoga_style": (listing.get("filters") or {}).get("primary_yoga_style", []),
+                "description": extract_localized_string(listing.get("description"), target_lang),
+                "cafe_atmosphere": (listing.get("filters") or {}).get("visitor_experience", {}).get("atmosphere", []),
                 "badge_html_code": get_badge_html_code(full_url),
                 "text_html_code": get_text_link_html_code(full_url)
             }
             # Add platform stats to context
             context.update(platform_stats)
 
-            subject = "Your yoga studio was added for community visibility"
+            subject = "Your cat cafe was added for community visibility"
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")
 
             # Determine Template
-            country_code = ((listing.get("cities") or {}).get("countries") or {}).get("code")
-            template_name = get_template_name(country_code)
+            template_name = get_template_name(target_lang)
 
             if is_dry_run:
                 try:
