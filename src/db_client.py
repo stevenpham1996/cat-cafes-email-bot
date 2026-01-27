@@ -27,7 +27,7 @@ def fetch_listings() -> list[dict]:
 
     # Query to fetch listings and join with location tables
     query = """
-        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url,
+        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url, price_range,
         cities (
             slug,
             state_id,
@@ -81,7 +81,7 @@ def fetch_preview_listings(limit: int = 100) -> list[dict]:
     
     # Query to fetch listings and join with location tables
     query = """
-        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url,
+        id, title, email, slug, full_address, average_rating, review_count, description, filters, thumbnail_url, price_range,
         cities (
             slug,
             state_id,

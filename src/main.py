@@ -4,6 +4,7 @@ import os
 import datetime
 import random
 import json
+import re
 from dotenv import load_dotenv
 
 from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats
@@ -15,6 +16,18 @@ from src.referral_code_generator import get_badge_html_code, get_text_link_html_
 # Load environment variables
 load_dotenv()
 
+MENU_STARTS_TRANSLATIONS = {
+    "en": "Menu starts from <strong>{price}</strong>",
+    "de": "Menü ab <strong>{price}</strong>",
+    "es": "Menú desde <strong>{price}</strong>",
+    "fr": "Menu à partir de <strong>{price}</strong>",
+    "nl": "Menu vanaf <strong>{price}</strong>",
+    "pt": "Menu a partir de <strong>{price}</strong>",
+    "ru": "Меню от <strong>{price}</strong>",
+    "ja": "メニューは <strong>{price}</strong> から",
+    "ko": "메뉴는 <strong>{price}</strong> 부터",
+    "zh": "菜单 <strong>{price}</strong> 起"
+}
 
 def setup_dry_run_directory() -> str:
     """Creates a timestamped directory for dry run outputs."""
@@ -34,6 +47,7 @@ def get_target_language(country_code: str) -> str:
         "NL": "nl",
         "RU": "ru",
         "PT": "pt",
+        "BR": "pt",
         "JP": "ja",  # Japan -> Japanese
         "KR": "ko",  # South Korea -> Korean
         "CN": "zh",  # China -> Chinese (Simplified)
@@ -65,6 +79,26 @@ def extract_localized_string(data: any, target_lang: str) -> str:
         return data.get(target_lang) or data.get("en") or ""
 
     return str(data)
+
+
+def extract_starting_price(price_range: str) -> str | None:
+    """
+    Extracts the starting price (prefix + first number) from a price range string.
+    Example: "$15–" -> "$15", "AED 50–750" -> "AED 50"
+    """
+    if not price_range:
+        return None
+        
+    match = re.search(r'[\d]+(?:[.,]\d{3})*(?:[.,]\d{1,2})?', price_range)
+    if not match:
+        return None
+        
+    # Extract everything from start up to the end of the first number
+    # This captures currency symbols ($, AED, etc.) and the number
+    end_index = match.end()
+    starting_price = price_range[:end_index].strip()
+    
+    return starting_price
 
 
 def get_template_name(lang: str) -> str:
@@ -336,6 +370,14 @@ def main():
             referral_promotion_url = f"https://www.catcafenearme.org/referral-promotion/{listing_id}"
 
             # 4. Prepare Email Context
+            # Logic for "Menu starts from..."
+            starting_price = extract_starting_price(listing.get("price_range"))
+            menu_starting_price_html = None
+            
+            if starting_price:
+                format_str = MENU_STARTS_TRANSLATIONS.get(target_lang, MENU_STARTS_TRANSLATIONS["en"])
+                menu_starting_price_html = format_str.format(price=starting_price)
+
             context = {
                 "title": title,
                 "listing_url": full_url,
@@ -347,7 +389,8 @@ def main():
                 "description": extract_localized_string(listing.get("description"), target_lang),
                 "cafe_atmosphere": (listing.get("filters") or {}).get("visitor_experience", {}).get("atmosphere", []),
                 "badge_html_code": get_badge_html_code(full_url),
-                "text_html_code": get_text_link_html_code(full_url)
+                "text_html_code": get_text_link_html_code(full_url),
+                "menu_starting_price_html": menu_starting_price_html
             }
             # Add platform stats to context
             context.update(platform_stats)
