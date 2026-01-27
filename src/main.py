@@ -34,9 +34,11 @@ def get_target_language(country_code: str) -> str:
         "NL": "nl",
         "RU": "ru",
         "PT": "pt",
-        "JP": "ja",
-        "KR": "ko",
-        "CN": "cn",
+        "JP": "ja",  # Japan -> Japanese
+        "KR": "ko",  # South Korea -> Korean
+        "CN": "zh",  # China -> Chinese (Simplified)
+        "HK": "zh",  # Hong Kong -> Chinese
+        "TW": "zh",  # Taiwan -> Chinese
     }
     return lang_map.get(country_code, "en")
 
