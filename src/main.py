@@ -335,7 +335,7 @@ def main():
             country_code = ((listing.get("cities") or {}).get("countries") or {}).get("code")
             target_lang = get_target_language(country_code)
 
-            print(f"\nProcessing listing: {title} ({listing_id})")
+            print(f"\nProcessing listing: {title} ({listing_id}) in {target_lang}")
 
             # 2. Duplicate Check (Database level)
             # Only check database history for production runs.
@@ -383,7 +383,7 @@ def main():
                 "listing_url": full_url,
                 "referral_promotion_url": referral_promotion_url,
                 "thumbnail_url": listing.get("thumbnail_url", ""),
-                "full_address": listing.get("full_address", ""),
+                "street_address": listing.get("street_address", ""),
                 "average_rating": listing.get("average_rating", 0),
                 "review_count": listing.get("review_count", 0),
                 "description": extract_localized_string(listing.get("description"), target_lang),

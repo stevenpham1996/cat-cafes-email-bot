@@ -73,7 +73,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
             We have created a dedicated listing page for your business.
 
             Details:
-            Address: {context.get('full_address', 'N/A')}
+            Address: {context.get('street_address', 'N/A')}
             Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
             Description: {context.get('description', 'N/A')[:100]}...
 
