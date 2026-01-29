@@ -16,7 +16,21 @@ from src.referral_code_generator import get_badge_html_code, get_text_link_html_
 # Load environment variables
 load_dotenv()
 
-MENU_STARTS_TRANSLATIONS = {
+
+EMAIL_SUBJECT_TRANSLATIONS = {
+    "en": "Your cat cafe was added for community visibility",
+    "de": "Ihr Katzen-Café wurde für die Sichtbarkeit in der Community hinzugefügt",
+    "es": "Tu cafetería de gatos ha sido añadida para visibilidad en la comunidad",
+    "fr": "Votre bar à chats a été ajouté pour une visibilité au sein de la communauté",
+    "nl": "Je kattencafé is toegevoegd voor zichtbaarheid in de community",
+    "pt": "O seu café de gatos foi adicionado para visibilidade na comunidade",
+    "ru": "Ваше котокафе было добавлено для повышения видимости в сообществе",
+    "ja": "あなたの猫カフェがコミュニティの視認性のために追加されました",
+    "ko": "귀하의 고양이 카페가 커뮤니티 가시성을 위해 추가되었습니다",
+    "zh": "您的猫咪咖啡馆已加入，以提高社区曝光度"
+}
+
+PRICE_RANGE_TRANSLATIONS = {
     "en": "Menu starts from <strong>{price}</strong>",
     "de": "Menü ab <strong>{price}</strong>",
     "es": "Menú desde <strong>{price}</strong>",
@@ -29,6 +43,7 @@ MENU_STARTS_TRANSLATIONS = {
     "zh": "菜单 <strong>{price}</strong> 起"
 }
 
+    
 def setup_dry_run_directory() -> str:
     """Creates a timestamped directory for dry run outputs."""
     path = os.path.join("dry-run", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
@@ -375,7 +390,7 @@ def main():
             menu_starting_price_html = None
             
             if starting_price:
-                format_str = MENU_STARTS_TRANSLATIONS.get(target_lang, MENU_STARTS_TRANSLATIONS["en"])
+                format_str = PRICE_RANGE_TRANSLATIONS.get(target_lang, PRICE_RANGE_TRANSLATIONS["en"])
                 menu_starting_price_html = format_str.format(price=starting_price)
 
             context = {
@@ -395,7 +410,7 @@ def main():
             # Add platform stats to context
             context.update(platform_stats)
 
-            subject = "Your cat cafe was added for community visibility"
+            subject = EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"])
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")
