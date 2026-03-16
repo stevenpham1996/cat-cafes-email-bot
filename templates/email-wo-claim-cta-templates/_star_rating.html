@@ -1,0 +1,69 @@
+{# templates/_star_rating.html #}
+{# Refactored to use table-based layout with inline styles for email compatibility #}
+{% macro render_star_rating(average_rating, review_count, star_size='h-5 w-5', text_size='text-sm', show_count=True) %}
+    {# Ensure rating is a number and between 0 and 5 #}
+    {% set rating_float = average_rating | float %}
+    {% set clamped_rating = [[0, rating_float] | max, 5] | min %}
+    {# Round to nearest 0.5 #}
+    {% set rounded_rating = (clamped_rating * 2) | round / 2 %}
+    
+    {# Determine star size in pixels based on the size parameter #}
+    {% if 'h-4' in star_size or 'w-4' in star_size %}
+        {% set star_px = 16 %}
+    {% elif 'h-5' in star_size or 'w-5' in star_size %}
+        {% set star_px = 20 %}
+    {% else %}
+        {% set star_px = 16 %}
+    {% endif %}
+
+    <table border="0" cellspacing="0" cellpadding="0" style="font-size: 13px; color: #1a1a1a;">
+        <tr>
+            <td valign="middle">
+                {# Star container table #}
+                <table border="0" cellspacing="0" cellpadding="0" aria-label="Rating: {{ clamped_rating | round(1) }} out of 5 stars">
+                    <tr>
+                        {% for i in range(5) %}
+                            {% set value = i + 1 %}
+                            {% set is_full = rounded_rating >= value %}
+                            {% set is_half = rounded_rating == value - 0.5 %}
+                            
+                            <td valign="middle" style="position: relative; width: {{ star_px }}px; height: {{ star_px }}px; padding-right: 2px;">
+                                {# Background Star (Empty) #}
+                                <svg style="width: {{ star_px }}px; height: {{ star_px }}px; display: block; position: absolute; top: 0; left: 0;" fill="transparent" stroke="#9ca3af" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path>
+                                </svg>
+                                
+                                {# Foreground Star (Full or Half) #}
+                                {% if is_full or is_half %}
+                                    <div style="position: absolute; top: 0; left: 0; overflow: hidden; width: {% if is_full %}100%{% else %}50%{% endif %}; height: 100%;">
+                                        <svg style="width: {{ star_px }}px; height: {{ star_px }}px; display: block;" fill="#eab308" stroke="#eab308" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </td>
+            
+            {% if clamped_rating > 0 %}
+                <td valign="middle" style="padding-left: 4px; font-weight: 600; color: #334155; font-size: 13px;">
+                    {{ clamped_rating | round(1) }}
+                </td>
+            {% endif %}
+            
+            {% if show_count and review_count is defined and review_count > 0 %}
+                <td valign="middle" style="padding-left: 4px; color: #64748b; font-size: 13px;">
+                    ({{ review_count }} reviews)
+                </td>
+            {% endif %}
+            
+            {% if clamped_rating == 0 %}
+                <td valign="middle" style="padding-left: 4px; color: #64748b; font-size: 13px;">
+                    No ratings and reviews
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+{% endmacro %}

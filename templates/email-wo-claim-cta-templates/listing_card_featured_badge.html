@@ -1,0 +1,100 @@
+{# templates/listing_card_featured_badge.html - Email-compatible listing card partial with "Spotlight" badge #}
+{% from '_star_rating.html' import render_star_rating %}
+
+<table border="0" cellspacing="0" cellpadding="0" style="width: 100%; max-width: 700px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; flex: flex-row; position: relative; margin: 20px auto;">
+  <tr>
+    {# Verified Badge (Top Right) #}
+    <td colspan="2" style="position: relative; height: 0; padding: 0;">
+      <div style="position: absolute; top: 8px; right: 8px; z-index: 10; padding: 4px 10px; background-color: #16a34a; color: #ffffff; font-size: 11px; font-weight: 700; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); display: inline-flex; align-items: center; gap: 4px;">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span>Verified</span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    {# Image Column with Spotlight Badge #}
+    <td width="33%" valign="top" style="padding: 0; position: relative;">
+
+      <a href="{{ listing_url }}" style="display: block; text-decoration: none;">
+        <img src="{{ thumbnail_url }}" alt="{{ title }}" style="width: 100%; height: 244px; object-fit: cover; display: block; border: 0;">
+      </a>
+
+      {# Spotlight Badge - positioned absolutely within this cell #}
+      <div style="position: absolute; bottom: 6px; left: 6px; z-index: 10; pointer-events: none; display: flex; flex-direction: column; align-items: center;">
+        <svg width="40px" height="40px" viewBox="-3.5 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <path d="M9.73795 18.8436L12.9511 20.6987L6.42625 32L4.55349 27.8233L9.73795 18.8436Z" fill="#d16c29"></path>
+            <path d="M9.73795 18.8436L6.52483 16.9885L0 28.2898L4.55349 27.8233L9.73795 18.8436Z" fill="#d16c29"></path>
+            <path d="M14.322 18.8436L11.1088 20.6987L17.6337 32L19.5064 27.8233L14.322 18.8436Z" fill="#d16c29"></path>
+            <path d="M14.322 18.8436L17.5351 16.9885L24.0599 28.2898L19.5064 27.8233L14.322 18.8436Z" fill="#d16c29"></path>
+            <path d="M22.9936 11.0622C22.9936 17.1716 18.0409 22.1243 11.9314 22.1243C5.82194 22.1243 0.869249 17.1716 0.869249 11.0622C0.869249 4.9527 5.82194 0 11.9314 0C18.0409 0 22.9936 4.9527 22.9936 11.0622Z" fill="url(#paint0_linear_103_1801)"></path>
+            <path d="M20.5665 11.0621C20.5665 15.8311 16.7004 19.6972 11.9315 19.6972C7.16247 19.6972 3.29645 15.8311 3.29645 11.0621C3.29645 6.29315 7.16247 2.42713 11.9315 2.42713C16.7004 2.42713 20.5665 6.29315 20.5665 11.0621Z" fill="#f5d04d"></path>
+            <path d="M21.0477 11.984C21.0477 16.7641 17.1727 20.6391 12.3926 20.6391C7.61251 20.6391 3.73748 16.7641 3.73748 11.984C3.73748 7.20389 7.61251 3.32887 12.3926 3.32887C17.1727 3.32887 21.0477 7.20389 21.0477 11.984Z" fill="#f5d04d"></path>
+            <path d="M20.5868 11.0621C20.5868 15.8422 16.7118 19.7172 11.9317 19.7172C7.15159 19.7172 3.27656 15.8422 3.27656 11.0621C3.27656 6.28205 7.15159 2.40702 11.9317 2.40702C16.7118 2.40702 20.5868 6.28205 20.5868 11.0621Z" fill="#f5d04d"></path>
+            <path d="M11.9781 5.04096L13.8451 8.77502L17.5792 9.24178L15.0151 12.117L15.7122 16.2431L11.9781 14.3761L8.24404 16.2431L8.94729 12.117L6.37701 9.24178L10.1111 8.77502L11.9781 5.04096Z" fill="url(#paint1_linear_103_1801)"></path>
+            <defs>
+              <linearGradient id="paint0_linear_103_1801" x1="11.1804" y1="4.03192" x2="12.6813" y2="31.965" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#e6bb1fff"></stop>
+                <stop offset="1" stop-color="#e6bb1fff"></stop>
+              </linearGradient>
+              <linearGradient id="paint1_linear_103_1801" x1="11.9783" y1="5.04096" x2="11.9783" y2="16.2431" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffffffff"></stop>
+                <stop offset="1" stop-color="#FFE896"></stop>
+              </linearGradient>
+            </defs>
+          </g>
+        </svg>
+        <span style="font-size: 8px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800; color: #f3f4f6; background-color: #fb923c; padding: 1px 2px; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-top: -4px; backdrop-filter: blur(4px); border: 1px solid #fef3c7;">
+          Spotlight
+        </span>
+      </div>
+    </td>
+    
+    {# Content Column #}
+    <td width="67%" valign="top" style="padding: 16px;">
+
+      <a href="{{ listing_url }}" style="text-decoration: none; color: inherit; display: block;">
+        {# Title #}
+        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #000000; line-height: 1.2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+          {{ title }}
+        </h3>
+        
+        {# Address Row (Table-based) #}
+        <table border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 6px;">
+          <tr>
+            <td width="18" valign="middle" style="padding-right: 4px;">
+              <svg style="width: 14px; height: 14px; display: block; color: #6b7280;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </td>
+            <td valign="middle" style="font-size: 13px; color: #6b7280; line-height: 1.4;">
+              {{ street_address }}
+            </td>
+          </tr>
+        </table>
+        
+        {# Star Rating #}
+        <div style="margin-bottom: 8px;">
+          {{ render_star_rating(average_rating, review_count, star_size='h-4 w-4') }}
+        </div>
+
+        {# Menu Starting Price #}
+        {% if menu_starting_price_html %}
+        <div style="margin-bottom: 8px; font-size: 13px; color: #0EA5E9; line-height: 1.4; font-style: italic;">
+            {{ menu_starting_price_html | safe }}
+        </div>
+        {% endif %}
+        
+        {# Description #}
+        <p style="margin: 8px 0 12px 0; font-size: 13px; color: #6b7280; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+          {{ description }}
+        </p>
+      </a>
+    </td>
+  </tr>
+</table>
