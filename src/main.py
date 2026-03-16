@@ -35,7 +35,7 @@ PRICE_RANGE_TRANSLATIONS = {
     "de": "Menü ab <strong>{price}</strong>",
     "es": "Menú desde <strong>{price}</strong>",
     "fr": "Menu à partir de <strong>{price}</strong>",
-    "nl": "Menu vanaf <strong>{price}</strong>",
+    "nl": "Menu vanaf <strong>{price}</strong>",    
     "pt": "Menu a partir de <strong>{price}</strong>",
     "ru": "Меню от <strong>{price}</strong>",
     "ja": "メニューは <strong>{price}</strong> から",
