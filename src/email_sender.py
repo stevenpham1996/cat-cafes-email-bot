@@ -18,28 +18,44 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 
-# Setup Jinja2 Environment
-template_loader = FileSystemLoader(searchpath="templates")
-template_env = Environment(
-    loader=template_loader,
-    autoescape=select_autoescape(['html', 'xml'])
-)
+# Jinja2 Environment Cache
+_ENV_CACHE = {}
 
-def render_email_html(context: dict, template_name: str = "catcafe_email_template_en.html") -> str:
+def get_template_env(template_dir: str):
+    """Gets or creates a Jinja2 environment for the given template directory."""
+    if template_dir in _ENV_CACHE:
+        return _ENV_CACHE[template_dir]
+    
+    # Always include the base 'templates' directory for shared partials
+    search_paths = [template_dir]
+    if template_dir != "templates":
+        search_paths.append("templates")
+    
+    loader = FileSystemLoader(searchpath=search_paths)
+    env = Environment(
+        loader=loader,
+        autoescape=select_autoescape(['html', 'xml'])
+    )
+    _ENV_CACHE[template_dir] = env
+    return env
+
+def render_email_html(context: dict, template_name: str, template_dir: str = "templates") -> str:
     """
     Renders the HTML email template with the provided context.
     
     Args:
         context (dict): Dictionary containing data for the template.
         template_name (str): The name of the template file to use.
+        template_dir (str): The directory to search for templates.
         
     Returns:
         str: Rendered HTML string.
     """
-    template = template_env.get_template(template_name)
+    env = get_template_env(template_dir)
+    template = env.get_template(template_name)
     return template.render(**context)
 
-def send_email(recipient: str, subject: str, context: dict, template_name: str = "catcafe_email_template_en.html") -> bool:
+def send_email(recipient: str, subject: str, context: dict, template_name: str, template_dir: str = "templates") -> bool:
     """
     Sends an email using SMTP and Jinja2 templating with inlined CSS.
     
@@ -48,6 +64,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
         subject (str): The subject of the email.
         context (dict): Dictionary containing data for the template (e.g., {'title': '...', 'url': '...'}).
         template_name (str): The name of the template file to use.
+        template_dir (str): The directory to search for templates.
         
     Returns:
         bool: True if sent successfully, False otherwise.
@@ -58,7 +75,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str =
 
     try:
         # 1. Render HTML content
-        rendered_html = render_email_html(context, template_name)
+        rendered_html = render_email_html(context, template_name, template_dir)
         
         # 2. Use premailer to inline internal CSS (from <style> block)
         # We no longer fetch external Tailwind CSS as the templates now use robust inline styles.

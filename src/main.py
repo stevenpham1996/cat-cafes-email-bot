@@ -5,12 +5,13 @@ import datetime
 import random
 import json
 import re
+import requests
 from dotenv import load_dotenv
 
 from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html
-from src.email_logger import log_email_attempt, check_if_email_sent
+from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
 
 # Load environment variables
@@ -70,6 +71,73 @@ def get_target_language(country_code: str) -> str:
         "TW": "zh",  # Taiwan -> Chinese
     }
     return lang_map.get(country_code, "en")
+
+
+def get_translated_subjects(title_en: str) -> dict:
+    """
+    Translates an English subject to 9 other languages using Gemini API.
+    Returns a dictionary of translations.
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    model = os.getenv("GEMINI_MODEL")
+    
+    if not api_key or not model:
+        print("Error: GEMINI_API_KEY or GEMINI_MODEL not found in .env. Falling back to defaults.")
+        return EMAIL_SUBJECT_TRANSLATIONS
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+    
+    prompt = (
+        f"Translate the following marketing email subject to: German, Spanish, French, "
+        f"Dutch, Portuguese, Russian, Japanese, Korean, Chinese. "
+        f"The translation should be optimized for a marketing email outreach to cat cafe owners. "
+        f"Subject: {title_en}"
+    )
+
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "responseMimeType": "application/json",
+            "responseJsonSchema": {
+                "type": "object",
+                "properties": {
+                    "en": {"type": "string"},
+                    "de": {"type": "string"},
+                    "es": {"type": "string"},
+                    "fr": {"type": "string"},
+                    "nl": {"type": "string"},
+                    "pt": {"type": "string"},
+                    "ru": {"type": "string"},
+                    "ja": {"type": "string"},
+                    "ko": {"type": "string"},
+                    "zh": {"type": "string"}
+                },
+                "required": ["en", "de", "es", "fr", "nl", "pt", "ru", "ja", "ko", "zh"]
+            }
+        }
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        
+        # Parse the JSON response from Gemini
+        content_text = data["candidates"][0]["content"]["parts"][0]["text"]
+        translated_dict = json.loads(content_text)
+        
+        # Ensure 'en' is correctly set
+        translated_dict["en"] = title_en
+        
+        print("Custom title translated successfully.")
+        return translated_dict
+        
+    except Exception as e:
+        print(f"Error during subject translation: {e}. Falling back to defaults.")
+        return EMAIL_SUBJECT_TRANSLATIONS
 
 
 def extract_localized_string(data: any, target_lang: str) -> str:
@@ -216,7 +284,24 @@ def main():
         default=None,
         help="Path to a log file to resume from (skips IDs listed in the file)."
     )
+    parser.add_argument(
+        "--title",
+        type=str,
+        default=None,
+        help="Custom English email subject line to be translated and used."
+    )
+    parser.add_argument(
+        "--wo-claim",
+        action="store_true",
+        help="Use email templates without the initial claim CTA section."
+    )
     args = parser.parse_args()
+
+    # If a custom title is provided, translate it and override the defaults
+    if args.title:
+        print(f"Custom title provided: '{args.title}'. Translating...")
+        global EMAIL_SUBJECT_TRANSLATIONS
+        EMAIL_SUBJECT_TRANSLATIONS = get_translated_subjects(args.title)
 
     # Determine dry run mode and limit
     is_dry_run = args.dry_run is not False
@@ -226,6 +311,9 @@ def main():
     
     # Production Limit
     production_limit = args.limit
+    
+    # Template Directory
+    template_dir = "templates/email-wo-claim-cta-templates" if args.wo_claim else "templates"
 
     # Rate Limit Configuration
     try:
@@ -352,16 +440,7 @@ def main():
 
             print(f"\nProcessing listing: {title} ({listing_id}) in {target_lang}")
 
-            # 2. Duplicate Check (Database level)
-            # Only check database history for production runs.
-            # Dry runs should generate artifacts regardless of past activity.
-            if not is_dry_run and check_if_email_sent(recipient, listing_id):
-                print(f"Skipping: Email already sent to {recipient} for listing "
-                      f"{listing_id}.")
-                skipped_count += 1
-                continue
-
-            # 3. Construct URL
+            # 2. Construct URL
             url = construct_listing_url(listing)
             if not url:
                 print(f"Error: Could not construct URL for listing {listing_id}. "
@@ -403,8 +482,8 @@ def main():
                 "review_count": listing.get("review_count", 0),
                 "description": extract_localized_string(listing.get("description"), target_lang),
                 "cafe_atmosphere": (listing.get("filters") or {}).get("visitor_experience", {}).get("atmosphere", []),
-                "badge_html_code": get_badge_html_code(full_url),
-                "text_html_code": get_text_link_html_code(full_url),
+                "badge_html_code": get_badge_html_code(full_url, template_dir=template_dir),
+                "text_html_code": get_text_link_html_code(full_url, template_dir=template_dir),
                 "menu_starting_price_html": menu_starting_price_html
             }
             # Add platform stats to context
@@ -420,7 +499,7 @@ def main():
 
             if is_dry_run:
                 try:
-                    html_content = render_email_html(context, template_name)
+                    html_content = render_email_html(context, template_name, template_dir=template_dir)
                     filename = f"{dry_run_count + 1:03d}_{slug}.html"
                     filepath = os.path.join(dry_run_dir, filename)
 
@@ -435,7 +514,7 @@ def main():
                     errors_count += 1
                 continue
 
-            success = send_email(recipient, subject, context, template_name)
+            success = send_email(recipient, subject, context, template_name, template_dir=template_dir)
 
             # 6. Log Result
             status = "sent" if success else "failed"
