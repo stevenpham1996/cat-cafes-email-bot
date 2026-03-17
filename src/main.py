@@ -8,7 +8,7 @@ import re
 import requests
 from dotenv import load_dotenv
 
-from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats
+from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats, resolve_country_ids
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html
 from src.email_logger import log_email_attempt
@@ -295,7 +295,25 @@ def main():
         action="store_true",
         help="Use email templates without the initial claim CTA section."
     )
+    parser.add_argument(
+        "--countries",
+        type=str,
+        default=None,
+        help="Comma-separated country codes, slugs, or names (e.g., 'vn,us,germany')."
+    )
     args = parser.parse_args()
+
+    # Resolve Country Filters
+    country_ids = []
+    if args.countries:
+        print(f"Resolving country filters: {args.countries}")
+        country_terms = [t.strip() for t in args.countries.split(",") if t.strip()]
+        country_ids = resolve_country_ids(country_terms)
+        if not country_ids:
+            print("Error: No valid countries resolved from input. "
+                  "Please check your input or connection.")
+            return
+        print(f"Resolved {len(country_ids)} countries.")
 
     # If a custom title is provided, translate it and override the defaults
     if args.title:
@@ -352,7 +370,7 @@ def main():
     if is_dry_run:
         # --- DRY RUN PATH ---
         print("--- DRY RUN: Fetching preview batch (fast mode) ---")
-        listings = fetch_preview_listings(limit=500)
+        listings = fetch_preview_listings(limit=500, country_ids=country_ids)
         total_available = len(listings)
         print(f"Preview fetched: {total_available} listings.")
         
@@ -368,8 +386,8 @@ def main():
         session_log_path, processed_ids, current_index = setup_session_log(args.resume)
         
         # 2. Fetch All
-        print("Fetching ALL listings (Production Mode)...")
-        listings = fetch_listings()
+        print("Fetching listings (Production Mode)...")
+        listings = fetch_listings(country_ids=country_ids)
         print(f"Found {len(listings)} total listings.")
         
         # 3. Filter
@@ -435,10 +453,12 @@ def main():
                 continue
 
             # Determine Language early for content and template resolution
-            country_code = ((listing.get("cities") or {}).get("countries") or {}).get("code")
+            cities = listing.get("cities") or {}
+            states = cities.get("states") or {}
+            country_code = (states.get("countries") or {}).get("code") or (cities.get("countries") or {}).get("code")
             target_lang = get_target_language(country_code)
 
-            print(f"\nProcessing listing: {title} ({listing_id}) in {target_lang}")
+            print(f"\nProcessing listing: {title} ({listing_id}) in {country_code}:{target_lang}")
 
             # 2. Construct URL
             url = construct_listing_url(listing)
