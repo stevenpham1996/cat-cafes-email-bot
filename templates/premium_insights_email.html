@@ -1,0 +1,427 @@
+<!-- ========================================================
+     Premium Insights Dashboard — Email-Compatible Version
+     Light theme, inline styles, table-based layout
+     Replaces: Benefit 2 (Page Spotlight) in the main template
+     ======================================================== -->
+<div style="margin-bottom: 18px; padding: 16px; background: #f8f9ff; border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
+
+  <!-- Dashboard Header -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
+    <tr>
+      <td>
+        <!-- Icon -->
+        <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
+          <tr>
+            <td width="48" height="48" style="width:48px; height:48px; background: linear-gradient(135deg, #248f84 0%, #33ccbd 100%); border-radius: 12px; text-align: center; vertical-align: middle; padding: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle;">
+                <path d="M18 20V10M12 20V4M6 20v-6"/>
+              </svg>
+            </td>
+            <td style="padding-left: 14px; vertical-align: middle;">
+              <div style="font-size: 17px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.3px; line-height: 1.2;">{{ t.dashboard_title }}</div>
+              <div style="font-size: 13px; color: #248f84; font-weight: 500; margin-top: 2px;">{{ title }}</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td align="right" style="vertical-align: middle;">
+        <span style="font-size: 11px; color: #6b7280; font-weight: 500; background: #f3f4f6; padding: 4px 10px; border-radius: 20px; border: 1px solid #e5e7eb; white-space: nowrap;">🗓️ {{ t.last_30_days }}</span>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 1: Bottom-of-Funnel · Lead Actions
+       ════════════════════════════════════════════ -->
+  <div style="font-size: 10px; font-weight: 700; color: #6b7280; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 10px; margin-top: 4px;">{{ t.bottom_funnel_title }}</div>
+
+  <!-- Scorecards: 2x2 table for 4 metric cards -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
+    <tr>
+      <!-- Profile Views -->
+      <td width="50%" style="padding: 0 6px 8px 0; vertical-align: top;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; border-left: 3px solid #248f84; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="padding: 14px 14px 10px 14px;">
+              <!-- Icon -->
+              <div style="width: 28px; height: 28px; background: rgba(36,143,132,0.1); border-radius: 7px; margin-bottom: 10px; text-align: center; line-height: 28px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#248f84" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-top: 7px;">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </div>
+              <div style="font-size: 11px; color: #6b7280; font-weight: 500; margin-bottom: 4px;">{{ t.profile_views }}</div>
+              <div style="font-size: 22px; font-weight: 700; color: #111827; font-family: 'Courier New', Courier, monospace; letter-spacing: -0.5px; line-height: 1;">1,247</div>
+              <div style="display: inline-block; margin-top: 8px; padding: 2px 7px; background: rgba(22,163,74,0.1); border-radius: 20px; font-size: 10px; font-weight: 600; color: #16a34a;">&#9650; +12.4%</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <!-- Website Clicks -->
+      <td width="50%" style="padding: 0 0 8px 2px; vertical-align: top;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; border-left: 3px solid #33ccbd; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="padding: 14px 14px 10px 14px;">
+              <div style="width: 28px; height: 28px; background: rgba(51,204,189,0.08); border-radius: 7px; margin-bottom: 10px; text-align: center; line-height: 28px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#33ccbd" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-top: 7px;">
+                  <path d="M5 3l14 9-14 9V3z"/>
+                </svg>
+              </div>
+              <div style="font-size: 11px; color: #6b7280; font-weight: 500; margin-bottom: 4px;">{{ t.website_clicks }}</div>
+              <div style="font-size: 22px; font-weight: 700; color: #111827; font-family: 'Courier New', Courier, monospace; letter-spacing: -0.5px; line-height: 1;">384</div>
+              <div style="display: inline-block; margin-top: 8px; padding: 2px 7px; background: rgba(22,163,74,0.1); border-radius: 20px; font-size: 10px; font-weight: 600; color: #16a34a;">&#9650; +8.2%</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <!-- Direction Intents -->
+      <td width="50%" style="padding: 0 6px 0 0; vertical-align: top;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; border-left: 3px solid #1d7a70; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="padding: 14px 14px 10px 14px;">
+              <div style="width: 28px; height: 28px; background: rgba(29,122,112,0.1); border-radius: 7px; margin-bottom: 10px; text-align: center; line-height: 28px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d7a70" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-top: 7px;">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div style="font-size: 11px; color: #6b7280; font-weight: 500; margin-bottom: 4px;">{{ t.direction_intents }}</div>
+              <div style="font-size: 22px; font-weight: 700; color: #111827; font-family: 'Courier New', Courier, monospace; letter-spacing: -0.5px; line-height: 1;">156</div>
+              <div style="display: inline-block; margin-top: 8px; padding: 2px 7px; background: rgba(220,38,38,0.1); border-radius: 20px; font-size: 10px; font-weight: 600; color: #dc2626;">&#9660; &minus;3.1%</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <!-- Contact Intents -->
+      <td width="50%" style="padding: 0 0 0 2px; vertical-align: top;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; border-left: 3px solid #22c55e; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="padding: 14px 14px 10px 14px;">
+              <div style="width: 28px; height: 28px; background: rgba(34,197,94,0.08); border-radius: 7px; margin-bottom: 10px; text-align: center; line-height: 28px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-top: 7px;">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.64 5.05 2 2 0 0 1 3.62 2.88h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.72 17z"/>
+                </svg>
+              </div>
+              <div style="font-size: 11px; color: #6b7280; font-weight: 500; margin-bottom: 4px;">{{ t.contact_intents }}</div>
+              <div style="font-size: 22px; font-weight: 700; color: #111827; font-family: 'Courier New', Courier, monospace; letter-spacing: -0.5px; line-height: 1;">89</div>
+              <div style="display: inline-block; margin-top: 8px; padding: 2px 7px; background: rgba(22,163,74,0.1); border-radius: 20px; font-size: 10px; font-weight: 600; color: #16a34a;">&#9650; +24.7%</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 2: Top-of-Funnel · Discovery Breakdown
+       ════════════════════════════════════════════════ -->
+  <div style="font-size: 10px; font-weight: 700; color: #6b7280; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 10px; margin-top: 6px;">{{ t.top_funnel_title }}</div>
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
+    <tr valign="top">
+
+      <!-- Traffic Sources Card -->
+      <td width="50%" style="padding-right: 5px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); height: 100%;">
+          <tr>
+            <td style="padding: 16px;">
+              <div style="font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 2px;">{{ t.traffic_sources }}</div>
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 14px;">{{ t.traffic_sources_desc }}</div>
+
+              <!-- Pie chart visualization using CSS borders (email-safe) - legend-only approach -->
+              <!-- Legend table for traffic sources -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                <!-- City Page: 38% -->
+                <tr>
+                  <td style="padding-bottom: 7px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="10" style="vertical-align: middle; padding-right: 7px;">
+                          <div style="width: 10px; height: 10px; background: #248f84; border-radius: 3px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-size: 12px; color: #4a4a4a;">{{ t.city_page }}</td>
+                        <td align="right" style="vertical-align: middle; font-size: 12px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #111827;">38%</td>
+                      </tr>
+                    </table>
+                    <!-- Progress bar -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 3px;">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 4px; overflow: hidden;">
+                          <div style="width: 38%; height: 4px; background: #248f84; border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- State Page: 24% -->
+                <tr>
+                  <td style="padding-bottom: 7px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="10" style="vertical-align: middle; padding-right: 7px;">
+                          <div style="width: 10px; height: 10px; background: #33ccbd; border-radius: 3px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-size: 12px; color: #4a4a4a;">{{ t.state_page }}</td>
+                        <td align="right" style="vertical-align: middle; font-size: 12px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #111827;">24%</td>
+                      </tr>
+                    </table>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 3px;">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 4px; overflow: hidden;">
+                          <div style="width: 24%; height: 4px; background: #33ccbd; border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Homepage Search: 20% -->
+                <tr>
+                  <td style="padding-bottom: 7px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="10" style="vertical-align: middle; padding-right: 7px;">
+                          <div style="width: 10px; height: 10px; background: #1d7a70; border-radius: 3px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-size: 12px; color: #4a4a4a;">{{ t.homepage_search }}</td>
+                        <td align="right" style="vertical-align: middle; font-size: 12px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #111827;">20%</td>
+                      </tr>
+                    </table>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 3px;">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 4px; overflow: hidden;">
+                          <div style="width: 20%; height: 4px; background: #1d7a70; border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Country Page: 11% -->
+                <tr>
+                  <td style="padding-bottom: 7px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="10" style="vertical-align: middle; padding-right: 7px;">
+                          <div style="width: 10px; height: 10px; background: #4ade80; border-radius: 3px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-size: 12px; color: #4a4a4a;">{{ t.country_page }}</td>
+                        <td align="right" style="vertical-align: middle; font-size: 12px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #111827;">11%</td>
+                      </tr>
+                    </table>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 3px;">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 4px; overflow: hidden;">
+                          <div style="width: 11%; height: 4px; background: #4ade80; border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Direct Link: 7% -->
+                <tr>
+                  <td>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="10" style="vertical-align: middle; padding-right: 7px;">
+                          <div style="width: 10px; height: 10px; background: #94a3b8; border-radius: 3px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-size: 12px; color: #4a4a4a;">{{ t.direct_link }}</td>
+                        <td align="right" style="vertical-align: middle; font-size: 12px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #111827;">7%</td>
+                      </tr>
+                    </table>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 3px;">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 4px; overflow: hidden;">
+                          <div style="width: 7%; height: 4px; background: #94a3b8; border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+      <!-- Search Funnel Card -->
+      <td width="50%" style="padding-left: 5px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); height: 100%;">
+          <tr>
+            <td style="padding: 16px;">
+              <div style="font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 2px;">{{ t.search_funnel }}</div>
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 14px;">{{ t.search_funnel_desc }}</div>
+
+              <!-- Search Impressions bar -->
+              <div style="font-size: 11px; color: #4a4a4a; margin-bottom: 5px;">{{ t.search_impressions }}</div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 4px;">
+                <tr>
+                  <td style="background: #e5e7eb; border-radius: 6px; height: 26px; overflow: hidden; position: relative;">
+                    <table width="100%" height="26" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: linear-gradient(90deg, #248f84, #1d7a70); border-radius: 6px; height: 26px; text-align: right; padding-right: 10px; vertical-align: middle;">
+                          <span style="font-size: 11px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #ffffff;">4,820</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Drop-off indicator -->
+              <div style="padding-left: 8px; margin-bottom: 6px; border-left: 2px solid rgba(220,38,38,0.3);">
+                <span style="font-size: 11px; color: #dc2626; font-family: 'Courier New', Courier, monospace; font-weight: 500;">&minus;74.1% {{ t.drop_off }}</span>
+              </div>
+
+              <!-- Profile Views bar (partial) -->
+              <div style="font-size: 11px; color: #4a4a4a; margin-bottom: 5px;">{{ t.profile_views }}</div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
+                <tr>
+                  <td style="background: #e5e7eb; border-radius: 6px; height: 26px; overflow: hidden;">
+                    <table width="100%" height="26" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <!-- 25.9% of full width -->
+                        <td width="26%" style="background: linear-gradient(90deg, #33ccbd, #248f84); border-radius: 6px; height: 26px; text-align: right; padding-right: 8px; vertical-align: middle;">
+                          <span style="font-size: 11px; font-family: 'Courier New', Courier, monospace; font-weight: 500; color: #ffffff;">1,247</span>
+                        </td>
+                        <td width="74%" style="background: #e5e7eb;"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTR Box -->
+              <div style="padding: 10px 12px; background: rgba(36,143,132,0.05); border-radius: 8px; border: 1px solid rgba(36,143,132,0.18);">
+                <div style="font-size: 10px; color: #6b7280; margin-bottom: 3px;">{{ t.ctr }}</div>
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="vertical-align: baseline;">
+                      <span style="font-size: 20px; font-weight: 700; font-family: 'Courier New', Courier, monospace; color: #248f84;">25.9%</span>
+                    </td>
+                    <td style="vertical-align: baseline; padding-left: 6px;">
+                      <span style="font-size: 11px; font-weight: 500; color: #16a34a;">&#8593; {{ t.above_avg }} (18%)</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+    </tr>
+  </table>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 3: Middle-of-Funnel · Engagement Overview
+       ════════════════════════════════════════════════ -->
+  <div style="font-size: 10px; font-weight: 700; color: #6b7280; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 10px; margin-top: 6px;">{{ t.middle_funnel_title }}</div>
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid rgba(113,124,142,0.2); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+    <tr>
+      <td style="padding: 16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+          <!-- Row 1: Gallery Interactions + Amenities Expanded -->
+          <tr>
+            <td width="50%" style="padding-right: 16px; padding-bottom: 12px; vertical-align: middle;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 12px; color: #4a4a4a; padding-bottom: 4px;">{{ t.gallery_interactions }}</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #6b7280; padding-bottom: 4px; white-space: nowrap;">892</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #248f84; font-weight: 600; padding-bottom: 4px; padding-left: 6px; white-space: nowrap;">71%</td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 6px; overflow: hidden;">
+                          <div style="width: 71%; height: 6px; background: linear-gradient(90deg, #248f84, #33ccbd); border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td width="50%" style="padding-left: 0; padding-bottom: 12px; vertical-align: middle;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 12px; color: #4a4a4a; padding-bottom: 4px;">{{ t.amenities_expanded }}</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #6b7280; padding-bottom: 4px; white-space: nowrap;">634</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #248f84; font-weight: 600; padding-bottom: 4px; padding-left: 6px; white-space: nowrap;">51%</td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 6px; overflow: hidden;">
+                          <div style="width: 51%; height: 6px; background: linear-gradient(90deg, #248f84, #33ccbd); border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Row 2: Hours Checked + Reviews Read -->
+          <tr>
+            <td width="50%" style="padding-right: 16px; vertical-align: middle;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 12px; color: #4a4a4a; padding-bottom: 4px;">{{ t.hours_checked }}</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #6b7280; padding-bottom: 4px; white-space: nowrap;">478</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #248f84; font-weight: 600; padding-bottom: 4px; padding-left: 6px; white-space: nowrap;">38%</td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 6px; overflow: hidden;">
+                          <div style="width: 38%; height: 6px; background: linear-gradient(90deg, #248f84, #33ccbd); border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td width="50%" style="padding-left: 0; vertical-align: middle;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 12px; color: #4a4a4a; padding-bottom: 4px;">{{ t.reviews_read }}</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #6b7280; padding-bottom: 4px; white-space: nowrap;">312</td>
+                  <td align="right" style="font-size: 11px; font-family: 'Courier New', Courier, monospace; color: #248f84; font-weight: 600; padding-bottom: 4px; padding-left: 6px; white-space: nowrap;">25%</td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: #e5e7eb; border-radius: 99px; height: 6px; overflow: hidden;">
+                          <div style="width: 25%; height: 6px; background: linear-gradient(90deg, #248f84, #33ccbd); border-radius: 99px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</div>
+<!-- ======================================================
+     END Premium Insights Dashboard Email Snippet
+     ====================================================== -->

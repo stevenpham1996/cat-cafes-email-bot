@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats, resolve_country_ids
 from src.url_constructor import construct_listing_url
-from src.email_sender import send_email, render_email_html
+from src.email_sender import send_email, render_email_html, load_dashboard_translations
 from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
 
@@ -434,13 +434,13 @@ def main():
         for listing in listings:
             # Check dry run limit
             if (is_dry_run and dry_run_limit is not None
-                    and dry_run_count >= dry_run_limit):
+                    and int(dry_run_count) >= int(dry_run_limit)):
                 print(f"Dry run limit of {dry_run_limit} reached. Stopping.")
                 break
                 
             # Check Production Limit
             if (not is_dry_run and production_limit is not None 
-                    and emails_sent_count >= production_limit):
+                    and int(emails_sent_count) >= int(production_limit)):
                 print(f"Production limit of {production_limit} reached. Stopping.")
                 break
 
@@ -481,7 +481,7 @@ def main():
             # Prepend Domain
             domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafenearme.org")
             full_url = f"{domain}{url}"
-            referral_promotion_url = f"https://www.catcafenearme.org/referral-promotion/{listing_id}"
+            referral_promotion_url = f"{domain}/referral-promotion/{listing_id}"
 
             # 4. Prepare Email Context
             # Logic for "Menu starts from..."
@@ -509,7 +509,10 @@ def main():
             # Add platform stats to context
             context.update(platform_stats)
 
-            subject = EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"])
+            # Load dashboard translations to get localized subject
+            dashboard_translations = load_dashboard_translations()
+            lang_t = dashboard_translations.get(target_lang, dashboard_translations.get("en", {}))
+            subject = lang_t.get("email_subject", EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"]))
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")
@@ -519,7 +522,7 @@ def main():
 
             if is_dry_run:
                 try:
-                    html_content = render_email_html(context, template_name, template_dir=template_dir)
+                    html_content = render_email_html(context, template_name, template_dir=template_dir, target_lang=target_lang)
                     filename = f"{dry_run_count + 1:03d}_{slug}.html"
                     filepath = os.path.join(dry_run_dir, filename)
 
@@ -534,7 +537,7 @@ def main():
                     errors_count += 1
                 continue
 
-            success = send_email(recipient, subject, context, template_name, template_dir=template_dir)
+            success = send_email(recipient, subject, context, template_name, template_dir=template_dir, target_lang=target_lang)
 
             # 6. Log Result
             status = "sent" if success else "failed"

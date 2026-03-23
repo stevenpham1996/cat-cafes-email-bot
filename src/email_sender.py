@@ -18,8 +18,27 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 
+import json
+
 # Jinja2 Environment Cache
 _ENV_CACHE = {}
+_DASHBOARD_TRANSLATIONS = None
+
+def load_dashboard_translations():
+    """Loads dashboard translations from JSON file."""
+    global _DASHBOARD_TRANSLATIONS
+    if _DASHBOARD_TRANSLATIONS is not None:
+        return _DASHBOARD_TRANSLATIONS
+    
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(os.path.dirname(current_dir), "translations", "dashboard.json")
+        with open(json_path, "r", encoding="utf-8") as f:
+            _DASHBOARD_TRANSLATIONS = json.load(f)
+    except Exception as e:
+        print(f"Warning: Could not load dashboard translations: {e}")
+        _DASHBOARD_TRANSLATIONS = {}
+    return _DASHBOARD_TRANSLATIONS
 
 def get_template_env(template_dir: str):
     """Gets or creates a Jinja2 environment for the given template directory."""
@@ -39,7 +58,7 @@ def get_template_env(template_dir: str):
     _ENV_CACHE[template_dir] = env
     return env
 
-def render_email_html(context: dict, template_name: str, template_dir: str = "templates") -> str:
+def render_email_html(context: dict, template_name: str, template_dir: str = "templates", target_lang: str = "en") -> str:
     """
     Renders the HTML email template with the provided context.
     
@@ -47,24 +66,31 @@ def render_email_html(context: dict, template_name: str, template_dir: str = "te
         context (dict): Dictionary containing data for the template.
         template_name (str): The name of the template file to use.
         template_dir (str): The directory to search for templates.
+        target_lang (str): The target language code for localization.
         
     Returns:
         str: Rendered HTML string.
     """
+    # Load translations and add to context if not already present
+    if 't' not in context:
+        translations = load_dashboard_translations()
+        context['t'] = translations.get(target_lang, translations.get("en", {}))
+
     env = get_template_env(template_dir)
     template = env.get_template(template_name)
     return template.render(**context)
 
-def send_email(recipient: str, subject: str, context: dict, template_name: str, template_dir: str = "templates") -> bool:
+def send_email(recipient: str, subject: str, context: dict, template_name: str, template_dir: str = "templates", target_lang: str = "en") -> bool:
     """
     Sends an email using SMTP and Jinja2 templating with inlined CSS.
     
     Args:
         recipient (str): The email address of the recipient.
         subject (str): The subject of the email.
-        context (dict): Dictionary containing data for the template (e.g., {'title': '...', 'url': '...'}).
+        context (dict): Dictionary containing data for the template.
         template_name (str): The name of the template file to use.
         template_dir (str): The directory to search for templates.
+        target_lang (str): The target language code for localization.
         
     Returns:
         bool: True if sent successfully, False otherwise.
@@ -75,33 +101,31 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str, 
 
     try:
         # 1. Render HTML content
-        rendered_html = render_email_html(context, template_name, template_dir)
+        rendered_html = render_email_html(context, template_name, template_dir, target_lang)
         
-        # 2. Use premailer to inline internal CSS (from <style> block)
-        # We no longer fetch external Tailwind CSS as the templates now use robust inline styles.
-        # Disable validation to suppress warnings about modern CSS (flex, gradients) which premailer/cssutils doesn't support.
+        # 2. Use premailer to inline internal CSS
         inlined_html = transform(rendered_html, disable_validation=True, cssutils_logging_level=logging.CRITICAL)
 
-        # Create Plain Text Fallback
+        # Create localized Plain Text Fallback
         text_content = f"""
-            Hi {context.get('title', 'Partner')},
+            {t.get('hi', 'Hi')} {context.get('title', t.get('partner', 'Partner'))},
 
-            We noticed your cafe on our directory and would love to help you reach more cat lovers.
-            We have created a dedicated listing page for your business.
+            {t.get('we_noticed', 'We noticed your cafe on our directory and would love to help you reach more cat lovers.')}
+            {t.get('we_created', 'We have created a dedicated listing page for your business.')}
 
-            Details:
-            Address: {context.get('street_address', 'N/A')}
-            Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
-            Description: {context.get('description', 'N/A')[:100]}...
+            {t.get('details', 'Details:')}
+            {t.get('address', 'Address:')} {context.get('street_address', 'N/A')}
+            {t.get('rating', 'Rating:')} {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} {t.get('reviews', 'reviews')})
+            {t.get('description', 'Description:')} {context.get('description', 'N/A')[:100]}...
 
-            You can view and claim it here:
+            {t.get('view_claim', 'You can view and claim it here:')}
 
             {context.get('listing_url', '#')}
 
-            Claiming your listing allows you to update your information, add photos, and connect with our community.
+            {t.get('claiming_allows', 'Claiming your listing allows you to update your information, add photos, and connect with our community.')}
 
-            Best regards,
-            The Cat Cafe Directory Team
+            {t.get('best_regards', 'Best regards,')}
+            {t.get('team', 'The Cat Cafe Directory Team')}
         """
 
         # Create MIME message
