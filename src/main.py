@@ -28,7 +28,9 @@ EMAIL_SUBJECT_TRANSLATIONS = {
     "ru": "Ваше котокафе было добавлено для повышения видимости в сообществе",
     "ja": "あなたの猫カフェがコミュニティの視認性のために追加されました",
     "ko": "귀하의 고양이 카페가 커뮤니티 가시성을 위해 추가되었습니다",
-    "zh": "您的猫咪咖啡馆已加入，以提高社区曝光度"
+    "zh": "您的猫咪咖啡馆已加入，以提高社区曝光度",
+    "id": "Kafe kucing Anda telah ditambahkan untuk visibilitas komunitas",
+    "vi": "Quán cà phê mèo của bạn đã được thêm vào trong cộng đồng"
 }
 
 PRICE_RANGE_TRANSLATIONS = {
@@ -41,7 +43,9 @@ PRICE_RANGE_TRANSLATIONS = {
     "ru": "Меню от <strong>{price}</strong>",
     "ja": "メニューは <strong>{price}</strong> から",
     "ko": "메뉴는 <strong>{price}</strong> 부터",
-    "zh": "菜单 <strong>{price}</strong> 起"
+    "zh": "菜单 <strong>{price}</strong> 起",
+    "id": "Menu mulai dari <strong>{price}</strong>",
+    "vi": "Menu bắt đầu từ <strong>{price}</strong>"
 }
 
     
@@ -69,6 +73,15 @@ def get_target_language(country_code: str) -> str:
         "CN": "zh",  # China -> Chinese (Simplified)
         "HK": "zh",  # Hong Kong -> Chinese
         "TW": "zh",  # Taiwan -> Chinese
+        # Southeast Asia Mappings
+        "ID": "id",  # Indonesia -> Bahasa Indonesia
+        "VN": "vi",  # Vietnam -> Vietnamese
+        "TH": "en", "MY": "en", "SG": "en", "PH": "en",  # Fallback to English for other SEA
+        # Latin America Spanish Mappings
+        "MX": "es", "AR": "es", "CO": "es", "PE": "es", "VE": "es",
+        "CL": "es", "EC": "es", "GT": "es", "CU": "es", "BO": "es",
+        "HN": "es", "PY": "es", "SV": "es", "NI": "es", "CR": "es",
+        "PA": "es", "UY": "es"
     }
     return lang_map.get(country_code, "en")
 
@@ -90,7 +103,7 @@ def get_translated_subjects(title_en: str) -> dict:
     
     prompt = (
         f"Translate the following marketing email subject to: German, Spanish, French, "
-        f"Dutch, Portuguese, Russian, Japanese, Korean, Chinese. "
+        f"Dutch, Portuguese, Russian, Japanese, Korean, Chinese, Indonesian, Vietnamese. "
         f"The translation should be optimized for a marketing email outreach to cat cafe owners. "
         f"Subject: {title_en}"
     )
@@ -113,9 +126,11 @@ def get_translated_subjects(title_en: str) -> dict:
                     "ru": {"type": "string"},
                     "ja": {"type": "string"},
                     "ko": {"type": "string"},
-                    "zh": {"type": "string"}
+                    "zh": {"type": "string"},
+                    "id": {"type": "string"},
+                    "vi": {"type": "string"}
                 },
-                "required": ["en", "de", "es", "fr", "nl", "pt", "ru", "ja", "ko", "zh"]
+                "required": ["en", "de", "es", "fr", "nl", "pt", "ru", "ja", "ko", "zh", "id", "vi"]
             }
         }
     }

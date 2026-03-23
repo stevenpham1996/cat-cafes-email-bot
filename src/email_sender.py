@@ -106,26 +106,26 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str, 
         # 2. Use premailer to inline internal CSS
         inlined_html = transform(rendered_html, disable_validation=True, cssutils_logging_level=logging.CRITICAL)
 
-        # Create localized Plain Text Fallback
+        # Create Plain Text Fallback
         text_content = f"""
-            {t.get('hi', 'Hi')} {context.get('title', t.get('partner', 'Partner'))},
+            Hi {context.get('title', 'Partner')},
 
-            {t.get('we_noticed', 'We noticed your cafe on our directory and would love to help you reach more cat lovers.')}
-            {t.get('we_created', 'We have created a dedicated listing page for your business.')}
+            We noticed your cafe on our directory and would love to help you reach more cat lovers.
+            We have created a dedicated listing page for your business.
 
-            {t.get('details', 'Details:')}
-            {t.get('address', 'Address:')} {context.get('street_address', 'N/A')}
-            {t.get('rating', 'Rating:')} {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} {t.get('reviews', 'reviews')})
-            {t.get('description', 'Description:')} {context.get('description', 'N/A')[:100]}...
+            Details:
+            Address: {context.get('street_address', 'N/A')}
+            Rating: {context.get('average_rating', 'N/A')} ({context.get('review_count', 0)} reviews)
+            Description: {context.get('description', 'N/A')[:100]}...
 
-            {t.get('view_claim', 'You can view and claim it here:')}
+            You can view and claim it here:
 
             {context.get('listing_url', '#')}
 
-            {t.get('claiming_allows', 'Claiming your listing allows you to update your information, add photos, and connect with our community.')}
+            Claiming your listing allows you to update your information, add photos, and connect with our community.
 
-            {t.get('best_regards', 'Best regards,')}
-            {t.get('team', 'The Cat Cafe Directory Team')}
+            Best regards,
+            The Cat Cafe Directory Team
         """
 
         # Create MIME message
