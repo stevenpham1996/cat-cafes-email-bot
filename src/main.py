@@ -13,6 +13,7 @@ from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html, load_dashboard_translations
 from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
+from src.localization import get_locale_for_listing
 
 # Load environment variables
 load_dotenv()
@@ -54,36 +55,6 @@ def setup_dry_run_directory() -> str:
     path = os.path.join("dry-run", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
     os.makedirs(path, exist_ok=True)
     return path
-
-
-def get_target_language(country_code: str) -> str:
-    """Maps a country code to a target language code."""
-    country_code = country_code.upper() if country_code else ""
-    lang_map = {
-        "CH": "de",  # Switzerland -> German
-        "DE": "de",
-        "ES": "es",
-        "FR": "fr",
-        "NL": "nl",
-        "RU": "ru",
-        "PT": "pt",
-        "BR": "pt",
-        "JP": "ja",  # Japan -> Japanese
-        "KR": "ko",  # South Korea -> Korean
-        "CN": "zh",  # China -> Chinese (Simplified)
-        "HK": "zh",  # Hong Kong -> Chinese
-        "TW": "zh",  # Taiwan -> Chinese
-        # Southeast Asia Mappings
-        "ID": "id",  # Indonesia -> Bahasa Indonesia
-        "VN": "vi",  # Vietnam -> Vietnamese
-        "TH": "en", "MY": "en", "SG": "en", "PH": "en",  # Fallback to English for other SEA
-        # Latin America Spanish Mappings
-        "MX": "es", "AR": "es", "CO": "es", "PE": "es", "VE": "es",
-        "CL": "es", "EC": "es", "GT": "es", "CU": "es", "BO": "es",
-        "HN": "es", "PY": "es", "SV": "es", "NI": "es", "CR": "es",
-        "PA": "es", "UY": "es"
-    }
-    return lang_map.get(country_code, "en")
 
 
 def get_translated_subjects(title_en: str) -> dict:
@@ -468,12 +439,9 @@ def main():
                 continue
 
             # Determine Language early for content and template resolution
-            cities = listing.get("cities") or {}
-            states = cities.get("states") or {}
-            country_code = (states.get("countries") or {}).get("code") or (cities.get("countries") or {}).get("code")
-            target_lang = get_target_language(country_code)
+            target_lang = get_locale_for_listing(listing)
 
-            print(f"\nProcessing listing: {title} ({listing_id}) in {country_code}:{target_lang}")
+            print(f"\nProcessing listing: {title} ({listing_id}) in {target_lang}")
 
             # 2. Construct URL
             url = construct_listing_url(listing)
@@ -496,7 +464,7 @@ def main():
             # Prepend Domain
             domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafenearme.org")
             full_url = f"{domain}{url}"
-            referral_promotion_url = f"{domain}/referral-promotion/{listing_id}"
+            referral_promotion_url = f"{domain}/{target_lang}/referral-promotion/{listing_id}"
 
             # 4. Prepare Email Context
             # Logic for "Menu starts from..."
