@@ -47,21 +47,26 @@ LOCALE_TO_DEFAULT_COUNTRY = {
 def get_locale_for_listing(listing: dict) -> str:
     """
     Determines the locale for a listing based on its country code or slug.
+    Supports all 3 location patterns:
+      Case 1/2: country via listing['cities']['countries']
+      Case 3:   country via listing['states']['countries'] (city-less)
     Defaults to 'en' if no mapping is found.
     """
     city_data = listing.get("cities") or {}
     country_data = city_data.get("countries") or {}
-    
+
+    # Case 3 fallback: no city, read country from top-level states join
+    if not country_data:
+        state_data = listing.get("states") or {}
+        country_data = state_data.get("countries") or {}
+
     code = (country_data.get("code") or "").lower()
     slug = (country_data.get("slug") or "").lower()
-    
-    # Priority 1: Match by Country Code
+
     if code in COUNTRY_CODE_TO_LOCALE:
         return COUNTRY_CODE_TO_LOCALE[code]
-        
-    # Priority 2: Match by Country Slug
+
     if slug in COUNTRY_SLUG_TO_LOCALE:
         return COUNTRY_SLUG_TO_LOCALE[slug]
-        
-    # Fallback to English
+
     return "en"

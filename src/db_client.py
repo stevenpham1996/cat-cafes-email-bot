@@ -16,6 +16,37 @@ def get_supabase_client() -> Client:
 
     return create_client(url, key)
 
+def _base_fields():
+    """Shared scalar fields for all listing queries."""
+    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range"
+
+# Query for Cases 1 & 2 (city-based listings). cities join can be !inner or plain.
+_QUERY_CITY = _base_fields() + """,
+    {cities_join} (
+        slug,
+        state_id,
+        country_id,
+        states (
+            slug,
+            countries ( code )
+        ),
+        countries ( slug, code )
+    ),
+    states ( slug, countries ( slug, code ) )
+"""
+
+# Query for Case 3 (city-less listings). states join is always !inner when filtering.
+_QUERY_STATE = _base_fields() + """,
+    cities ( slug, state_id, country_id, states ( slug, countries ( code ) ), countries ( slug, code ) ),
+    states!inner ( slug, countries ( slug, code ) )
+"""
+
+# No-filter query: plain left joins on both cities and states.
+_QUERY_ALL = _base_fields() + """,
+    cities ( slug, state_id, country_id, states ( slug, countries ( code ) ), countries ( slug, code ) ),
+    states ( slug, countries ( slug, code ) )
+"""
+
 def resolve_country_ids(terms: list[str]) -> list[str]:
     """
     Resolves a list of country terms (codes, slugs, or names) to their database UUIDs.
@@ -74,68 +105,53 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
     Uses pagination to retrieve all records beyond the default 1000 limit.
     """
     supabase = get_supabase_client()
-
-    # Use !inner join for cities if we are filtering by country
-    cities_join = "cities!inner" if country_ids else "cities"
-    
-    # Query to fetch listings and join with location tables
-    # Includes states.countries to support the priority determination logic
-    query = f"""
-        id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range,
-        {cities_join} (
-            slug,
-            state_id,
-            country_id,
-            states (
-                slug,
-                countries (
-                    code
-                )
-            ),
-            countries (
-                slug,
-                code
-            )
-        )
-    """
-    
     all_listings = []
     start = 0
     batch_size = 1000
-    
+
     while True:
         print(f"Fetching listings batch: {start} to {start + batch_size}...")
         try:
-            builder = (
-                supabase.table("coworking_places")
-                .select(query)
-                .not_.is_("email", "null")
-                .neq("email", "")
-            )
-            
-            # Apply Country Filter
             if country_ids:
-                # Simplified logic: Use cities.country_id directly.
-                # This assumes cities.country_id is always correctly set, which is
-                # standard for this database schema.
-                ids_str = ",".join(country_ids)
-                builder = builder.in_("cities.country_id", country_ids)
+                # Query A: Cases 1 & 2 — cities!inner forces country match via cities.country_id
+                batch_a = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_CITY.format(cities_join="cities!inner"))
+                    .not_.is_("email", "null").neq("email", "")
+                    .in_("cities.country_id", country_ids)
+                    .range(start, start + batch_size - 1)
+                    .execute().data
+                )
+                # Query B: Case 3 — states!inner forces country match via states.country_id
+                batch_b = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_STATE)
+                    .not_.is_("email", "null").neq("email", "")
+                    .is_("city_id", "null")
+                    .in_("states.country_id", country_ids)
+                    .range(start, start + batch_size - 1)
+                    .execute().data
+                )
+                seen = {r["id"] for r in batch_a}
+                batch = batch_a + [r for r in batch_b if r["id"] not in seen]
+            else:
+                batch = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_ALL)
+                    .not_.is_("email", "null").neq("email", "")
+                    .range(start, start + batch_size - 1)
+                    .execute().data
+                )
 
-            response = builder.range(start, start + batch_size - 1).execute()
-            
-            batch = response.data
             all_listings.extend(batch)
-            
-            # If we fetched fewer than batch_size, we've reached the end
             if len(batch) < batch_size:
                 break
-                
             start += batch_size
-            
+
         except Exception as e:
             print(f"Error fetching batch starting at {start}: {e}")
             break
-            
+
     return all_listings
 
 def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> list[dict]:
@@ -144,48 +160,33 @@ def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> l
     Does not use pagination; strictly limits the query to the specified count.
     """
     supabase = get_supabase_client()
-    
-    # Use !inner join for cities if we are filtering by country
-    cities_join = "cities!inner" if country_ids else "cities"
-    
-    # Query to fetch listings and join with location tables
-    # Includes states.countries to support the priority determination logic
-    query = f"""
-        id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range,
-        {cities_join} (
-            slug,
-            state_id,
-            country_id,
-            states (
-                slug,
-                countries (
-                    code
-                )
-            ),
-            countries (
-                slug,
-                code
-            )
-        )
-    """
-    
     print(f"Fetching preview batch of {limit} listings...")
-    builder = (
-        supabase.table("coworking_places")
-        .select(query)
-        .not_.is_("email", "null")
-        .neq("email", "")
-    )
-    
-    # Apply Country Filter
-    if country_ids:
-        # Simplified logic: Use cities.country_id directly.
-        # This assumes cities.country_id is always correctly set.
-        builder = builder.in_("cities.country_id", country_ids)
 
-    response = builder.limit(limit).execute()
-    
-    return response.data
+    if country_ids:
+        batch_a = (
+            supabase.table("coworking_places")
+            .select(_QUERY_CITY.format(cities_join="cities!inner"))
+            .not_.is_("email", "null").neq("email", "")
+            .in_("cities.country_id", country_ids)
+            .limit(limit).execute().data
+        )
+        batch_b = (
+            supabase.table("coworking_places")
+            .select(_QUERY_STATE)
+            .not_.is_("email", "null").neq("email", "")
+            .is_("city_id", "null")
+            .in_("states.country_id", country_ids)
+            .limit(limit).execute().data
+        )
+        seen = {r["id"] for r in batch_a}
+        return batch_a + [r for r in batch_b if r["id"] not in seen]
+
+    return (
+        supabase.table("coworking_places")
+        .select(_QUERY_ALL)
+        .not_.is_("email", "null").neq("email", "")
+        .limit(limit).execute().data
+    )
 
 def get_platform_stats() -> dict:
     """

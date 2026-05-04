@@ -20,18 +20,18 @@ load_dotenv()
 
 
 EMAIL_SUBJECT_TRANSLATIONS = {
-    "en": "Your cat cafe was added for community visibility",
-    "de": "Ihr Katzen-Café wurde für die Sichtbarkeit in der Community hinzugefügt",
-    "es": "Tu cafetería de gatos ha sido añadida para visibilidad en la comunidad",
-    "fr": "Votre bar à chats a été ajouté pour une visibilité au sein de la communauté",
-    "nl": "Je kattencafé is toegevoegd voor zichtbaarheid in de community",
-    "pt": "O seu café de gatos foi adicionado para visibilidade na comunidade",
-    "ru": "Ваше котокафе было добавлено для повышения видимости в сообществе",
-    "ja": "あなたの猫カフェがコミュニティの視認性のために追加されました",
-    "ko": "귀하의 고양이 카페가 커뮤니티 가시성을 위해 추가되었습니다",
-    "zh": "您的猫咪咖啡馆已加入，以提高社区曝光度",
-    "id": "Kafe kucing Anda telah ditambahkan untuk visibilitas komunitas",
-    "vi": "Quán cà phê mèo của bạn đã được thêm vào trong cộng đồng"
+    "en": "Cat Cafe Circle welcomes you aboard!",
+    "de": "Cat Cafe Circle heißt Sie herzlich willkommen!",
+    "es": "¡Cat Cafe Circle te da la bienvenida!",
+    "fr": "Cat Cafe Circle vous souhaite la bienvenue !",
+    "nl": "Cat Cafe Circle heet je van harte welkom!",
+    "pt": "Cat Cafe Circle dá-lhe as boas-vindas!",
+    "ru": "Cat Cafe Circle приветствует вас в нашем сообществе!",
+    "ja": "Cat Cafe Circleへようこそ！",
+    "ko": "Cat Cafe Circle에 오신 것을 환영합니다!",
+    "zh": "Cat Cafe Circle 欢迎您的加入！",
+    "id": "Cat Cafe Circle menyambut Anda dengan hangat!",
+    "vi": "Cat Cafe Circle chào mừng bạn gia nhập!"
 }
 
 PRICE_RANGE_TRANSLATIONS = {
