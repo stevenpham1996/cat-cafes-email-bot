@@ -1,7 +1,22 @@
-id,coworking_place_id,user_id,reviewer_name,profile_picture_url,rating,description,review_date,is_approved,created_at,updated_at
-002029bd-7362-4e12-af24-9232b53ccd4b,cc063996-d7d7-4005-a838-b0ba6de73d32,,Linh Nguyễn,https://lh3.googleusercontent.com/a-/ALV-UjXKYwNXaK1PCSa6Htd5_R8SOmuM0zqMlSw19PxvoFXK3L0y8j2J=s120-c-rp-mo-br100,5.0,"Cty cung cấp thông tin về diện tích, vị trí và giá thuê của văn phòng chính xác. Khách hàng như tôi có thể dễ dàng tham khảo thông tin trên website của công ty để lựa chọn văn phòng phù hợp. Đội ngũ nhân viên của G Office luôn sẵn sàng hỗ trợ tôi chọn được văn phòng phù hợp với lĩnh vực kinh doanh, quy mô công ty và khả năng chi trả. Chuyên nghiệp và tận tâm. Good!",2024-08-08,true,2025-04-13 16:54:44.968948+00,2025-04-13 16:54:44.968948+00
-0285548c-77f4-43f6-a499-df43213b2cb2,2fc1ff23-70ea-4ce9-a776-6a39eea8b038,,Gia Hân,https://lh3.googleusercontent.com/a-/ALV-UjVb7r476mkFzA-5S_EvSrzmqcfOEb60cAwIAxNwircTZQt-LyrX=s120-c-rp-mo-br100,5.0,"Mình mới thuê bàn làm việc linh hoạt bên đây 1 tháng thôi nhưng thấy mọi thứ rất ok. Lễ tân nhiệt tình, không gian sạch sẽ thoải mái. Có khu pantry tiện lợi cho người hay lười ra ngoài mua như mình :))) Ban đầu tìm hơi khó một xíu do toà nhà nằm phía trong khu quân đội. Nhưng quen đường thì thấy ok, phí gửi xe có 5k cả ngày luôn quá rẻ. 10 điểm nha",2025-03-11,true,2025-04-13 16:51:05.435321+00,2025-04-13 16:51:05.435321+00
-083109b7-a08d-4161-b836-af29849ac34f,2e11aea3-f854-41e2-a1e9-bcc46ac05997,,Tài Lê Thành,https://lh3.googleusercontent.com/a-/ALV-UjXK5s-CF9Oq5yoYet8tU-kNEtxCqnaVvxSNrkhZBowZJNsH0CA=s120-c-rp-mo-br100,5.0,"Không gian tại WorkEasy thật sự ấn tượng! Mình rất ưa thích cách bố trí hiện đại và thoáng đãng. Wifi tốc độ cao, phòng họp đầy đủ tiện nghi, và còn có khu vực thư giãn với những chiếc sofa vô cùng thoải mái. Mình chắc chắn sẽ quay lại thường xuyên!",2025-03-17,true,2025-04-13 16:52:07.416938+00,2025-04-13 16:52:07.416938+00
-0e7610c0-efd8-4bdd-8950-6536506c55da,217d107f-d6a8-4b59-bba9-a91e15336feb,,Lily Nguyen,https://lh3.googleusercontent.com/a-/ALV-UjWD4AoDKb4IJwMWvRrqsrrVr85u0B6s4drfoxUhAqmh0kG1L-xOPA=s120-c-rp-mo-br100,5.0,"Đã book phòng họp ở Dreamplex chi nhánh TQK 2 lần đều hài lòng, 10 điểm không có nhưng 🙌. Không gian làm việc over hợp với những workers yêu thích môi trường làm việc năng động, vui vẻ vì hoạt activity ở đây rất đa dạng, 5-6 hđ 1 tuần là vô tư luôn. Staffs tận tình, chu đáo, chìu khách hàng như chìu ng yêu 🫰
-Must try, will come back again ❤️",2024-11-15,true,2025-04-13 16:54:27.818228+00,2025-04-13 16:54:27.818228+00
-12537570-5919-4702-90cc-9baf86e1a86e,2fc1ff23-70ea-4ce9-a776-6a39eea8b038,,Tâm Giang,https://lh3.googleusercontent.com/a-/ALV-UjXmWka-eo1QgMGFHWcaQfMEZojbuoKk6k0IG-bm-Vybwl-2PwP7=s120-c-rp-mo-br100,5.0,"thích hợp cho những ai cần không gian làm việc yên tĩnh, ngay ở trung tâm nên cũng tiện đi lại",2024-08-14,true,2025-04-13 16:51:05.435321+00,2025-04-13 16:51:05.435321+00
+id,coworking_place_id,user_id,reviewer_name,profile_picture_url,rating,description,review_date,created_at,updated_at,is_approved,rejection_reason,revert_status_reason,owner_reply_content,owner_replied_at,review_images
+0004ecfb-5278-400b-a904-a782bba6e9c1,003cb70b-4275-4606-b3a1-d5a83aaa1e7f,,もふ,https://lh3.googleusercontent.com/a-/ALV-UjXvyjLHpSZ3hmVce8jfMWu6EGR7kDHIiXJdfTt25XKHjotpi3gN=s120-c-rp-mo-ba4-br100,2.0,"猫は可愛かった。
+
+休日に行くと子供が多く、
+寝てる猫たちを起こしたり
+ドタドタと走り回るので
+猫たちがびっくりしていた
+
+GoProで撮影してる？方がいたその人は
+猫の扱い上手すぎで猫を集めるのが凄くて
+撮るだけ撮って帰りました。
+
+ドリンクバー要らないですね 笑",2024-02-28,2026-01-28 12:19:03.024234+00,2026-01-28 12:19:03.024234+00,true,,,,,[]
+0013b7d6-8dc8-44ce-8c54-997be89e8709,89420eaf-4269-4df2-8d47-252e421fc91b,,Gabriella Maciel,https://lh3.googleusercontent.com/a-/ALV-UjXN2IQbD-_kISETV6iRn8xengv7ZHpBGH2r53yHqYBhDvXQXVQtIw=s120-c-rp-mo-ba3-br100,4.0,Uma ótima experiência para amantes de gatos. Um ponto menos bom é a falta de opções de lanches.,,2026-01-20 21:44:28.886978+00,2026-01-20 21:44:28.886978+00,true,,,,,[]
+0071b232-c923-4e0f-89a6-80f5efe03b5d,ee0a7e24-5f9e-4ccc-a284-90993ffcafe8,,Rachel Fielding,https://lh3.googleusercontent.com/a-/ALV-UjXQ9vnb4pbJ156_xf8S3zo1s4CsAyzR01cVqUNUpnK8G7uqWNE=s120-c-rp-mo-ba2-br100,5.0,"Such a cute cafe! The food looked amazing, and the coffee was very good. It was relaxing to read a book with a nice coffee drink while surrounded by kitties. This is my new coffee spot.",,2026-01-20 21:37:39.340541+00,2026-01-20 21:37:39.340541+00,true,,,,,[]
+00971cb1-6f3d-4d2c-bfbb-d24f1e6822e1,fccc15b2-49bd-48e6-91d7-8535df7b979f,,Greisy Maldonado,https://lh3.googleusercontent.com/a-/ALV-UjVKhZgjo1yK4MKYvyoX2DWoOttfk-WEoK4JijQaoJ2VqK8wCCgY=s120-c-rp-mo-br100,2.0,,,2026-03-08 23:51:49.548814+00,2026-03-08 23:51:49.548814+00,true,,,,,[]
+00a3ffe7-0bee-4dd6-9ab9-9b864287ac27,b326f18a-c320-48e7-b880-a490c6fd706b,,筒井優子,https://lh3.googleusercontent.com/a/ACg8ocKKvyrdXi4ZIeVapJb2MV27_oUL0e5E_F35qNGd8sQvLgQFRg=s120-c-rp-mo-ba3-br100,4.0,"猫大好きな子供達と一緒に行きました。
+遊べるスペースは狭いです。
+たくさん猫はいますが、ゲージから出して遊べる猫は二頭でした。（猫が疲れてしまうので交代で出しているようです）
+ゲージに入ってる猫もゲージ越しに遊ぶことは出来ます。
+一時間があっという間でした。
+私が行った時は他のお客さんと被らないようにしてくれていたので自分たちだけで過ごせたのも良かったです。",,2026-01-28 12:11:11.651252+00,2026-01-28 12:11:11.651252+00,true,,,,,[]

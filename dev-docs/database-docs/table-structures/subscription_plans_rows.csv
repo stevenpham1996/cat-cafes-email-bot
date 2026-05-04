@@ -1,0 +1,4 @@
+id,paypal_product_id,paypal_plan_id,name,description,price,currency,billing_interval,is_active,created_at,updated_at
+2ef061bb-1bef-4016-ac2c-ab7858c88659,PROD-35H96143SP699294S,P-43478952JV271810PNGZBYGQ,Monthly,Premium visibility and features for 1 month,12.99,USD,monthly,true,2026-03-12 00:26:35.567266+00,2026-03-12 00:26:35.567266+00
+9353822b-51d4-4164-9b71-96a1a5f93da2,PROD-35H96143SP699294S,P-8ML065473W873735NNGZBYGY,Annually,Premium visibility and features for 1 year,129.99,USD,annually,true,2026-03-12 00:26:35.567266+00,2026-03-12 00:26:35.567266+00
+b7f0c0d3-b06f-49f5-ae6e-dd699159ca29,PROD-35H96143SP699294S,P-7R33053278004412MNGZBYGY,6 Months,Premium visibility and features for 6 months,69.99,USD,biannually,true,2026-03-12 00:26:35.567266+00,2026-03-12 00:26:35.567266+00

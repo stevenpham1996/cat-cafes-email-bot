@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Insights Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root[data-theme="dark"]{
+  --bg-page:#0d1117;--bg-card:#161b22;--bg-surface:#1c2c4a;--bg-input:rgba(28,44,74,0.5);
+  --bg-hdr:rgba(13,17,23,0.95);--bg-chat-input:#0d1117;
+  --border:rgba(36,143,132,0.15);--border-md:rgba(36,143,132,0.25);--border-strong:rgba(51,204,189,0.3);--border-hdr:rgba(36,143,132,0.18);
+  --text-primary:#e6edf3;--text-secondary:#7d8590;--text-muted:#9ca3af;--text-on-bubble:#d1d9e0;
+  --funnel-track:#1c2c4a;--eng-track:#1c2c4a;
+  --donut-inner:#161b22;--donut-text:#e6edf3;--donut-sub:#7d8590;
+  --legend-lbl:#9ca3af;--legend-val:#e6edf3;
+  --shadow-card:none;--shadow-drop:0 8px 32px rgba(0,0,0,0.5);
+  --placeholder:#4a5568;--section-lbl:#7d8590;
+  --ctr-bg:rgba(36,143,132,0.07);--ctr-border:rgba(36,143,132,0.15);
+  --toggle-bg:rgba(36,143,132,0.1);--toggle-border:rgba(36,143,132,0.3);
+  --funnel-drop:rgba(248,81,73,0.25);--drop-color:#f85149;
+  --trend-up-bg:rgba(63,185,80,0.12);--trend-up-color:#3fb950;
+  --trend-dn-bg:rgba(248,81,73,0.12);--trend-dn-color:#f85149;
+}
+:root[data-theme="light"]{
+  --bg-page:#eceadf;--bg-card:#ffffff;--bg-surface:#f2f2f2;--bg-input:#ffffff;
+  --bg-hdr:rgba(242,242,242,0.97);--bg-chat-input:#f2f2f2;
+  --border:rgba(113,124,142,0.2);--border-md:rgba(113,124,142,0.3);--border-strong:rgba(36,143,132,0.35);--border-hdr:rgba(113,124,142,0.15);
+  --text-primary:#000000;--text-secondary:#6b7280;--text-muted:#4A4A4A;--text-on-bubble:#374151;
+  --funnel-track:#e5e7eb;--eng-track:#e5e7eb;
+  --donut-inner:#ffffff;--donut-text:#111827;--donut-sub:#6b7280;
+  --legend-lbl:#4A4A4A;--legend-val:#111827;
+  --shadow-card:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-drop:0 8px 24px rgba(0,0,0,0.12);
+  --placeholder:#9ca3af;--section-lbl:#6b7280;
+  --ctr-bg:rgba(36,143,132,0.05);--ctr-border:rgba(36,143,132,0.18);
+  --toggle-bg:rgba(36,143,132,0.07);--toggle-border:rgba(36,143,132,0.22);
+  --funnel-drop:rgba(220,38,38,0.2);--drop-color:#dc2626;
+  --trend-up-bg:rgba(22,163,74,0.1);--trend-up-color:#16a34a;
+  --trend-dn-bg:rgba(220,38,38,0.1);--trend-dn-color:#dc2626;
+}
+
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;padding-bottom:2rem;transition:background .3s,color .3s}
+.mono{font-family:'DM Mono',monospace}
+
+.hdr{background:var(--bg-hdr);border-bottom:1px solid var(--border-hdr);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);transition:background .3s,border-color .3s}
+.hdr-left h1{font-size:16px;font-weight:600;color:var(--text-primary);letter-spacing:-0.3px;transition:color .3s}
+.hdr-left p{font-size:12px;color:#248f84;margin-top:2px;font-weight:500}
+.hdr-right{display:flex;align-items:center;gap:10px}
+
+.theme-toggle{width:34px;height:34px;border-radius:8px;background:var(--toggle-bg);border:1px solid var(--toggle-border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--text-primary);flex-shrink:0;position:relative}
+.theme-toggle:hover{background:rgba(36,143,132,0.18);border-color:var(--border-strong)}
+.t-icon{position:absolute;transition:opacity .25s,transform .25s}
+[data-theme="dark"] .t-sun{opacity:1;transform:rotate(0deg) scale(1)}
+[data-theme="dark"] .t-moon{opacity:0;transform:rotate(90deg) scale(0.7)}
+[data-theme="light"] .t-sun{opacity:0;transform:rotate(-90deg) scale(0.7)}
+[data-theme="light"] .t-moon{opacity:1;transform:rotate(0deg) scale(1)}
+
+.date-btn{background:var(--toggle-bg);border:1px solid var(--toggle-border);color:var(--text-primary);padding:7px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.date-btn:hover{background:rgba(36,143,132,0.16);border-color:var(--border-strong)}
+.date-drop{position:absolute;top:100%;right:0;margin-top:6px;background:var(--bg-card);border:1px solid var(--border-md);border-radius:10px;overflow:hidden;z-index:200;min-width:170px;box-shadow:var(--shadow-drop);transition:background .3s}
+.date-opt{padding:10px 16px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--text-primary)}
+.date-opt:hover,.date-opt.active{background:rgba(36,143,132,0.1);color:#248f84}
+
+.wrap{max-width:1200px;margin:0 auto;padding:20px 24px}
+.section-label{font-size:11px;font-weight:600;color:var(--section-lbl);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;transition:color .3s}
+
+.scorecard{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:900px){.scorecard{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.scorecard{grid-template-columns:1fr}}
+.mcard{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s,background .3s,box-shadow .3s;box-shadow:var(--shadow-card)}
+.mcard:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+[data-theme="light"] .mcard:hover{box-shadow:0 4px 14px rgba(0,0,0,0.09)}
+.mcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px}
+.mcard-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.mcard-title{font-size:12px;color:var(--text-secondary);font-weight:500;margin-bottom:6px;transition:color .3s}
+.mcard-value{font-size:26px;font-weight:700;color:var(--text-primary);font-family:'DM Mono',monospace;letter-spacing:-1px;line-height:1;transition:color .3s}
+.mcard-trend{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;margin-top:10px;transition:background .3s,color .3s}
+.trend-up{background:var(--trend-up-bg);color:var(--trend-up-color)}
+.trend-dn{background:var(--trend-dn-bg);color:var(--trend-dn-color)}
+
+.disco-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:700px){.disco-grid{grid-template-columns:1fr}}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:background .3s,border-color .3s,box-shadow .3s;box-shadow:var(--shadow-card)}
+.card-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;transition:color .3s}
+.card-sub{font-size:12px;color:var(--text-secondary);margin-bottom:16px;transition:color .3s}
+
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-label{font-size:12px;color:var(--legend-lbl);flex:1;transition:color .3s}
+.legend-val{font-size:12px;font-family:'DM Mono',monospace;font-weight:500;color:var(--legend-val);transition:color .3s}
+
+.funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.funnel-lbl{font-size:12px;color:var(--text-muted);width:140px;flex-shrink:0;transition:color .3s}
+.funnel-bar-track{flex:1;height:28px;background:var(--funnel-track);border-radius:6px;overflow:hidden;transition:background .3s}
+.funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px}
+.funnel-bar-num{font-size:12px;font-family:'DM Mono',monospace;font-weight:500;color:#fff}
+.ctr-box{margin-top:20px;padding:12px;background:var(--ctr-bg);border-radius:8px;border:1px solid var(--ctr-border);transition:background .3s,border-color .3s}
+
+.eng-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.eng-lbl{font-size:13px;color:var(--text-muted);width:160px;flex-shrink:0;transition:color .3s}
+.eng-track{flex:1;height:6px;background:var(--eng-track);border-radius:99px;overflow:hidden;transition:background .3s}
+.eng-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#248f84,#33ccbd);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.eng-num{font-size:12px;font-family:'DM Mono',monospace;color:var(--text-secondary);width:40px;text-align:right;flex-shrink:0;transition:color .3s}
+.eng-pct{font-size:12px;font-family:'DM Mono',monospace;color:#248f84;width:36px;text-align:right;flex-shrink:0;font-weight:500}
+
+.chat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-card);transition:background .3s,border-color .3s,box-shadow .3s}
+.chat-hdr{background:var(--bg-surface);padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-hdr);transition:background .3s,border-color .3s}
+.chat-hdr-icon{width:32px;height:32px;background:linear-gradient(135deg,#248f84,#33ccbd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-hdr-title{font-size:14px;font-weight:600;color:var(--text-primary);transition:color .3s}
+.chat-hdr-sub{font-size:11px;color:#248f84}
+.chat-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:#22c55e}
+.status-dot{width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.chat-msgs{height:280px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:4px}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(36,143,132,0.3);border-radius:99px}
+.msg{max-width:82%;animation:fadeUp .3s ease-out}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end}
+.msg.assistant{align-self:flex-start}
+.msg-bubble{padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.55}
+.msg.user .msg-bubble{background:linear-gradient(135deg,#248f84,#1d7a70);color:#fff;border-radius:12px 12px 2px 12px}
+.msg.assistant .msg-bubble{background:var(--bg-surface);color:var(--text-on-bubble);border-radius:12px 12px 12px 2px;border:1px solid var(--border);transition:background .3s,color .3s,border-color .3s}
+.typing{align-self:flex-start;display:flex;align-items:center;gap:5px;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:12px 12px 12px 2px;transition:background .3s}
+.typing-dot{width:6px;height:6px;background:var(--text-secondary);border-radius:50%;animation:typingBounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.prompts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-top:1px solid var(--border);transition:border-color .3s}
+.prompt-pill{background:rgba(36,143,132,0.08);border:1px solid rgba(36,143,132,0.22);color:#248f84;padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500}
+.prompt-pill:hover{background:rgba(36,143,132,0.16);border-color:rgba(51,204,189,0.4)}
+.chat-input-row{display:flex;align-items:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg-chat-input);transition:background .3s,border-color .3s}
+.chat-textarea{flex:1;background:var(--bg-input);border:1px solid var(--border-md);border-radius:10px;color:var(--text-primary);padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;resize:none;outline:none;max-height:80px;line-height:1.5;transition:border-color .2s,background .3s,color .3s}
+.chat-textarea:focus{border-color:rgba(36,143,132,0.5)}
+.chat-textarea::placeholder{color:var(--placeholder)}
+[data-theme="light"] .chat-textarea{box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.send-btn{width:38px;height:38px;background:linear-gradient(135deg,#248f84,#33ccbd);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 0 16px rgba(36,143,132,0.35)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <h1>Premium Insights</h1>
+    <p>The Paw Prints - Los Angeles</p>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark">
+      <svg class="t-icon t-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="t-icon t-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <div style="position:relative">
+      <button class="date-btn" onclick="toggleDate()" id="date-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span id="date-label">Last 30 Days</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="date-drop" id="date-drop" style="display:none">
+        <div class="date-opt active" onclick="setDate('Last 7 Days')">Last 7 Days</div>
+        <div class="date-opt" onclick="setDate('Last 30 Days')">Last 30 Days</div>
+        <div class="date-opt" onclick="setDate('This Month')">This Month</div>
+        <div class="date-opt" onclick="setDate('Last 90 Days')">Last 90 Days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="section-label">Bottom-of-Funnel · Lead Actions</div>
+<div class="scorecard">
+  <div class="mcard" style="--accent:#248f84;--accent-bg:rgba(36,143,132,0.1)">
+    <div class="mcard-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#248f84" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+    <div class="mcard-title">Profile Views</div>
+    <div class="mcard-value mono">1,247</div>
+    <div class="mcard-trend trend-up"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 15 7-7 7 7"/></svg>+12.4%</div>
+  </div>
+  <div class="mcard" style="--accent:#33ccbd;--accent-bg:rgba(51,204,189,0.08)">
+    <div class="mcard-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#33ccbd" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+    <div class="mcard-title">Website Clicks</div>
+    <div class="mcard-value mono">384</div>
+    <div class="mcard-trend trend-up"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 15 7-7 7 7"/></svg>+8.2%</div>
+  </div>
+  <div class="mcard" style="--accent:#1d7a70;--accent-bg:rgba(29,122,112,0.1)">
+    <div class="mcard-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d7a70" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+    <div class="mcard-title">Direction Intents</div>
+    <div class="mcard-value mono">156</div>
+    <div class="mcard-trend trend-dn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 9 7 7 7-7"/></svg>−3.1%</div>
+  </div>
+  <div class="mcard" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.08)">
+    <div class="mcard-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.64 5.05 2 2 0 0 1 3.62 2.88h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.72 17z"/></svg></div>
+    <div class="mcard-title">Contact Intents</div>
+    <div class="mcard-value mono">89</div>
+    <div class="mcard-trend trend-up"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 15 7-7 7 7"/></svg>+24.7%</div>
+  </div>
+</div>
+
+<div class="section-label">Top-of-Funnel · Discovery Breakdown</div>
+<div class="disco-grid">
+  <div class="card">
+    <div class="card-title">Traffic Sources</div>
+    <div class="card-sub">How visitors discovered your listing</div>
+    <div class="donut-wrap">
+      <canvas id="donutChart" width="130" height="130" style="flex-shrink:0"></canvas>
+      <div id="donut-legend" style="flex:1"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Search Funnel</div>
+    <div class="card-sub">Impressions vs. profile views drop-off</div>
+    <div style="margin-top:8px">
+      <div class="funnel-row">
+        <div class="funnel-lbl">Search Impressions</div>
+        <div class="funnel-bar-track">
+          <div class="funnel-bar-fill" style="width:100%;background:linear-gradient(90deg,#248f84,#1d7a70)">
+            <span class="funnel-bar-num mono">4,820</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:0 0 12px 152px">
+        <div style="width:1px;height:16px;background:var(--funnel-drop)"></div>
+        <span style="font-size:11px;color:var(--drop-color);font-family:'DM Mono',monospace;font-weight:500;transition:color .3s">−74.1% drop-off</span>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-lbl">Profile Views</div>
+        <div class="funnel-bar-track">
+          <div class="funnel-bar-fill" style="width:25.9%;background:linear-gradient(90deg,#33ccbd,#248f84)">
+            <span class="funnel-bar-num mono">1,247</span>
+          </div>
+        </div>
+      </div>
+      <div class="ctr-box">
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;transition:color .3s">Click-through rate</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <span style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:#248f84">25.9%</span>
+          <span style="font-size:11px;font-weight:500" class="trend-up-text">↑ above avg (18%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Middle-of-Funnel · Engagement Overview</div>
+<div class="card" style="margin-bottom:5px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px" id="eng-grid"></div>
+</div>
+
+</div>
+
+<script>
+const trafficData=[
+  {name:'City Page',value:38,color:'#248f84'},
+  {name:'State Page',value:24,color:'#33ccbd'},
+  {name:'Homepage Search',value:20,color:'#1d7a70'},
+  {name:'Country Page',value:11,color:'#4ade80'},
+  {name:'Direct Link',value:7,color:'#94a3b8'},
+];
+const engData=[
+  {label:'Gallery Interactions',value:892,pct:71},
+  {label:'Amenities Expanded',value:634,pct:51},
+  {label:'Hours Checked',value:478,pct:38},
+  {label:'Reviews Read',value:312,pct:25},
+];
+const prompts=["What are my top keywords?","How can I improve my gallery?","Analyze my conversion rate","Compare to last month"];
+const aiReplies={
+  keyword:"Based on your search data, here are your top performing keywords:\n\n<b>• \"best restaurant near me\"</b> — 340 impressions, 89 clicks\n<b>• \"family dining downtown\"</b> — 210 impressions, 54 clicks\n<b>• \"outdoor seating restaurant\"</b> — 180 impressions, 41 clicks\n\n⚡ 40 people searched for 'wifi' but you haven't listed it as an amenity. Adding it could boost clicks ~15%.",
+  gallery:"Your gallery has a 71% engagement rate — excellent!\n\nHowever I noticed:\n<b>• Only 4 photos currently uploaded</b>\n• Listings with 10+ photos get 3× more contact intents\n• Your current photos are from 2022\n\n<b>Recommendation:</b> Upload 6 fresh high-quality photos showcasing your interior, signature dishes, and ambiance. This could boost profile views by 40%.",
+  conversion:"Your conversion funnel:\n\n<b>4,820</b> impressions → <b>1,247</b> views (25.9% CTR ✓)\n<b>1,247</b> views → <b>89</b> contacts (7.1% conversion)\n\nYour CTR is above average (industry: 18%), but conversion has room to grow. Adding a clear CTA and updating contact info could push this to 10%+.",
+  compare:"Compared to last month:\n\n<b>Profile Views:</b> +12.4% ↑\n<b>Website Clicks:</b> +8.2% ↑\n<b>Direction Intents:</b> −3.1% ↓ (seasonal)\n<b>Contact Intents:</b> +24.7% ↑ (best metric!)\n\nOverall trend is positive. Focus on reversing the direction decline by updating your maps listing.",
+  default:"Great question! Based on your data for the selected period, your listing is performing well overall with strong growth in contact intents (+24.7%). Would you like me to suggest specific optimization strategies to further boost your ROI?"
+};
+
+let messages=[{role:'assistant',text:"Hello! I'm your AI listing optimizer. I've analyzed your premium listing data and I'm ready to help you maximize your ROI. What would you like to explore?"}];
+let isTyping=false;
+
+function renderMsgs(){
+  const el=document.getElementById('chat-msgs');
+  el.innerHTML=messages.map(m=>`<div class="msg ${m.role}"><div class="msg-bubble">${m.text.replace(/\n/g,'<br>')}</div></div>`).join('');
+  if(isTyping) el.innerHTML+=`<div class="msg assistant"><div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  el.scrollTop=el.scrollHeight;
+}
+function renderPrompts(){
+  document.getElementById('prompts-row').innerHTML=prompts.map(p=>`<button class="prompt-pill" onclick="sendMsg('${p}')">${p}</button>`).join('');
+}
+function getReply(t){
+  const s=t.toLowerCase();
+  if(s.includes('keyword')) return aiReplies.keyword;
+  if(s.includes('gallery')) return aiReplies.gallery;
+  if(s.includes('conversion')) return aiReplies.conversion;
+  if(s.includes('last month')||s.includes('compare')) return aiReplies.compare;
+  return aiReplies.default;
+}
+function sendMsg(override){
+  const input=document.getElementById('chat-input');
+  const text=override||input.value.trim();
+  if(!text||isTyping) return;
+  if(!override) input.value='';
+  messages.push({role:'user',text});
+  isTyping=true;renderMsgs();
+  setTimeout(()=>{isTyping=false;messages.push({role:'assistant',text:getReply(text)});renderMsgs();},1600);
+}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function toggleDate(){const d=document.getElementById('date-drop');d.style.display=d.style.display==='none'?'block':'none';}
+function setDate(v){document.getElementById('date-label').textContent=v;document.getElementById('date-drop').style.display='none';document.querySelectorAll('.date-opt').forEach(el=>el.classList.toggle('active',el.textContent===v));}
+document.addEventListener('click',e=>{if(!document.getElementById('date-btn').contains(e.target)) document.getElementById('date-drop').style.display='none';});
+
+function toggleTheme(){
+  const html=document.documentElement;
+  html.setAttribute('data-theme',html.getAttribute('data-theme')==='dark'?'light':'dark');
+  setTimeout(redrawDonut,50);
+}
+
+function redrawDonut(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const canvas=document.getElementById('donutChart');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,130,130);
+  const cx=65,cy=65,r=52,inner=30;
+  const total=trafficData.reduce((a,b)=>a+b.value,0);
+  let start=-Math.PI/2;
+  trafficData.forEach(d=>{
+    const angle=(d.value/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+angle);ctx.closePath();ctx.fillStyle=d.color;ctx.fill();
+    start+=angle;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);
+  ctx.fillStyle=isDark?'#161b22':'#ffffff';ctx.fill();
+  ctx.fillStyle=isDark?'#e6edf3':'#111827';
+  ctx.font="700 15px 'DM Mono',monospace";ctx.textAlign='center';ctx.fillText('5',cx,cy+3);
+  ctx.fillStyle=isDark?'#7d8590':'#6b7280';
+  ctx.font="400 9px 'DM Sans',sans-serif";ctx.fillText('sources',cx,cy+14);
+  document.getElementById('donut-legend').innerHTML=trafficData.map(d=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${d.color}"></div>
+      <span class="legend-label">${d.name}</span>
+      <span class="legend-val">${d.value}%</span>
+    </div>`).join('');
+}
+
+function renderEngagement(){
+  document.getElementById('eng-grid').innerHTML=engData.map(d=>`
+    <div class="eng-row">
+      <div class="eng-lbl">${d.label}</div>
+      <div class="eng-track" style="flex:1"><div class="eng-fill" style="width:0%" data-pct="${d.pct}"></div></div>
+      <div class="eng-num mono">${d.value.toLocaleString()}</div>
+      <div class="eng-pct">${d.pct}%</div>
+    </div>`).join('');
+  setTimeout(()=>{document.querySelectorAll('.eng-fill').forEach(el=>{el.style.width=el.dataset.pct+'%';});},150);
+}
+
+redrawDonut();renderEngagement();renderMsgs();renderPrompts();
+</script>
+</body>
+</html>

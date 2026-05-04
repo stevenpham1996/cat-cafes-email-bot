@@ -6,7 +6,7 @@
 *   **Restriction 1 (Quantity):** Personal Gmail accounts have a strict hard limit of **500 emails per rolling 24-hour period**. Exceeding this will lock your account.
 *   **Restriction 2 (Deliverability):** As of February 2024, Google and Yahoo implemented strict DMARC policies. If you try to use a third-party tool (like this bot) to send emails saying they are "From" a `@gmail.com` address, they will be rejected or marked as spam.
 
-**The Solution:** You must use a **Transactional Email Service** (like Brevo or Resend) connected to a **custom domain** (e.g., `marketing@hotyogafinder.com`).
+**The Solution:** You must use a **Transactional Email Service** (like Brevo or Resend) connected to a **custom domain** (e.g., `marketing@catcafenearme.org`).
 
 ---
 
@@ -82,7 +82,7 @@ If your domain is new to sending email, follow this schedule:
 
 ### Step 1: Get Credentials
 1.  Sign up at [Brevo.com](https://www.brevo.com/).
-2.  **Add your Domain:** Go to Senders & IP > Domains. Add `hotyogafinder.com`.
+2.  **Add your Domain:** Go to Senders & IP > Domains. Add `catcafenearme.org`.
 3.  **Verify Domain:** Add the DNS records (TXT) provided by Brevo to your domain host (GoDaddy, Namecheap, etc.). **This is mandatory.**
 4.  **Get API Key:** Go to SMTP & API > Generate new SMTP Key.
     *   **Host:** `smtp-relay.brevo.com`
@@ -98,7 +98,7 @@ SMTP_HOST=smtp-relay.brevo.com
 SMTP_PORT=587
 SMTP_USER=your_email@gmail.com
 SMTP_PASSWORD=xsmtpsib-12345...
-SENDER_EMAIL=marketing@hotyogafinder.com  <-- Must match verified domain
+SENDER_EMAIL=marketing@catcafenearme.org  <-- Must match verified domain
 ```
 
 ### Step 3: Run the Bot (Batched)

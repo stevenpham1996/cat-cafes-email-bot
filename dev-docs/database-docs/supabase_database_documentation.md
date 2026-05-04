@@ -12,6 +12,7 @@
     -   [coworking_places](#coworking_places)
     -   [images](#images)
     -   [reviews](#reviews)
+    -   [review_comments](#review_comments)
     -   [roles](#roles)
     -   [user_profiles](#user_profiles)
     -   [listing_claims](#listing_claims)
@@ -19,6 +20,8 @@
     -   [notifications](#notifications)
     -   [user_favorites](#user_favorites)
     -   [faqs](#faqs)
+    -   [subscription_plans](#subscription_plans)
+    -   [listing_subscriptions](#listing_subscriptions)
 5.  [Authentication and Authorization](#authentication-and-authorization)
     -   [User Authentication](#user-authentication)
     -   [Row Level Security (RLS)](#row-level-security-rls)
@@ -42,11 +45,11 @@
 
 ## Introduction
 
-This document provides a comprehensive technical overview of the Supabase database implementation for the Coworking Places Directory website. The database is designed to store and manage information about coworking spaces across the globe, with an initial focus on Vietnam.
+This document provides a comprehensive technical overview of the Supabase database implementation for the Coworking Places Directory website. The database is designed to store and manage information about coworking spaces across Southeast Asia, with an initial focus on Vietnam.
 
 The database is hosted on Supabase with the following details:
-- **Project ID**: azbctqxuqldfqddyylpe
-- **Name**: Coworking Places across the globe
+- **Project ID**: hoejkyguhiokhqzluqwk
+- **Name**: Coworking Places in Southeast Asia
 - **Region**: eu-west-2
 - **Status**: ACTIVE_HEALTHY
 - **Database Version**: PostgreSQL 15.8.1.054
@@ -187,7 +190,8 @@ Stores the main details for each coworking space listing.
 | id | UUID | NO | Primary key |
 | title | TEXT | NO | Business name (e.g., "CirCO Dong Du") |
 | slug | TEXT | NO | URL-friendly version of the title |
-| city_id | UUID | NO | Foreign key to cities.id |
+| city_id | UUID | YES | Foreign key to cities.id (Nullable for city-less listings) |
+| state_id | UUID | YES | Foreign key to states.id (Directly used for city-less listings) |
 | full_address | TEXT | NO | Complete address string |
 | street_address | TEXT | YES | Street and number/details |
 | zip_code | VARCHAR(20) | YES | Postal code |
@@ -208,12 +212,15 @@ Stores the main details for each coworking space listing.
 | is_featured | BOOLEAN | YES | Whether the listing is featured (default: false) |
 | verified_by_owner | BOOLEAN | NO | Whether the listing is verified by a Business User owner (default: false) |
 | listing_note | TEXT | YES | Additional notes for the listing (e.g., 'submitted by Admin') |
+| referral_promotion_expires_at | TIMESTAMPTZ | YES | Expiration timestamp for the referral promotion. Also serves as a flag for redemption history (if not null, promotion was redeemed). |
+| is_referral_promotion | BOOLEAN | YES | Whether the listing currently has an active referral promotion (default: false) |
 | created_at | TIMESTAMP WITH TIME ZONE | YES | Record creation timestamp |
 | updated_at | TIMESTAMP WITH TIME ZONE | YES | Record update timestamp |
 
 **Constraints:**
 - Unique constraint on (city_id, slug)
 - Foreign key constraint on city_id referencing cities.id
+- Foreign key constraint on state_id referencing states.id
 - Foreign key constraint on owner_user_id referencing auth.users.id
 - Check constraint on average_rating (between 0 and 5)
 - Check constraint on review_count (>= 0)
@@ -221,6 +228,7 @@ Stores the main details for each coworking space listing.
 
 **Indexes:**
 - Index on `city_id` for faster joins
+- Index on `state_id` for faster joins
 - Index on `slug` for URL lookups
 - Index on `owner_user_id` for filtering by owner
 - Index on `status` for filtering by status
@@ -269,7 +277,8 @@ Stores user reviews and ratings for coworking places.
 | description | TEXT | YES | Review text |
 | review_date | DATE | YES | Date the review was left/scraped |
 | is_approved | TEXT    | NO  | Whether the review is approved. Allowed values: 'true', 'false', 'pending' (default: 'pending') |
-| rejection_reason        | TEXT                     | YES      | Reason provided if the review is rejected (is_approved = 'false') |
+| review_images | JSONB | YES | Array of image URLs (Supabase storage or external) (default: []) |
+| rejection_reason | TEXT | YES | Reason provided if the review is rejected (is_approved = 'false') |
 | created_at | TIMESTAMP WITH TIME ZONE | YES | Record creation timestamp |
 | updated_at | TIMESTAMP WITH TIME ZONE | YES | Record update timestamp |
 
@@ -289,6 +298,36 @@ Stores user reviews and ratings for coworking places.
 3. Active business owners can manage reviews for their own places (suspended users cannot)
 4. Public/Anonymous users can only select approved reviews (is_approved = true)
 
+### review_comments
+
+Stores threaded comments and replies for user reviews.
+
+| Column | Data Type | Nullable | Description |
+|--------|-----------|----------|-------------|
+| id | UUID | NO | Primary key |
+| review_id | UUID | NO | Foreign key to reviews.id |
+| user_id | UUID | NO | Foreign key to user_profiles.user_id |
+| parent_id | UUID | YES | Foreign key to review_comments.id (for nesting) |
+| content | TEXT | NO | Comment text content |
+| comment_images | JSONB | YES | Array of image URLs (Supabase storage or external) (default: []) |
+| is_deleted | BOOLEAN | YES | Soft delete flag (default: false) |
+| created_at | TIMESTAMP WITH TIME ZONE | YES | Record creation timestamp |
+| updated_at | TIMESTAMP WITH TIME ZONE | YES | Record update timestamp |
+
+**Constraints:**
+- Foreign key constraint on review_id referencing reviews.id with CASCADE delete
+- Foreign key constraint on user_id referencing user_profiles.user_id
+- Foreign key constraint on parent_id referencing review_comments.id with CASCADE delete (self-reference)
+
+**Indexes:**
+- Index on `review_id` for faster grouping
+- Index on `parent_id` for faster reply lookup
+
+**RLS Policies:**
+1. Public read access allowed for all records
+2. Authenticated users can insert their own comments (auth.uid() = user_id)
+3. Authors can update or delete their own comments
+
 ### roles
 
 Defines the available user roles in the system.
@@ -297,6 +336,8 @@ Defines the available user roles in the system.
 |--------|-----------|----------|-------------|
 | id | INTEGER | NO | Primary key (serial) |
 | name | TEXT | NO | Role name (e.g., "Admin", "Supervisor") |
+| description | TEXT | YES | Description of the role |
+
 
 **Constraints:**
 - `name` is UNIQUE
@@ -338,9 +379,10 @@ Stores additional profile information for authenticated users, linked to Supabas
 - Index on `role_id` for faster role lookups
 
 **RLS Policies:**
-1. Users can view their own profile (regardless of status)
-2. Active users can update their own profile (suspended users cannot)
-3. Admins have full access to all profiles
+1. Public profiles are viewable by everyone (SELECT allowed for all)
+2. Users can view their own full profile (regardless of status)
+3. Active users can update their own profile (suspended users cannot)
+4. Admins have full access to all profiles
 
 ### listing_claims
 
@@ -487,6 +529,61 @@ Stores frequently asked questions and their answers.
 **RLS Policies:**
 - Public read access is allowed for all records
 
+### subscription_plans
+
+Stores details about available listing subscription plans.
+
+| Column | Data Type | Nullable | Description |
+|--------|-----------|----------|-------------|
+| id | UUID | NO | Primary key |
+| paypal_product_id | TEXT | YES | Associated PayPal product ID |
+| paypal_plan_id | TEXT | YES | Associated PayPal plan ID |
+| name | TEXT | NO | Plan name (e.g., "Monthly Premium") |
+| description | TEXT | YES | Detailed plan description |
+| price | NUMERIC | NO | Subscription price |
+| currency | VARCHAR(3) | YES | Currency code (default: 'USD') |
+| billing_interval | VARCHAR | YES | Billing cycle (e.g., 'month', 'year') |
+| is_active | BOOLEAN | YES | Whether the plan is currently available (default: true) |
+| created_at | TIMESTAMPTZ | YES | Record creation timestamp |
+| updated_at | TIMESTAMPTZ | YES | Record update timestamp |
+
+**Indexes:**
+- Index on `paypal_plan_id` for quick matching with PayPal data
+
+**RLS Policies:**
+- Public read access is allowed for all records
+
+### listing_subscriptions
+
+Stores active and past user subscriptions for specific listings.
+
+| Column | Data Type | Nullable | Description |
+|--------|-----------|----------|-------------|
+| id | UUID | NO | Primary key |
+| listing_id | UUID | YES | Foreign key to coworking_places.id |
+| user_id | UUID | YES | Foreign key to auth.users.id |
+| plan_id | UUID | YES | Foreign key to subscription_plans.id |
+| paypal_subscription_id | TEXT | YES | Unique PayPal subscription ID |
+| status | TEXT | YES | Subscription status (e.g., 'ACTIVE', 'CANCELLED') |
+| current_period_start | TIMESTAMPTZ | YES | Start of the current billing period |
+| current_period_end | TIMESTAMPTZ | YES | End of the current billing period |
+| created_at | TIMESTAMPTZ | YES | Record creation timestamp |
+| updated_at | TIMESTAMPTZ | YES | Record update timestamp |
+
+**Constraints:**
+- ID is UNIQUE
+- Foreign key constraint on listing_id referencing coworking_places.id
+- Foreign key constraint on user_id referencing auth.users.id
+- Foreign key constraint on plan_id referencing subscription_plans.id
+
+**Indexes:**
+- Index on `listing_id` for quick lookup
+- Index on `user_id` for user-specific queries
+- Index on `paypal_subscription_id` for webhook updates
+
+**RLS Policies:**
+- Users can view their own subscriptions (SELECT where auth.uid() = user_id)
+
 ## Authentication and Authorization
 
 ### User Authentication
@@ -523,6 +620,12 @@ Key RLS concepts implemented:
   - Must be active (not suspended)
 - **Update Policy:** Same authorization as insert
 - **Delete Policy:** Same authorization as insert
+
+#### 5.2.2 Storage Object Policies for review-images
+- **Select Policy:** Public read access for all images
+- **Insert Policy:** Authenticated users only, must be active (not suspended)
+- **Update Policy:** Authenticated users can update their own images
+- **Delete Policy:** Authenticated users can delete their own images
 
 ### Helper Functions
 
@@ -598,6 +701,59 @@ $$;
 
 The database includes several specialized functions and triggers to handle complex operations and ensure data integrity.
 
+### Referral Promotion System
+
+The database supports a referral promotion system where listing owners can verify a backlink to receive a temporary "featured" status or other benefits.
+
+#### `set_referral_promotion_expiry()` Function
+- **Trigger**: `trigger_set_referral_promotion_expiry` (BEFORE UPDATE ON `coworking_places`)
+- **Purpose**: Automatically sets the `referral_promotion_expires_at` timestamp to 30 days from now when `is_referral_promotion` is switched to TRUE. It also enforces a one-time-use policy by checking if `referral_promotion_expires_at` is already set.
+
+```sql
+CREATE OR REPLACE FUNCTION public.set_referral_promotion_expiry()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Check if is_referral_promotion is being changed to true
+  IF NEW.is_referral_promotion = TRUE AND (OLD.is_referral_promotion = FALSE OR OLD.is_referral_promotion IS NULL) THEN
+    -- Check if it has EVER been redeemed before (by checking if expires_at is not null)
+    IF OLD.referral_promotion_expires_at IS NOT NULL THEN
+       RAISE EXCEPTION 'Referral promotion has already been redeemed for this listing.';
+    END IF;
+
+    -- Set the expiration date to 30 days from now
+    NEW.referral_promotion_expires_at := NOW() + INTERVAL '30 days';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+```
+
+#### `expire_referral_promotions()` Function
+- **Purpose**: A cleanup function designed to be run periodically (e.g., via `pg_cron`). It checks for expired promotions and resets the `is_referral_promotion` flag to `false`.
+
+```sql
+CREATE OR REPLACE FUNCTION public.expire_referral_promotions()
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE public.coworking_places
+  SET is_referral_promotion = false
+  WHERE is_referral_promotion = true
+  AND referral_promotion_expires_at < NOW();
+END;
+$$;
+
+-- Schedule the job to run daily at midnight
+SELECT cron.schedule(
+  'expire-referral-promotions-daily',
+  '0 0 * * *',
+  'SELECT public.expire_referral_promotions()'
+);
+```
+
 ### Data Retrieval Functions
 
 #### `get_cities_with_listing_counts()` Function
@@ -663,6 +819,14 @@ This function is automatically executed when a new user record is inserted into 
   - Table: `auth.users`
   - Action: `EXECUTE FUNCTION public.handle_new_user()`
 
+**Trigger Configuration:**
+To ensure this function is executed, the `on_auth_user_created` trigger must be created on the `auth.users` table. The trigger definition is as follows:
+```sql
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+```
+
 **Key Features:**
 - Populates the `user_profiles` table with a new record for the new user.
 - Sets the `user_id` to `NEW.id`.
@@ -670,6 +834,7 @@ This function is automatically executed when a new user record is inserted into 
 - Extracts `avatar_url` from `NEW.raw_user_meta_data` (checking `'avatar_url'`, then `'picture'`).
 - Assigns a default `role_id` (typically 'Public User', e.g., 4, as per existing `roles` table data).
 - Sets a default `status` (e.g., 'active').
+- Includes `ON CONFLICT (user_id) DO NOTHING` to handle potential idempotent calls (e.g., if the function were manually triggered multiple times).
 
 #### `handle_auth_user_avatar_update()` Function
 
@@ -680,6 +845,17 @@ This function is automatically executed when the `raw_user_meta_data` of an exis
   - Table: `auth.users`
   - Condition: `OLD.raw_user_meta_data IS DISTINCT FROM NEW.raw_user_meta_data`
   - Action: `EXECUTE FUNCTION public.handle_auth_user_avatar_update()`
+
+### PayPal Webhooks Edge Function
+
+The `paypal-webhooks` Edge Function handles automated events from PayPal to sync subscription statuses with the database.
+
+**Location:** `supabase/functions/paypal-webhooks/index.ts`
+
+**Key Events Handled:**
+- `BILLING.SUBSCRIPTION.ACTIVATED`: Sets subscription status to 'active' and toggles `is_featured = true` in `coworking_places`. Uses `custom_id` passed during checkout (format: `listing_id:user_id:plan_id`) to identify the listing.
+- `BILLING.SUBSCRIPTION.CANCELLED` / `BILLING.SUBSCRIPTION.EXPIRED`: Updates subscription status in `listing_subscriptions`.
+- `PAYMENT.SALE.COMPLETED`: Logged for payment confirmation.
 
 ### Listing and Claim State Management Engine
 
@@ -872,11 +1048,16 @@ $$;
 The database implements the following relationships:
 
 1.  **One-to-Many Relationships:**
-    -   One country has many states OR many cities (Two Relationship Patterns)
-    -   One state has many cities
-    -   One city has many coworking places
-    -   One coworking place has many images
-    -   One coworking place has many reviews
+    -   `city_id` references `cities.id`
+    -   `state_id` references `states.id`
+    -   `owner_user_id` references `auth.users.id`
+    -   `coworking_places` has many `images`
+    -   `coworking_places` has many `reviews`
+    -   `coworking_places` has many `listing_claims`
+    -   `coworking_places` has many `listing_subscriptions`
+    -   `coworking_places` has many `listing_analytics_events`
+    -   One review has many review_comments
+    -   One review_comment can have many replies (self-reference)
     -   One coworking place can have many listing claims
     -   One coworking place has many ownership history records
     -   One user can own multiple coworking places
@@ -986,6 +1167,20 @@ The database design accommodates future growth and features:
 
 ### 15.1 listing-images Bucket
 - **Purpose:** Store uploaded listing images
+- **Configuration:**
+  - Public access enabled
+  - 500 KB (512,000 bytes) file size limit
+  - Allowed MIME types: image/jpeg, image/png, image/webp, image/gif
+
+### 15.2 claim-documents
+- **Purpose:** Store claim documents
+- **Configuration:**
+  - Private access
+  - 5 MB file size limit
+  - Allowed all MIME types
+
+### 15.3 location-images
+- **Purpose:** Store location page's images
 - **Configuration:**
   - Public access enabled
   - 500 KB (512,000 bytes) file size limit

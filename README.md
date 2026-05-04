@@ -18,7 +18,7 @@ The bot relies on environment variables defined in the `.env` file. You must pop
 -   `SENDER_EMAIL`: The email address that will appear in the "From" field.
 
 ### Other
--   `WEBSITE_DOMAIN`: The base domain for your website (e.g., `https://catcafenearme.org`). Defaults to `https://hotyogastudios.com` if not set.
+-   `WEBSITE_DOMAIN`: The base domain for your website (e.g., `https://catcafenearme.org`). 
 -   `RATE_LIMIT`: The number of emails to send per minute (e.g., `30`). Defaults to 30 if not set.
 
 
