@@ -465,7 +465,7 @@ def main():
                 continue
 
             # Prepend Domain
-            domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafenearme.org")
+            domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafecircle.com")
             full_url = f"{domain}{url}"
             referral_promotion_url = f"{domain}/{target_lang}/referral-promotion/{listing_id}"
 
