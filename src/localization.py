@@ -14,7 +14,7 @@ COUNTRY_CODE_TO_LOCALE = {
     'pt': 'pt', 'br': 'pt', 'ao': 'pt', 'mz': 'pt', 'ru': 'ru',
     'by': 'ru', 'kz': 'ru', 'jp': 'ja', 'kr': 'ko', 'cn': 'zh',
     'hk': 'zh', 'tw': 'zh', 'id': 'id', 'vn': 'vi', 'th': 'en',
-    'my': 'en', 'sg': 'en', 'ph': 'en'
+    'my': 'en', 'sg': 'en', 'ph': 'en', 'it': 'it'
 }
 
 # Mapping of normalized country slugs to locale codes
@@ -34,14 +34,14 @@ COUNTRY_SLUG_TO_LOCALE = {
     'kazakhstan': 'ru', 'japan': 'ja', 'south-korea': 'ko',
     'china': 'zh', 'hong-kong': 'zh', 'taiwan': 'zh',
     'indonesia': 'id', 'vietnam': 'vi', 'thailand': 'en',
-    'malaysia': 'en', 'singapore': 'en', 'philippines': 'en'
+    'malaysia': 'en', 'singapore': 'en', 'philippines': 'en', 'italy': 'it'
 }
 
 # Mapping of locale codes to their default country code
 LOCALE_TO_DEFAULT_COUNTRY = {
     'en': 'us', 'fr': 'fr', 'de': 'de', 'es': 'es', 'pt': 'pt',
     'nl': 'nl', 'ru': 'ru', 'ja': 'jp', 'ko': 'kr', 'zh': 'cn',
-    'id': 'id', 'vi': 'vn'
+    'id': 'id', 'vi': 'vn', 'it': 'it'
 }
 
 def get_locale_for_listing(listing: dict) -> str:

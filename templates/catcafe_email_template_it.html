@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+        }
+
+        .email-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .h2 {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .intro {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-left: 4px solid #248f84;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box p {
+            font-size: 15px;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 35px;
+        }
+
+        .cta-text {
+            /* Removed padding and border-radius as they conflict with text-only styling */
+            background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* Makes the text color transparent to show the background clip */
+            text-decoration: none; /* Remove default underline */
+            font-weight: 600;
+            font-size: 18px;
+            transition: transform 0.2s;
+            display: inline-block; /* Allows transform to work */
+            position: relative; /* For custom underline */
+        }
+
+        .cta-text::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px; /* Adjust position of the underline */
+            width: 100%;
+            height: 2px; /* Thickness of the underline */
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
+            /* Underline is now always present by default */
+        }
+
+        .cta-text:hover {
+            transform: translateY(-2px);
+            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .benefits {
+            margin: 30px 0;
+        }
+
+        .benefits-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .svg-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            font-size: 15px;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 35px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #248f84;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+
+        .signature {
+            margin-top: 25px;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .signature-name {
+            font-weight: 600;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-link {
+            color: #248f84;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 30px;
+                font-size: 15px;
+            }
+        }
+
+        /* Listing Card Styles */
+        .listing-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .listing-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            line-height: 1.2;
+        }
+
+        .listing-card-address {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .star-rating {
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="email-wrapper">
+        <div class="header">
+            <!-- Logo Image - Centered on top -->
+            <div style="text-align: center; margin-bottom: 10px;">
+                <img src="https://catcafenearme.org/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeNearMe.org"
+                    style="height: 85px; display: inline-block;">
+            </div>
+            <!-- Brand Name -->
+            <div class="logo" style="margin-bottom: 10px;">
+                Cat Cafe Circle
+            </div>
+            <!-- Tagline -->
+            <div class="tagline">La più grande directory di cat cafè al mondo</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">Ciao {{ title }},</div>
+
+            <p class="intro">
+                Siamo entusiasti di informarti che il tuo locale è stato selezionato per essere inserito su <strong>Cat Cafe Circle</strong>, la nostra directory globale di riferimento che connette gli amanti dei gatti con i cat cafè di tutto il mondo.
+            </p>
+
+            <p class="caveat">
+                Desideriamo assicurarti che tutte le informazioni utilizzate per creare la scheda del tuo locale sono state raccolte con cura ed esclusivamente da canali ufficiali e pubblici, garantendo il massimo rispetto e accuratezza per la tua attività.
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-text">Visualizza la scheda del tuo cat cafè</a>
+            </div>
+
+
+            <div class="benefits">
+                <div class="h2">
+                    <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 155.139 155.139" xml:space="preserve" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <g>
+                                    <path style="fill:#010002;"
+                                        d="M109.719,114.588v28.17l45.42-45.42l-45.42-45.42v28.516C56.202,76.4,12.966,48.529,2.452,12.381 C0.847,17.895,0,23.605,0,29.452C0,73.601,48.027,109.94,109.719,114.588z">
+                                    </path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <div class="benefits-title">Rivendica la tua scheda per sbloccare le funzionalità Premium:</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Posizionamento prioritario:</strong> Compari più in alto nei risultati di ricerca e attira più visitatori
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Personalizzazione completa:</strong> Aggiorna in qualsiasi momento i dettagli di contatto, le immagini, i prezzi, la politica di adozione (se applicabile) e i servizi del locale
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Coinvolgi la tua community:</strong> Rispondi alle recensioni e connettiti con i potenziali visitatori
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Strumenti promozionali:</strong> Accedi a funzionalità promozionali speciali per far crescere il tuo pubblico e aumentare la visibilità
+                    </div>
+                </div>
+            </div>
+
+            {% include 'listing_card.html' %}
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
+                Il tuo locale rivendicato avrà un badge "Verificato" e avrà la priorità nei risultati di ricerca.
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-button">Rivendica subito il tuo cat cafè</a>
+            </div>
+
+            <div class="benefits">
+                <div class="h2" style="margin-top: 10px;">
+                    <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 155.139 155.139" xml:space="preserve" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <g>
+                                    <path style="fill:#010002;"
+                                        d="M109.719,114.588v28.17l45.42-45.42l-45.42-45.42v28.516C56.202,76.4,12.966,48.529,2.452,12.381 C0.847,17.895,0,23.605,0,29.452C0,73.601,48.027,109.94,109.719,114.588z">
+                                    </path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <div class="benefits-title">Cresciamo insieme:</div>
+                </div>
+                <!-- Launch Offer Subtitle -->
+                <div style="display: flex; align-items: center; padding: 0px 6px;">
+                    <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
+                        Crediamo nelle collaborazioni. Come caloroso benvenuto, ci piacerebbe iniziare con un semplice scambio: aggiungi un backlink verso di noi e saremo felici di <strong>promuoverti per un mese, gratuitamente</strong>.
+                    </p>
+                </div>
+
+                <!-- Premium Benefits -->
+                <h3
+                    style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                    Vantaggi Premium:
+                </h3>
+                <div style="margin-top: 10px;">
+                    <!-- Benefit 1: Top Position with Badge -->
+                    <div
+                        style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);">
+                            <span style="font-size: 24px;">👑</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Prima posizione con badge speciale</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Sempre in cima ai risultati di ricerca con uno speciale badge <strong
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"In primo piano"</strong> che si fa notare.</div>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 2: Blog & Email Recommendations -->
+                    <div
+                        style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #f093fb 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(240, 147, 251, 0.3);">
+                            <span style="font-size: 24px;">📧</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Consigli nel blog e nelle e-mail</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Incluso frequentemente nei nostri <strong>post del blog quotidiani</strong> e nelle <strong>newsletter settimanali</strong> inviate a migliaia di amanti dei gatti.</div>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 3: Premium Insights Dashboard -->
+                    {% include 'premium_insights_email.html' %}
+
+                </div>
+
+                <!-- Action Steps Guide -->
+                <div
+                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                    <h3
+                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                        Come essere promossi in 2 semplici passaggi:
+                    </h3>
+
+                    <!-- Step 1: Add Badge or Text -->
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                            <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Inserisci un backlink</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
+                                Sostieni il nostro network in crescita aggiungendo un backlink che rimandi a noi su una delle tue pagine.<br>
+                                <i>In alternativa, per comodità, puoi decorare la tua Header, Footer o qualsiasi pagina web con una delle seguenti opzioni:</i>
+                            </div>
+
+                            <!-- Option 1: Badge -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 16px;">🏷️</span>
+                                    Opzione 1: Badge
+                                </div>
+
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Anteprima:</div>
+                                    <div style="text-align: center;">
+                                        {% include 'catcafe_referral_badge.html' %}
+                                    </div>
+                                </div>
+
+                                <!-- HTML Code Section -->
+                                <div>
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 Copia questo codice HTML:</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ badge_html_code }}
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                        Seleziona e copia il codice sopra, quindi incollalo nell'HTML del tuo sito web.</div>
+                                </div>
+                            </div>
+
+                            <!-- Option 2: Text Link -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 16px;">📝</span>
+                                    Opzione 2: Testo ancorato
+                                </div>
+
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Anteprima:</div>
+                                    <div style="text-align: center;">
+                                        {% include 'catcafe_referral_text.html' %}
+                                    </div>
+                                </div>
+
+                                <!-- HTML Code Section -->
+                                <div>
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 Copia questo codice HTML:</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ text_html_code }}
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                        Seleziona e copia il codice sopra, quindi incollalo nell'HTML del tuo sito web.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Email Us -->
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
+                            <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verifica e ricevi la promozione 🎉</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
+                                Visita il seguente <a href="{{ referral_promotion_url }}"
+                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
+                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> sul nostro sito web per verificare rapidamente il tuo backlink verso di noi ed essere promosso immediatamente!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div style="margin-bottom: 20px;"> </div>
+
+            {% include 'listing_card_featured_badge.html' %}
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
+                Il locale promosso avrà un badge "In primo piano" e apparirà sempre in cima ai risultati di ricerca.
+            </p>
+
+            <div class="signature">
+                <div>Un cordiale saluto,</div>
+                <div class="signature-name">Il team di Cat Cafe Directory</div>
+                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                    <a href="https://catcafenearme.org"
+                        style="color: #248f84; text-decoration: none;">catcafenearme.org</a>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_studios_count }}</span>
+                    <span class="stat-label">Cat cafè registrati</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_cities_count }}</span>
+                    <span class="stat-label">Città</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
+                    <span class="stat-label">Utenti attivi</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                Ricevi questa e-mail perché il tuo cat cafè è inserito nella nostra directory pubblica. Ci impegniamo a costruire una community globale per connettere i proprietari di cat cafè con gli amanti dei gatti in tutto il mondo.
+            </p>
+            <div class="footer-links">
+                <a href="https://catcafenearme.org/about" class="footer-link">Chi siamo</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="https://catcafenearme.org/contact" class="footer-link">Contatti</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">Disiscriviti</a>
+            </div>
+            <p class="footer-text" style="font-size: 12px;">
+                © 2026 CatCafeNearMe.org. Tutti i diritti riservati.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

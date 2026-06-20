@@ -31,7 +31,8 @@ EMAIL_SUBJECT_TRANSLATIONS = {
     "ko": "Cat Cafe Circle에 오신 것을 환영합니다!",
     "zh": "Cat Cafe Circle 欢迎您的加入！",
     "id": "Cat Cafe Circle menyambut Anda dengan hangat!",
-    "vi": "Cat Cafe Circle chào mừng bạn gia nhập!"
+    "vi": "Cat Cafe Circle chào mừng bạn gia nhập!",
+    "it": "Cat Cafe Circle ti dà il benvenuto a bordo!"
 }
 
 PRICE_RANGE_TRANSLATIONS = {
@@ -46,7 +47,8 @@ PRICE_RANGE_TRANSLATIONS = {
     "ko": "메뉴는 <strong>{price}</strong> 부터",
     "zh": "菜单 <strong>{price}</strong> 起",
     "id": "Menu mulai dari <strong>{price}</strong>",
-    "vi": "Menu bắt đầu từ <strong>{price}</strong>"
+    "vi": "Menu bắt đầu từ <strong>{price}</strong>",
+    "it": "Menu a partire da <strong>{price}</strong>"
 }
 
     
@@ -74,7 +76,7 @@ def get_translated_subjects(title_en: str) -> dict:
     
     prompt = (
         f"Translate the following marketing email subject to: German, Spanish, French, "
-        f"Dutch, Portuguese, Russian, Japanese, Korean, Chinese, Indonesian, Vietnamese. "
+        f"Dutch, Portuguese, Russian, Japanese, Korean, Chinese, Indonesian, Vietnamese, Italian. "
         f"The translation should be optimized for a marketing email outreach to cat cafe owners. "
         f"Subject: {title_en}"
     )
@@ -99,9 +101,10 @@ def get_translated_subjects(title_en: str) -> dict:
                     "ko": {"type": "string"},
                     "zh": {"type": "string"},
                     "id": {"type": "string"},
-                    "vi": {"type": "string"}
+                    "vi": {"type": "string"},
+                    "it": {"type": "string"}
                 },
-                "required": ["en", "de", "es", "fr", "nl", "pt", "ru", "ja", "ko", "zh", "id", "vi"]
+                "required": ["en", "de", "es", "fr", "nl", "pt", "ru", "ja", "ko", "zh", "id", "vi", "it"]
             }
         }
     }
