@@ -222,6 +222,13 @@
             margin-top: 5px;
         }
 
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+
         .signature {
             margin-top: 25px;
             font-size: 15px;
@@ -312,30 +319,32 @@
 <body>
     <div class="email-wrapper">
         <div class="header">
+            <!-- Logo Image - Centered on top -->
             <div style="text-align: center; margin-bottom: 10px;">
                 <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
                     style="height: 85px; display: inline-block;">
             </div>
+            <!-- Brand Name -->
             <div class="logo" style="margin-bottom: 10px;">
                 Cat Cafe Circle
             </div>
-            <div class="tagline">Danh bạ Quán Cà phê Mèo Lớn nhất Thế giới</div>
+            <!-- Tagline -->
+            <div class="tagline">Danh bạ quán cà phê mèo lớn nhất thế giới</div>
         </div>
 
         <div class="content">
             <div class="greeting">Xin chào {{ title }},</div>
 
             <p class="intro">
-                Chúng tôi rất vui mừng thông báo rằng quán cà phê của bạn đã được chọn để giới thiệu trên <strong>Cat Cafe Circle</strong>,
-                danh bạ toàn cầu hàng đầu của chúng tôi kết nối những người yêu mèo với các quán cà phê trên khắp thế giới.
+                Chúng tôi rất vui mừng thông báo rằng quán của bạn đã được chọn để giới thiệu trên <strong>Cat Cafe Circle</strong> — danh bạ toàn cầu hàng đầu kết nối những người yêu mèo với các quán cà phê mèo trên khắp thế giới.
             </p>
 
             <p class="caveat">
-                Chúng muốn đảm bảo với bạn rằng tất cả thông tin được sử dụng để niêm yết quán cà phê của bạn đều được thu thập một cách độc quyền và cẩn thận từ các nguồn chính thức và công khai, đảm bảo sự tôn trọng và chính xác đối với doanh nghiệp của bạn.
+                Chúng tôi muốn đảm bảo với bạn rằng toàn bộ thông tin dùng để giới thiệu quán đều được thu thập một cách kỹ lưỡng và độc quyền từ các nguồn chính thức và công khai, bảo đảm sự chính xác và tôn trọng đối với hoạt động kinh doanh của bạn.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">Xem Quán Cà phê Mèo của Bạn</a>
+                <a href="{{ listing_url }}" class="cta-button">Xem quán cà phê mèo của bạn</a>
             </div>
 
 
@@ -356,19 +365,39 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">Hãy cùng nhau phát triển:</div>
+                    <div class="benefits-title">Cùng nhau hợp tác và phát triển:</div>
                 </div>
+                <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        Chúng tôi tin tưởng vào sự hợp tác. Như một lời chào mừng nồng nhiệt, chúng tôi muốn bắt đầu bằng một sự trao đổi đơn giản: hãy thêm một liên kết ngược (backlink) trỏ về chúng tôi, và chúng tôi sẽ rất vui lòng <strong>quảng bá bạn trong một tháng hoàn toàn miễn phí</strong>.
+                        Chúng tôi tin tưởng vào sức mạnh của sự hợp tác. Như một lời chào mừng nồng nhiệt, chúng tôi muốn đề xuất một chương trình trao đổi đơn giản: bạn chỉ cần thêm một liên kết (backlink) trỏ về chúng tôi trên trang web của bạn, và chúng tôi sẽ rất vui lòng <strong>quảng bá quán của bạn trên vị trí nổi bật trong một tháng hoàn toàn miễn phí</strong>.
                     </p>
                 </div>
 
+                {% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> 【Số lượng có hạn】 Chỉ còn {{ max_free_slots }} suất quảng bá miễn phí tại {{ location_name }}
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Số suất quảng bá miễn phí tại {{ location_name }}: Còn {{ max_free_slots }} suất
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Do nhu cầu từ các quán địa phương rất cao, số lượng suất quảng bá miễn phí tại {{ location_name }} có giới hạn.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Premium Benefits -->
                 <h3
                     style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                    Lợi ích Cao cấp:
+                    Quyền lợi Cao cấp (Premium):
                 </h3>
                 <div style="margin-top: 10px;">
+                    <!-- Benefit 1: Top Position with Badge -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -376,12 +405,13 @@
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Vị trí Hàng đầu với Huy hiệu Đặc biệt</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Luôn được liệt kê ở đầu kết quả tìm kiếm với huy hiệu <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Tiêu điểm"</strong> đặc biệt giúp bạn nổi bật hơn.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Vị trí hàng đầu kèm huy hiệu đặc biệt</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Quán của bạn sẽ luôn được hiển thị ở đầu kết quả tìm kiếm kèm theo huy hiệu <strong
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Tiêu điểm"</strong> nổi bật để thu hút khách hàng.</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 2: Blog & Email Recommendations -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -389,112 +419,123 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Đề xuất trên Blog & Email</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Thường xuyên được giới thiệu trong các <strong>bài đăng trên blog hàng ngày</strong> và <strong>bản tin hàng tuần</strong> của chúng tôi gửi đến hàng ngàn người yêu mèo.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Giới thiệu trên Blog & Bản tin Email</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Quán sẽ thường xuyên được nhắc đến trong các <strong>bài viết blog hàng ngày</strong> và <strong>bản tin email hàng tuần</strong> gửi đến hàng ngàn người yêu mèo.</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
                 </div>
+            </div>
 
-                <div
-                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
-                    <h3
-                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        Cách để được Quảng bá trong 2 Bước Đơn giản:
-                    </h3>
+            <!-- Action Steps Guide -->
+            <div
+                style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                <h3
+                    style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                    Nhận quảng bá chỉ với 2 bước đơn giản:
+                </h3>
 
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Gửi cho chúng tôi một liên kết ngược (backlink)</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                Hỗ trợ mạng lưới đang phát triển của chúng tôi bằng cách thêm một liên kết nhắc đến chúng tôi trên một trong các trang của bạn.<br>
-                                <i>Ngoài ra, để thuận tiện, bạn có thể trang trí trang Web, Header hoặc Footer của mình bằng một trong các lựa chọn sau:</i>
-                            </div>
-
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">🏷️</span>
-                                    Lựa chọn 1: Huy hiệu
-                                </div>
-
-                                <div
-                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Xem trước:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_badge.html' %}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Sao chép mã HTML này:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ badge_html_code }}
-                                    </div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Chọn và sao chép mã ở trên, rồi dán vào mã HTML của trang web của bạn.</div>
-                                </div>
-                            </div>
-
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">📝</span>
-                                    Lựa chọn 2: Văn bản có Liên kết
-                                </div>
-
-                                <div
-                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Xem trước:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_text.html' %}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Sao chép mã HTML này:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ text_html_code }}
-                                    </div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Chọn và sao chép mã ở trên, rồi dán vào mã HTML của trang web của bạn.</div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Step 1: Add Badge or Text -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                     </div>
-
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Thêm liên kết trỏ về chúng tôi</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
+                            Hỗ trợ mạng lưới đang phát triển của chúng tôi bằng cách thêm một liên kết nhắc đến chúng tôi trên một trong các trang của bạn.<br>
+                            <i>Ngoài ra, để thuận tiện, bạn có thể trang trí trang Web, Header hoặc Footer của mình bằng một trong các lựa chọn sau:</i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Xác minh và được Quảng bá 🎉</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Truy cập <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">liên kết<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> sau trên trang web của chúng tôi để nhanh chóng xác thực liên kết ngược và nhận quảng bá ngay lập tức!
+
+                        <!-- Option 1: Badge -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">🏷️</span>
+                                Lựa chọn 1: Huy hiệu hình ảnh
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Xem trước:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_badge.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 Sao chép mã HTML này:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ badge_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Chọn và sao chép mã ở trên, rồi dán vào mã HTML của trang web của bạn.</div>
+                            </div>
+                        </div>
+
+                        <!-- Option 2: Text Link -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">📝</span>
+                                Lựa chọn 2: Liên kết văn bản (Anchor Text)
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Xem trước:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_text.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 Sao chép mã HTML này:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ text_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Chọn và sao chép mã ở trên, rồi dán vào mã HTML của trang web của bạn.</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Step 2: Email Us -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Xác minh liên kết và kích hoạt 🎉</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
+                            Sau khi đặt liên kết, vui lòng truy cập <a href="{{ referral_promotion_url }}"
+                                style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
+                                style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">liên kết<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> sau trên website của chúng tôi để kiểm tra nhanh. Sau khi hệ thống xác nhận, quyền lợi quảng bá sẽ lập tức được kích hoạt.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div style="margin-bottom: 20px;"> </div>
 
@@ -503,9 +544,20 @@
                 Quán cà phê được quảng bá sẽ có huy hiệu "Tiêu điểm" và luôn xuất hiện ở đầu kết quả tìm kiếm.
             </p>
 
+            {% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Hiện tại, toàn bộ {{ max_free_slots }} suất quảng bá miễn phí tại {{ location_name }} đã được đăng ký hết.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Bạn vẫn có thể tạo backlink để đăng ký vào danh sách chờ, hoặc nâng cấp lên gói quảng bá trả phí để đảm bảo nhận được các quyền lợi ngay lập tức.
+                    </p>
+                </div>
+            {% endif %}
+
             <div class="signature">
                 <div>Trân trọng,</div>
-                <div class="signature-name">Đội ngũ Danh bạ Quán Cà phê Mèo</div>
+                <div class="signature-name">Đội ngũ Cat Cafe Circle</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
                     <a href="https://catcafecircle.com"
                         style="color: #248f84; text-decoration: none;">catcafecircle.com</a>
@@ -515,7 +567,7 @@
             <div class="stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_studios_count }}</span>
-                    <span class="stat-label">Quán đã niêm yết</span>
+                    <span class="stat-label">Quán đã đăng ký</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_cities_count }}</span>
@@ -523,14 +575,14 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_active_users_count }}</span>
-                    <span class="stat-label">Người dùng thường xuyên</span>
+                    <span class="stat-label">Thành viên hoạt động</span>
                 </div>
             </div>
         </div>
 
         <div class="footer">
             <p class="footer-text">
-                Bạn nhận được email này vì quán cà phê của bạn có tên trong danh bạ công khai của chúng tôi. Chúng tôi cam kết xây dựng một cộng đồng toàn cầu để kết nối chủ quán với những người yêu mèo trên toàn thế giới.
+                Bạn nhận được email này vì quán cà phê của bạn có tên trong danh bạ công khai của chúng tôi. Chúng tôi cam kết xây dựng một cộng đồng toàn cầu để kết nối các chủ quán với những người yêu mèo trên toàn thế giới.
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">Về chúng tôi</a>

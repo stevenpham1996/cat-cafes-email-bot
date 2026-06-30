@@ -18,33 +18,37 @@ def get_supabase_client() -> Client:
 
 def _base_fields():
     """Shared scalar fields for all listing queries."""
-    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range"
+    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range, city_id, state_id"
 
 # Query for Cases 1 & 2 (city-based listings). cities join can be !inner or plain.
 _QUERY_CITY = _base_fields() + """,
     {cities_join} (
+        id,
+        name,
         slug,
         state_id,
         country_id,
         states (
+            id,
+            name,
             slug,
-            countries ( code )
+            countries ( id, name, code )
         ),
-        countries ( slug, code )
+        countries ( id, name, slug, code )
     ),
-    states ( slug, countries ( slug, code ) )
+    states ( id, name, slug, countries ( id, name, slug, code ) )
 """
 
 # Query for Case 3 (city-less listings). states join is always !inner when filtering.
 _QUERY_STATE = _base_fields() + """,
-    cities ( slug, state_id, country_id, states ( slug, countries ( code ) ), countries ( slug, code ) ),
-    states!inner ( slug, countries ( slug, code ) )
+    cities ( id, name, slug, state_id, country_id, states ( id, name, slug, countries ( id, name, code ) ), countries ( id, name, slug, code ) ),
+    states!inner ( id, name, slug, countries ( id, name, slug, code ) )
 """
 
 # No-filter query: plain left joins on both cities and states.
 _QUERY_ALL = _base_fields() + """,
-    cities ( slug, state_id, country_id, states ( slug, countries ( code ) ), countries ( slug, code ) ),
-    states ( slug, countries ( slug, code ) )
+    cities ( id, name, slug, state_id, country_id, states ( id, name, slug, countries ( id, name, code ) ), countries ( id, name, slug, code ) ),
+    states ( id, name, slug, countries ( id, name, slug, code ) )
 """
 
 def resolve_country_ids(terms: list[str]) -> list[str]:
@@ -218,3 +222,140 @@ def get_platform_stats() -> dict:
         "platform_cities_count": cities_count,
         "platform_active_users_count": active_users_count  # Hardcoded for now per business requirements
     }
+
+def fetch_approved_listings_for_cache() -> list[dict]:
+    """
+    Fetches all approved listings from the database with only the columns needed
+    to calculate capacity limits.
+    """
+    supabase = get_supabase_client()
+    all_listings = []
+    start = 0
+    batch_size = 1000
+
+    while True:
+        try:
+            batch = (
+                supabase.table("coworking_places")
+                .select("id, city_id, state_id, is_featured, is_referral_promotion, referral_promotion_expires_at")
+                .eq("status", "approved")
+                .range(start, start + batch_size - 1)
+                .execute().data
+            )
+            all_listings.extend(batch)
+            if len(batch) < batch_size:
+                break
+            start += batch_size
+        except Exception as e:
+            print(f"Error fetching approved listings for cache: {e}")
+            break
+
+    return all_listings
+
+def calculate_capacity_limits_cache(listings_data: list[dict]) -> dict:
+    """
+    Processes all approved listings to calculate the promotion stats
+    for each city and each no-city state.
+    
+    Returns a dictionary of:
+    {
+        "city": {
+            city_id: {
+                "N": total_active,
+                "P": active_paid,
+                "R": active_free,
+                "L": max_paid_slots,
+                "remaining_free_slots": remaining_free_slots
+            }
+        },
+        "state": {
+            state_id: {
+                "N": total_active,
+                "P": active_paid,
+                "R": active_free,
+                "L": max_paid_slots,
+                "remaining_free_slots": remaining_free_slots
+            }
+        }
+    }
+    """
+    import math
+    from datetime import datetime, timezone
+
+    # Current time in UTC for checking promotion expiration
+    now = datetime.now(timezone.utc)
+
+    city_stats = {}
+    state_stats = {}
+
+    for item in listings_data:
+        city_id = item.get("city_id")
+        state_id = item.get("state_id")
+        is_featured = bool(item.get("is_featured"))
+        is_referral_promotion = bool(item.get("is_referral_promotion"))
+        
+        # Check if referral promotion is active (expires_at > now)
+        expires_at_str = item.get("referral_promotion_expires_at")
+        is_referral_active = False
+        if is_referral_promotion and expires_at_str:
+            try:
+                # Parse ISO timestamp, e.g. "2026-07-29T18:54:14+00:00" or with Z
+                clean_ts = expires_at_str.replace("Z", "+00:00")
+                expires_at = datetime.fromisoformat(clean_ts)
+                if expires_at > now:
+                    is_referral_active = True
+            except Exception:
+                is_referral_active = False
+
+        if city_id:
+            if city_id not in city_stats:
+                city_stats[city_id] = {"N": 0, "P": 0, "R": 0}
+            city_stats[city_id]["N"] += 1
+            if is_featured:
+                city_stats[city_id]["P"] += 1
+            if is_referral_active:
+                city_stats[city_id]["R"] += 1
+        elif state_id:
+            # No-city State (city_id is None)
+            if state_id not in state_stats:
+                state_stats[state_id] = {"N": 0, "P": 0, "R": 0}
+            state_stats[state_id]["N"] += 1
+            if is_featured:
+                state_stats[state_id]["P"] += 1
+            if is_referral_active:
+                state_stats[state_id]["R"] += 1
+
+    def compute_limits(stats):
+        result = {}
+        for loc_id, s in stats.items():
+            N = s["N"]
+            P = s["P"]
+            R = s["R"]
+            
+            # Tiered Step Function for Limit (L)
+            if N < 5:
+                L = 1
+            elif N <= 50:
+                L = math.ceil(0.1 * N)
+                if L < 1:
+                    L = 1
+            else:
+                L = 8
+                
+            # Remaining Free Slots = max(0, (L * 2) - ((P * 2) + R))
+            remaining_free_slots = max(0, (L * 2) - ((P * 2) + R))
+            
+            result[loc_id] = {
+                "N": N,
+                "P": P,
+                "R": R,
+                "L": L,
+                "remaining_free_slots": remaining_free_slots
+            }
+        return result
+
+    return {
+        "city": compute_limits(city_stats),
+        "state": compute_limits(state_stats)
+    }
+

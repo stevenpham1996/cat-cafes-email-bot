@@ -32,7 +32,7 @@
 
         .logo {
             font-size: 28px;
-            font-weight: 700;            
+            font-weight: 700;
             color: #ffffff;
             letter-spacing: -0.5px;
             margin-bottom: 10px;
@@ -333,23 +333,22 @@
                 Cat Cafe Circle
             </div>
             <!-- Tagline -->
-            <div class="tagline">De grootste gids voor Cat Cafés ter wereld</div>
+            <div class="tagline">De grootste kattencafégids ter wereld</div>
         </div>
 
         <div class="content">
-            <div class="greeting">Hallo {{ title }},</div>
+            <div class="greeting">Beste {{ title }},</div>
 
             <p class="intro">
-                We zijn verheugd te delen dat uw café is geselecteerd voor <strong>Cat Cafe Circle</strong>,
-                onze vooraanstaande wereldwijde gids die kattenliefhebbers verbindt met cafés over de hele wereld.
+                met trots laten we u weten dat uw café is geselecteerd voor een vermelding op <strong>Cat Cafe Circle</strong>, onze toonaangevende wereldwijde gids die kattenliefhebbers verbindt met kattencafés over de hele wereld.
             </p>
 
             <p class="caveat">
-                Wij willen u verzekeren dat alle informatie die voor uw cafévermelding is gebruikt, zorgvuldig en uitsluitend is verkregen via openbaar toegankelijke en officiële kanalen, om nauwkeurigheid en respect voor uw bedrijf te waarborgen.
+                We willen u ervan verzekeren dat alle informatie die voor uw vermelding is gebruikt, zorgvuldig & uitsluitend is verzameld uit openbare en officiële bronnen, met het grootste respect voor uw onderneming.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-text">Bekijk uw cafévermelding</a>
+                <a href="{{ listing_url }}" class="cta-text">Bekijk de vermelding van uw kattencafé</a>
             </div>
 
 
@@ -370,44 +369,44 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">Claim uw vermelding om premiumfuncties te ontgrendelen:</div>
+                    <div class="benefits-title">Claim uw vermelding en ontgrendel premium functies:</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Prioriteitsplaatsing:</strong> Kom hoger in de zoekresultaten en trek meer bezoekers aan
+                        <strong>Prioritaire plaatsing:</strong> Word hoger weergegeven in de zoekresultaten en trek meer bezoekers
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Volledige aanpassing:</strong> Update contactgegevens, foto's, prijzen, adoptiebeleid (indien van toepassing) en voorzieningen op elk moment
+                        <strong>Volledige personalisatie:</strong> Werk de contactgegevens, afbeeldingen, prijzen, het adoptiebeleid (indien van toepassing) en de voorzieningen van uw café op elk moment bij
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Betrek uw community:</strong> Reageer op recensies en kom in contact met potentiële bezoekers
+                        <strong>Interactie met uw community:</strong> Reageer op beoordelingen en kom in contact met potentiële bezoekers
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Promotietools:</strong> Krijg toegang tot speciale promotiefuncties om uw publiek te laten groeien en de zichtbaarheid te vergroten
+                        <strong>Promotietools:</strong> Krijg toegang tot speciale promotiefuncties om uw bereik te vergroten en uw zichtbaarheid te stimuleren
                     </div>
                 </div>
             </div>
 
             {% include 'listing_card.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Uw geclaimde café krijgt een "Geverifieerd"-badge en krijgt voorrang in de resultaten.
+                Uw geclaimde café krijgt een "Geverifieerd"-badge en wordt met prioriteit getoond in de zoekresultaten.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">Claim uw café nu</a>
+                <a href="{{ listing_url }}" class="cta-button">Claim uw kattencafé nu</a>
             </div>
 
             <div class="benefits">
@@ -432,14 +431,31 @@
                 <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                         Wij geloven in samenwerkingen. Als warm welkom willen we graag beginnen met een eenvoudige uitwisseling: voeg een backlink naar ons toe en we zullen <strong>u één maand gratis promoten</strong>.
+                        Wij geloven in samenwerking. Als warm welkom beginnen we graag met een eenvoudige uitwisseling: plaats een link naar ons en we zullen <strong>uw café een maand lang volledig gratis promoten</strong>.
                     </p>
                 </div>
+
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Nog {{ max_free_slots }} gratis promotieplek beschikbaar in {{ location_name }}
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Nog {{ max_free_slots }} gratis promotieplekken beschikbaar in {{ location_name }}
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Vanwege de grote lokale vraag zijn de gratis promoties in {{ location_name }} beperkt.
+                    </p>
+                </div>
+                {% endif %}
 
                 <!-- Premium Benefits -->
                 <h3
                     style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                    Premiumvoordelen:
+                    Premium voordelen:
                 </h3>
                 <div style="margin-top: 10px;">
                     <!-- Benefit 1: Top Position with Badge -->
@@ -450,13 +466,13 @@
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Toppositie met speciale badge</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Altijd bovenaan de zoekresultaten met een speciale <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Spotlight"</strong>-badge die opvalt.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Top
+                                positie met speciale badge</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Altijd bovenaan de zoekresultaten met een opvallende, speciale <strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"In de schijnwerpers"</strong>-badge.</div>
                         </div>
                     </div>
 
-                    <!-- Benefit 2: Blog- & e-mailaanbevelingen -->
+                    <!-- Benefit 2: Aanbevelingen in blogs & e-mails -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -464,8 +480,9 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Blog- & e-mailaanbevelingen</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Vaak uitgelicht in onze <strong>dagelijkse blogposts</strong> en <strong>wekelijkse nieuwsbrieven</strong> die naar duizenden kattenliefhebbers worden gestuurd.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Aanbevelingen
+                                in blogs & e-mails</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Regelmatig uitgelicht in onze <strong>dagelijkse blogberichten</strong> en <strong>wekelijkse nieuwsbrieven</strong> die naar duizenden kattenliefhebbers worden verzonden.</div>
                         </div>
                     </div>
 
@@ -479,7 +496,7 @@
                     style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
                     <h3
                         style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        Hoe gepromoot te worden in 2 simpele stappen:
+                        Word gepromoot in 2 eenvoudige stappen:
                     </h3>
 
                     <!-- Step 1: Add Badge or Text -->
@@ -489,13 +506,13 @@
                             <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Geef ons een backlink</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Plaats een link naar ons</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                Steun ons groeiende netwerk door een backlink naar ons toe te voegen op een van uw pagina's.<br>
-                                <i>Als alternatief kunt u voor uw gemak uw header, footer of een andere webpagina decoreren met een van de volgende elementen:</i>
+                                Ondersteun ons groeiende netwerk door een link (backlink) naar ons op een van uw pagina's te plaatsen.<br>
+                                <i>Als alternatief kunt u voor uw gemak uw header, footer of een willekeurige webpagina verfraaien met een van de volgende opties:</i>
                             </div>
 
-                            <!-- Option 1: Badge -->
+                            <!-- Optie 1: Badge -->
                             <div
                                 style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
                                 <div
@@ -523,8 +540,9 @@
                                     <div
                                         style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ badge_html_code }}
-                                    </div>                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Selecteer en kopieer de bovenstaande code en plak deze in de HTML van uw website.</div>
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                        Kopieer de bovenstaande code en plak deze in de HTML van uw website.</div>
                                 </div>
                             </div>
 
@@ -534,7 +552,7 @@
                                 <div
                                     style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">📝</span>
-                                    Optie 2: Ankertekst
+                                    Optie 2: Tekstlink
                                 </div>
 
                                 <!-- Visual Preview -->
@@ -558,7 +576,7 @@
 {{ text_html_code }}
                                     </div>
                                     <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Selecteer en kopieer de bovenstaande code en plak deze in de HTML van uw website.</div>
+                                        Kopieer de bovenstaande code en plak deze in de HTML van uw website.</div>
                                 </div>
                             </div>
                         </div>
@@ -571,11 +589,9 @@
                             <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Geverifieerd en Gepromoot 🎉</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Link controleren & promotie starten 🎉</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Bezoek de volgende <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> op onze website om uw backlink naar ons snel te valideren en direct gepromoot te worden!
+                                Bezoek de volgende <a href="{{ referral_promotion_url }}" style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> op onze website om uw backlink snel te valideren en uw promotie direct te activeren!
                             </div>
                         </div>
                     </div>
@@ -585,10 +601,21 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Gepromote cafés krijgen een "Spotlight"-badge en verschijnen altijd bovenaan de resultaten.
+                Gepromote cafés krijgen een "In de schijnwerpers"-badge en verschijnen altijd bovenaan de zoekresultaten.
             </p>
 
-            <div class="signature">
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Vanwege de grote lokale vraag zijn momenteek alle {{ max_free_slots }} gratis promotieplekken in {{ location_name }} bezet.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Je kunt nog steeds de link plaatsen om op de wachtlijst te komen, of upgraden naar een betaalde promotie om direct je voordelen te claimen.
+                    </p>
+                </div>
+            {% endif %}
+
+                        <div class="signature">
                 <div>Met vriendelijke groet,</div>
                 <div class="signature-name">Cat Cafe Directory Team</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
@@ -600,7 +627,7 @@
             <div class="stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_studios_count }}</span>
-                    <span class="stat-label">Cafés vermeld</span>
+                    <span class="stat-label">Geregistreerde cafés</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_cities_count }}</span>
@@ -615,14 +642,14 @@
 
         <div class="footer">
             <p class="footer-text">
-                U ontvangt deze e-mail omdat uw café in onze openbare gids staat. We zetten ons in om een wereldwijde community op te bouwen om café-eigenaren te verbinden met kattenliefhebbers wereldwijd.
+                U ontvangt deze e-mail omdat uw café is opgenomen in onze openbare gids. We zetten ons in voor het opbouwen van een wereldwijde community om café-eigenaren te verbinden met kattenliefhebbers wereldwijd.
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">Over ons</a>
                 <span style="color: #d1d5db;">|</span>
                 <a href="https://catcafecircle.com/contact" class="footer-link">Contact</a>
                 <span style="color: #d1d5db;">|</span>
-                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">Uitschrijven</a>
+                <a href="mailto:directorynexus@gmail.com?subject=Afmelden" class="footer-link">Afmelden</a>
             </div>
             <p class="footer-text" style="font-size: 12px;">
                 © 2026 CatCafeCircle.com. Alle rechten voorbehouden.

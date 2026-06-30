@@ -439,6 +439,23 @@
                     </p>
                 </div>
 
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> {{ max_free_slots }} Promotion Left in {{ location_name }}
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> {{ max_free_slots }} Promotions Left in {{ location_name }}
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Due to high local demand, free promotions are limited in {{ location_name }}.
+                    </p>
+                </div>
+                {% endif %}
+
                 <!-- Premium Benefits -->
                 <h3
                     style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
@@ -597,7 +614,18 @@
                 Promoted cafe will have a "Spotlight" badge and always appear at the top of listing results.
             </p>
 
-            <div class="signature">
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Due to high local demand, all <strong>{{ max_free_slots }}</strong> free promotion slots are currently occupied.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        You can still set up your backlink to join the waitlist, or upgrade to a paid promotion to guarantee your benefits.
+                    </p>
+                </div>
+            {% endif %}
+
+                        <div class="signature">
                 <div>Warm regards,</div>
                 <div class="signature-name">Cat Cafe Directory Team</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">

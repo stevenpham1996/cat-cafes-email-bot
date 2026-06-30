@@ -8,7 +8,14 @@ import re
 import requests
 from dotenv import load_dotenv
 
-from src.db_client import fetch_listings, fetch_preview_listings, get_platform_stats, resolve_country_ids
+from src.db_client import (
+    fetch_listings,
+    fetch_preview_listings,
+    get_platform_stats,
+    resolve_country_ids,
+    fetch_approved_listings_for_cache,
+    calculate_capacity_limits_cache
+)
 from src.url_constructor import construct_listing_url
 from src.email_sender import send_email, render_email_html, load_dashboard_translations
 from src.email_logger import log_email_attempt
@@ -384,6 +391,16 @@ def main():
             listings = [l for l in listings if str(l.get("id")) not in processed_ids]
             print(f"Filtered down to {len(listings)} listings (removed {len(processed_ids)} processed).")
 
+    # Build regional capacity limits cache
+    print("Building regional capacity limits cache...")
+    try:
+        approved_listings = fetch_approved_listings_for_cache()
+        capacity_cache = calculate_capacity_limits_cache(approved_listings)
+        print(f"Capacity cache built successfully (Cities: {len(capacity_cache['city'])}, States: {len(capacity_cache['state'])}).")
+    except Exception as e:
+        print(f"Error building capacity cache: {e}. Using empty cache.")
+        capacity_cache = {"city": {}, "state": {}}
+
     # Fetch Platform Stats
     if is_dry_run:
         print("--- DRY RUN: Using mock platform stats ---")
@@ -469,6 +486,31 @@ def main():
             full_url = f"{domain}{url}"
             referral_promotion_url = f"{domain}/{target_lang}/referral-promotion/{listing_id}"
 
+            # Resolve location name and capacity limits from cache
+            location_name = None
+            max_free_slots = None
+            remaining_free_slots = None
+
+            city_data = listing.get("cities")
+            state_data = listing.get("states")
+
+            if city_data and isinstance(city_data, dict):
+                city_id = city_data.get("id")
+                location_name = city_data.get("name")
+                if city_id and capacity_cache:
+                    stats = capacity_cache.get("city", {}).get(city_id)
+                    if stats:
+                        max_free_slots = stats["L"] * 2
+                        remaining_free_slots = stats["remaining_free_slots"]
+            elif state_data and isinstance(state_data, dict):
+                state_id = state_data.get("id")
+                location_name = state_data.get("name")
+                if state_id and capacity_cache:
+                    stats = capacity_cache.get("state", {}).get(state_id)
+                    if stats:
+                        max_free_slots = stats["L"] * 2
+                        remaining_free_slots = stats["remaining_free_slots"]
+
             # 4. Prepare Email Context
             # Logic for "Menu starts from..."
             starting_price = extract_starting_price(listing.get("price_range"))
@@ -490,7 +532,10 @@ def main():
                 "cafe_atmosphere": (listing.get("filters") or {}).get("visitor_experience", {}).get("atmosphere", []),
                 "badge_html_code": get_badge_html_code(full_url, template_dir=template_dir),
                 "text_html_code": get_text_link_html_code(full_url, template_dir=template_dir),
-                "menu_starting_price_html": menu_starting_price_html
+                "menu_starting_price_html": menu_starting_price_html,
+                "location_name": location_name,
+                "max_free_slots": max_free_slots,
+                "remaining_free_slots": remaining_free_slots
             }
             # Add platform stats to context
             context.update(platform_stats)

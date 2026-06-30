@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
             background-color: #f5f5f5;
@@ -103,30 +103,33 @@
         }
 
         .cta-text {
+            /* Removed padding and border-radius as they conflict with text-only styling */
             background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent;
-            text-decoration: none;
+            color: transparent; /* Makes the text color transparent to show the background clip */
+            text-decoration: none; /* Remove default underline */
             font-weight: 600;
             font-size: 18px;
             transition: transform 0.2s;
-            display: inline-block;
-            position: relative;
+            display: inline-block; /* Allows transform to work */
+            position: relative; /* For custom underline */
         }
 
         .cta-text::after {
             content: '';
             position: absolute;
             left: 0;
-            bottom: -2px;
+            bottom: -2px; /* Adjust position of the underline */
             width: 100%;
-            height: 2px;
-            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            height: 2px; /* Thickness of the underline */
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
+            /* Underline is now always present by default */
         }
 
         .cta-text:hover {
             transform: translateY(-2px);
+            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
         }
 
         .cta-button {
@@ -288,6 +291,7 @@
             }
         }
 
+        /* Listing Card Styles */
         .listing-card {
             background-color: #ffffff;
             border-radius: 8px;
@@ -319,31 +323,34 @@
 <body>
     <div class="email-wrapper">
         <div class="header">
+            <!-- Logo Image - Centered on top -->
             <div style="text-align: center; margin-bottom: 10px;">
                 <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
                     style="height: 85px; display: inline-block;">
             </div>
+            <!-- Brand Name -->
             <div class="logo" style="margin-bottom: 10px;">
                 Cat Cafe Circle
             </div>
+            <!-- Tagline -->
             <div class="tagline">세계 최대의 고양이 카페 디렉토리</div>
         </div>
 
         <div class="content">
-            <div class="greeting">{{ title }}님 안녕하세요,</div>
+            <div class="greeting">{{ title }} 대표님,</div>
 
             <p class="intro">
-                귀하의 카페가 <strong>Cat Cafe Circle</strong>에 등록되게 되어 기쁘게 생각합니다.
-                전 세계 고양이 애호가들과 카페를 연결하는 저희의 프리미엄 글로벌 디렉토리입니다.
+                귀하의 카페가 전 세계 고양이 애호가와 고양이 카페를 연결하는 글로벌 포탈 <strong>Cat Cafe Circle</strong>의 추천 목록에 선정되었음을 알려드립니다.
             </p>
 
             <p class="caveat">
-                카페 리스팅에 사용된 모든 정보는 공개적으로 이용 가능한 공식 채널에서만 신중하게 수집되었으며, 정확성과 귀하의 비즈니스에 대한 존중을 보장합니다.
+                참고로 본 레이아웃에 등록된 카페의 모든 정보는 공개적으로 접근 가능한 공식 채널에서만 신중하게 수집되었으며, 귀사의 비즈니스를 존중하고 정보의 정확성을 기하기 위해 최선을 다했습니다.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-text">귀하의 고양이 카페 리스팅 보기</a>
+                <a href="{{ listing_url }}" class="cta-text">고양이 카페 등록 정보 확인하기</a>
             </div>
+
 
             <div class="benefits">
                 <div class="h2">
@@ -362,45 +369,46 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">리스팅을 신청하여 프리미엄 기능 잠금 해제:</div>
+                    <div class="benefits-title">소유주 인증을 완료하고 프리미엄 기능을 언록하세요:</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>우선 배치:</strong> 검색 결과에서 더 높은 순위에 표시되어 더 많은 방문자를 유치
+                        <strong>최우선 노출:</strong> 검색 결과 상단에 노출되어 더 많은 방문자를 유치할 수 있습니다.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>완전한 커스터마이징:</strong> 카페 연락처 세부 정보, 이미지, 가격, 입양 정책(해당하는 경우), 편의시설을 언제든지 업데이트
+                        <strong>자유로운 정보 수정:</strong> 연락처, 사진, 이용 요금, 입양 정책(해당하는 경우), 편의시설 정보를 언제든지 수정할 수 있습니다.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>커뮤니티 참여:</strong> 리뷰에 응답하고 잠재적 방문자들과 연결
+                        <strong>고객과의 소통:</strong> 리뷰에 답글을 달고 잠재 고객들과 직접 소통해보세요.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>프로모션 도구:</strong> 특별한 프로모션 기능에 액세스하여 오디언스를 늘리고 가시성을 향상
+                        <strong>프로모션 도구:</strong> 인지도를 높이고 방문자를 늘릴 수 있는 특별 프로모션 기능을 제공합니다.
                     </div>
                 </div>
             </div>
 
             {% include 'listing_card.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                신청된 카페는 "인증됨" 배지를 받고 리스팅 결과에서 우선 순위를 갖습니다.
+                소유주 인증이 완료된 카페는 "인증됨" 배지를 획득하며 검색 결과에서 우선 노출됩니다.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">지금 고양이 카페 신청하기</a>
+                <a href="{{ listing_url }}" class="cta-button">지금 소유주 인증 신청하기</a>
             </div>
+
             <div class="benefits">
                 <div class="h2" style="margin-top: 10px;">
                     <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
@@ -418,28 +426,53 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">함께 성장해요:</div>
+                    <div class="benefits-title">서로 돕고 함께 성장해요:</div>
                 </div>
+                <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        저희는 협력을 소중히 여깁니다. 환영의 의미로 간단한 교환부터 시작하고 싶습니다. 저희 쪽으로 백링크를 추가해 주시면, <strong>한 달 동안 무료로 홍보해 드리겠습니다</strong>.
+                        저희는 상생 협력을 소중히 여깁니다. 환영의 의미로 간단한 제안을 드리고자 합니다. 귀사 웹사이트에 저희 사이트 링크를 추가해 주시면, <strong>한 달간 귀사를 무료로 특별 홍보(광고 영역 노출)해 드리겠습니다</strong>.
                     </p>
                 </div>
 
-                <h3 style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> 【마감 임박】{{ location_name }} 지역 무료 프로모션 혜택: {{ max_free_slots }}개 남음
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> {{ location_name }} 지역 무료 프로모션 혜택: {{ max_free_slots }}개 남음
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        성원에 힘입어 {{ location_name }} 지역의 무료 프로모션 혜택 수량은 한정되어 있습니다.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Premium Benefits -->
+                <h3
+                    style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
                     프리미엄 혜택:
                 </h3>
                 <div style="margin-top: 10px;">
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);">
+                    <!-- Benefit 1: Top Position with Badge -->
+                    <div
+                        style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);">
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">특별 배지가 있는 최상위 위치</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">검색 결과 최상단에 항상 나열되며 눈에 띄는 특별한 <strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"스포트라이트"</strong> 배지가 표시됩니다.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">특별
+                                배지와 함께 상단 노출</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">검색 결과 가장 최상단에 항상 노출되며, 시선을 사로잡는 전용 <strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"스포트라이트"</strong> 배지가 부여됩니다.</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 2: 블로그 및 뉴스레터 추천 -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -447,92 +480,118 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">블로그 & 이메일 추천</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">수천 명의 고양이 애호가들에게 발송되는 <strong>일간 블로그 포스트</strong>와 <strong>주간 뉴스레터</strong>에 자주 소개됩니다.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">블로그
+                                및 뉴스레터 추천</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">수천 명의 고양이 애호가들이 구독하는 <strong>공식 블로그의 일일 게시물</strong> 및 <strong>주간 뉴스레터</strong>에 추천 카페로 자주 소개됩니다.</div>
                         </div>
                     </div>
 
                     <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
+
                 </div>
 
-                <div style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
-                    <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        2가지 간단한 단계로 승격하는 방법:
+                <!-- Action Steps Guide -->
+                <div
+                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                    <h3
+                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                        간단한 2단계로 홍보 시작하기:
                     </h3>
 
+                    <!-- Step 1: Add Badge or Text -->
                     <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
                             <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">저희에게 백링크를 남겨주세요</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">저희 사이트 링크 추가하기</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                귀하의 페이지 중 하나에 저희를 가리키는 백링크를 추가하여 성장하는 저희 네트워크를 지원해 주세요.<br>
-                                <i>또는 편의를 위해 헤더, 푸터 또는 웹페이지를 다음 중 하나로 꾸밀 수도 있습니다:</i>
+                                귀사 웹사이트에 저희 사이트로 연결되는 링크(백링크)를 추가하여 성장하는 네트워크를 지원해 주세요.<br>
+                                <i>또는 편리하게 헤더, 푸터, 혹은 원하는 페이지에 아래 배지나 텍스트 링크 중 하나를 삽입하셔도 좋습니다:</i>
                             </div>
 
-                            <div style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
-                                <div style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                            <!-- 옵션 1: 배지 -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">🏷️</span>
                                     옵션 1: 배지
                                 </div>
 
-                                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
-                                    <div style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
                                         미리보기:</div>
                                     <div style="text-align: center;">
                                         {% include 'catcafe_referral_badge.html' %}
                                     </div>
                                 </div>
 
+                                <!-- HTML Code Section -->
                                 <div>
-                                    <div style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 이 HTML 코드를 복사:</div>
-                                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 HTML 코드 복사:</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ badge_html_code }}
-                                    </div>                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        위의 코드를 선택하여 복사한 다음 귀하의 웹사이트 HTML에 붙여넣으세요.</div>
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                        위 코드를 선택하여 복사한 후, 귀사 웹사이트의 HTML 코드에 붙여넣으세요.</div>
                                 </div>
                             </div>
 
-                            <div style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
-                                <div style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                            <!-- Option 2: Text Link -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">📝</span>
-                                    옵션 2: 앵커 텍스트
+                                    옵션 2: 텍스트 링크
                                 </div>
 
-                                <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
-                                    <div style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
                                         미리보기:</div>
                                     <div style="text-align: center;">
                                         {% include 'catcafe_referral_text.html' %}
                                     </div>
                                 </div>
 
+                                <!-- HTML Code Section -->
                                 <div>
-                                    <div style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 이 HTML 코드를 복사:</div>
-                                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 HTML 코드 복사:</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ text_html_code }}
                                     </div>
                                     <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        위의 코드를 선택하여 복사한 다음 귀하의 웹사이트 HTML에 붙여넣으세요.</div>
+                                        위 코드를 선택하여 복사한 후, 귀사 웹사이트의 HTML 코드에 붙여넣으세요.</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Step 2: Email Us -->
                     <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
                             <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">확인하고 승격받기 🎉</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">링크 확인 후 홍보 시작하기 🎉</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                저희 웹사이트의 다음 <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">링크<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a>를 방문하여 저희로의 백링크를 빠르게 검증하고 즉시 승격받으세요!
+                                링크를 설치하신 후, 저희 웹사이트의 <a href="{{ referral_promotion_url }}" style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">확인 페이지<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a>에 접속하시면 링크가 빠르게 검증되며 즉시 무료 홍보가 시작됩니다!
                             </div>
                         </div>
                     </div>
@@ -542,11 +601,22 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                승격된 카페는 "스포트라이트" 배지를 받고 항상 리스팅 결과 최상단에 나타납니다.
+                홍보 중인 카페는 "스포트라이트" 배지가 표시되며 항상 검색 결과 최상단에 노출됩니다.
             </p>
 
-            <div class="signature">
-                <div>따뜻한 안부,</div>
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        현재 {{ location_name }} 지역의 무료 프로모션 혜택(총 {{ max_free_slots }}개)은 모두 마감되었습니다.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        링크를 설치하여 대기자 명단에 등록하시거나, 유료 프로모션으로 업그레이드하여 즉시 프리미엄 혜택을 이용하실 수도 있습니다.
+                    </p>
+                </div>
+            {% endif %}
+
+                        <div class="signature">
+                <div>감사합니다.</div>
                 <div class="signature-name">Cat Cafe Directory Team</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
                     <a href="https://catcafecircle.com"
@@ -572,15 +642,14 @@
 
         <div class="footer">
             <p class="footer-text">
-                귀하의 카페가 저희 공개 디렉토리에 등록되어 있기 때문에 이 이메일을 받고 계십니다.
-                저희는 전 세계 카페 소유자들과 고양이 애호가들을 연결하는 글로벌 커뮤니티 구축에 전념하고 있습니다.
+                이 이메일은 귀하의 카페가 저희 공개 디렉토리에 등록되어 발송되었습니다. 저희는 전 세계 카페 운영자들과 고양이 애호가들을 연결하는 글로벌 커뮤니티를 만들기 위해 노력하고 있습니다.
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">회사 소개</a>
                 <span style="color: #d1d5db;">|</span>
-                <a href="https://catcafecircle.com/contact" class="footer-link">연락처</a>
+                <a href="https://catcafecircle.com/contact" class="footer-link">문의하기</a>
                 <span style="color: #d1d5db;">|</span>
-                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">구독 취소</a>
+                <a href="mailto:directorynexus@gmail.com?subject=수신 거부" class="footer-link">수신 거부</a>
             </div>
             <p class="footer-text" style="font-size: 12px;">
                 © 2026 CatCafeCircle.com. All rights reserved.

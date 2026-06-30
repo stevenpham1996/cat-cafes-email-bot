@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
             background-color: #f5f5f5;
@@ -77,6 +77,7 @@
             border-left: 4px solid #248f84;
             margin-left: 10px;
         }
+
         .highlight-box {
             background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             border-left: 4px solid #248f84;
@@ -102,30 +103,33 @@
         }
 
         .cta-text {
+            /* Removed padding and border-radius as they conflict with text-only styling */
             background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent;
-            text-decoration: none;
+            color: transparent; /* Makes the text color transparent to show the background clip */
+            text-decoration: none; /* Remove default underline */
             font-weight: 600;
             font-size: 18px;
             transition: transform 0.2s;
-            display: inline-block;
-            position: relative;
+            display: inline-block; /* Allows transform to work */
+            position: relative; /* For custom underline */
         }
 
         .cta-text::after {
             content: '';
             position: absolute;
             left: 0;
-            bottom: -2px;
+            bottom: -2px; /* Adjust position of the underline */
             width: 100%;
-            height: 2px;
-            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            height: 2px; /* Thickness of the underline */
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
+            /* Underline is now always present by default */
         }
 
         .cta-text:hover {
             transform: translateY(-2px);
+            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
         }
 
         .cta-button {
@@ -287,6 +291,7 @@
             }
         }
 
+        /* Listing Card Styles */
         .listing-card {
             background-color: #ffffff;
             border-radius: 8px;
@@ -318,31 +323,34 @@
 <body>
     <div class="email-wrapper">
         <div class="header">
+            <!-- Logo Image - Centered on top -->
             <div style="text-align: center; margin-bottom: 10px;">
                 <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
                     style="height: 85px; display: inline-block;">
             </div>
+            <!-- Brand Name -->
             <div class="logo" style="margin-bottom: 10px;">
                 Cat Cafe Circle
             </div>
+            <!-- Tagline -->
             <div class="tagline">世界最大の猫カフェディレクトリ</div>
         </div>
 
         <div class="content">
-            <div class="greeting">{{ title }}様</div>
+            <div class="greeting">{{ title }} 様</div>
 
             <p class="intro">
-                この度、あなたのカフェが<strong>Cat Cafe Circle</strong>に掲載されることになりました。
-                世界中の猫愛好家とカフェを繋ぐ、私たちのプレミアムグローバルディレクトリです。
+                貴店が、世界中の猫好きと猫カフェをつなぐ世界最大級のポータルサイト<strong>Cat Cafe Circle</strong>の掲載店舗に選出されましたのでお知らせいたします。
             </p>
 
             <p class="caveat">
-                カフェリスティングに使用されたすべての情報は、公開されている公式チャンネルからのみ慎重に収集されており、正確性とあなたのビジネスへの敬意を確保しております。
+                なお、掲載されている情報はすべて、貴店の公式情報および一般に公開されている信頼性の高いソースから細心の注意を払って収集したものであり、正確かつ貴店のブランドに配慮した内容となっておりますのでご安心ください。
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-text">あなたの猫カフェリスティングを見る</a>
+                <a href="{{ listing_url }}" class="cta-text">掲載ページを確認する</a>
             </div>
+
 
             <div class="benefits">
                 <div class="h2">
@@ -361,45 +369,46 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">リスティングを申請してプレミアム機能をアンロック：</div>
+                    <div class="benefits-title">オーナー登録を行ってプレミアム機能をアンロックする：</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>優先表示：</strong> 検索結果で上位に表示され、より多くの訪問者を引き付けます
+                        <strong>優先表示：</strong> 検索結果で上位に表示され、より多くのアクセスと来店客を獲得できます。
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>完全カスタマイズ：</strong> カフェの連絡先詳細、画像、料金、譲渡ポリシー（該当する場合）、アメニティをいつでも更新
+                        <strong>情報の完全カスタマイズ：</strong> 連絡先、写真、料金、譲渡ポリシー（実施している場合）、設備情報などをいつでも自由に更新可能。
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>コミュニティとの交流：</strong> レビューに返信し、潜在的な訪問者とつながる
+                        <strong>コミュニティとの交流：</strong> クチコミへの返信機能を通じて、見込み客と直接つながることができます。
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>プロモーションツール：</strong> 特別なプロモーション機能にアクセスして、オーディエンスを拡大し、視認性を向上
+                        <strong>プロモーションツール：</strong> 露出を高めてアクセスを伸ばすための、様々な限定プロモーション機能を利用可能。
                     </div>
                 </div>
             </div>
 
             {% include 'listing_card.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                申請されたカフェには「認証済み」バッジが付き、リスティング結果で優先表示されます。
+                オーナー登録済みの店舗には「認証済み」バッジが付与され、検索結果で優先的に表示されます。
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">今すぐ猫カフェを申請する</a>
+                <a href="{{ listing_url }}" class="cta-button">今すぐオーナー登録（無料）を行う</a>
             </div>
+
             <div class="benefits">
                 <div class="h2" style="margin-top: 10px;">
                     <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
@@ -417,28 +426,52 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">一緒に成長しましょう：</div>
+                    <div class="benefits-title">相互リンクで無料プロモーション：</div>
                 </div>
+                <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        私たちはコラボレーションを大切にしています。歓迎の印として、シンプルな交換から始めたいと考えています。当サイトへのバックリンクを追加していただければ、<strong>1ヶ月間無料でプロモーションさせていただきます</strong>。
+                        私たちは地域のお店との協力関係を大切にしています。今回、オープン記念の歓迎特典として簡単なご提案がございます。貴店のウェブサイトに当サイトへのリンクを設置していただくだけで、<strong>1ヶ月間無料で貴店を特別プロモーション（広告枠掲載）させていただきます</strong>。
                     </p>
                 </div>
 
-                <h3 style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> 【残りわずか】{{ location_name }}での無料プロモーション枠：残り {{ max_free_slots }} 枠
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> {{ location_name }}での無料プロモーション枠：残り {{ max_free_slots }} 枠
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        ご好評につき、{{ location_name }}での無料プロモーション枠には限りがございます。
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Premium Benefits -->
+                <h3
+                    style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
                     プレミアム特典：
                 </h3>
                 <div style="margin-top: 10px;">
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);">
+                    <!-- Benefit 1: Top Position with Badge -->
+                    <div
+                        style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);">
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">特別バッジ付きトップポジション</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">検索結果の最上位に常に表示され、目立つ特別な<strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">「スポットライト」</strong>バッジが付きます。</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">特別バッジ付きの最上位表示</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">検索結果の最上部に常に表示され、他の店舗より目立つ特別な<strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">「スポットライト」</strong>バッジが付与されます。</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 2: ブログやメルマガでのご紹介 -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -446,73 +479,98 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">ブログ＆メール推薦</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">数千人の猫愛好家に送信される<strong>日刊ブログ投稿</strong>と<strong>週刊ニュースレター</strong>で頻繁に紹介されます。</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">ブログやメルマガでのご紹介</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">数千人の猫好きが購読する<strong>公式ブログのデイリー記事</strong>や<strong>週刊ニュースレター</strong>の中で、おすすめ店舗として頻繁に紹介されます。</div>
                         </div>
                     </div>
 
                     <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
+
                 </div>
 
-                <div style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
-                    <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        2つの簡単なステップで昇格する方法：
+                <!-- Action Steps Guide -->
+                <div
+                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                    <h3
+                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                        わずか2ステップでプロモーションを開始：
                     </h3>
 
+                    <!-- Step 1: Add Badge or Text -->
                     <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
                             <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">バックリンクをお願いします</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">当サイトへのリンクを設置する</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                貴店のページに当サイトへのバックリンクを追加して、成長中のネットワークを支援してください。<br>
-                                <i>または、手軽な方法として、ヘッダー、フッター、または任意のウェブページに以下のいずれかを掲載することもできます：</i>
+                                貴店のいずれかのページに、当サイトへのバックリンクを追加してご支援をお願いいたします。<br>
+                                <i>または、簡単な方法として、ヘッダーやフッター、任意のページに以下のいずれかの紹介リンクを設置していただくことも可能です：</i>
                             </div>
 
-                            <div style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
-                                <div style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                            <!-- オプション1：バッジ -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">🏷️</span>
                                     オプション1：バッジ
                                 </div>
 
-                                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
-                                    <div style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
                                         プレビュー：</div>
                                     <div style="text-align: center;">
                                         {% include 'catcafe_referral_badge.html' %}
                                     </div>
                                 </div>
 
+                                <!-- HTML Code Section -->
                                 <div>
-                                    <div style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 このHTMLコードをコピー：</div>
-                                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 HTMLコードをコピー：</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ badge_html_code }}
-                                    </div>                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
                                         上記のコードを選択してコピーし、あなたのウェブサイトのHTMLに貼り付けてください。</div>
                                 </div>
                             </div>
 
-                            <div style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
-                                <div style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                            <!-- Option 2: Text Link -->
+                            <div
+                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                                <div
+                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">📝</span>
-                                    オプション2：アンカーテキスト
+                                    オプション2：テキストリンク
                                 </div>
 
-                                <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
-                                    <div style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <!-- Visual Preview -->
+                                <div
+                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                    <div
+                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
                                         プレビュー：</div>
                                     <div style="text-align: center;">
                                         {% include 'catcafe_referral_text.html' %}
                                     </div>
                                 </div>
 
+                                <!-- HTML Code Section -->
                                 <div>
-                                    <div style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 このHTMLコードをコピー：</div>
-                                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+                                    <div
+                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        📋 HTMLコードをコピー：</div>
+                                    <div
+                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ text_html_code }}
                                     </div>
                                     <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
@@ -522,16 +580,16 @@
                         </div>
                     </div>
 
+                    <!-- Step 2: Email Us -->
                     <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
+                        <div
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
                             <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">確認して昇格 🎉</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">リンクを確認してプロモーションを開始 🎉</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                私たちのウェブサイトの以下の<a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">リンク<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a>にアクセスして、私たちへのバックリンクを迅速に検証し、すぐに昇格してください！
+                                リンク設置後、当サイトのこちらの<a href="{{ referral_promotion_url }}" style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">確認ページ<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a>にアクセスしていただくと、自動でリンクが検証され、すぐに無料プロモーションが開始されます！
                             </div>
                         </div>
                     </div>
@@ -541,10 +599,21 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                昇格されたカフェには「スポットライト」バッジが付き、常にリスティング結果の最上位に表示されます。
+                プロモーション対象の店舗には「スポットライト」バッジが付き、常に検索結果の最上位に表示されます。
             </p>
 
-            <div class="signature">
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        現在、{{ location_name }}地域における無料プロモーション枠（全 {{ max_free_slots }} 枠）はすべて満席となっております。
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        リンクを設置してウェイトリストに登録していただくか、有料プランにアップグレードすることで、今すぐ特典をご利用いただくことも可能です。
+                    </p>
+                </div>
+            {% endif %}
+
+                        <div class="signature">
                 <div>心より、</div>
                 <div class="signature-name">Cat Cafe Directory Team</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
@@ -571,15 +640,14 @@
 
         <div class="footer">
             <p class="footer-text">
-                あなたのカフェが私たちの公開ディレクトリに掲載されているため、このメールを受信しています。
-                私たちは世界中のカフェオーナーと猫愛好家を繋ぐグローバルコミュニティの構築に取り組んでいます。
+                このメールは、当サイトの公開ディレクトリに貴店が掲載されているためにお送りしています。私たちは、世界中の猫カフェオーナー様と猫愛好家をつなぐグローバルなコミュニティ作りに取り組んでいます。
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">私たちについて</a>
                 <span style="color: #d1d5db;">|</span>
                 <a href="https://catcafecircle.com/contact" class="footer-link">お問い合わせ</a>
                 <span style="color: #d1d5db;">|</span>
-                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">配信停止</a>
+                <a href="mailto:directorynexus@gmail.com?subject=配信停止" class="footer-link">配信停止</a>
             </div>
             <p class="footer-text" style="font-size: 12px;">
                 © 2026 CatCafeCircle.com. All rights reserved.

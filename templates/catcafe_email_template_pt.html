@@ -333,23 +333,22 @@
                 Cat Cafe Circle
             </div>
             <!-- Tagline -->
-            <div class="tagline">O Maior Diretório de Cat Cafés do Mundo</div>
+            <div class="tagline">O maior diretório de cat cafés do mundo</div>
         </div>
 
         <div class="content">
             <div class="greeting">Olá {{ title }},</div>
 
             <p class="intro">
-                Temos o prazer de informar que o seu café foi selecionado para figurar no <strong>Cat Cafe Circle</strong>,
-                o nosso diretório global de excelência que liga amantes de gatos a cafés em todo o mundo.
+                temos o prazer de informar que o seu café foi selecionado para aparecer no <strong>Cat Cafe Circle</strong>, o nosso diretório global de referência que liga amantes de gatos a cafés em todo o mundo.
             </p>
 
             <p class="caveat">
-                Queremos assegurar-lhe que toda a informação utilizada para a listagem do seu café foi cuidadosamente obtida exclusivamente através de canais públicos e oficiais, garantindo a precisão e o respeito pelo seu negócio.
+                Queremos garantir-lhe que todas as informações utilizadas para listar o seu café foram recolhidas de forma cuidadosa e exclusiva a partir de fontes oficiais e de acesso público, garantindo o máximo respeito e exatidão para o seu negócio.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-text">Ver o Perfil do seu Cat Café</a>
+                <a href="{{ listing_url }}" class="cta-text">Ver a página do seu cat café</a>
             </div>
 
 
@@ -370,44 +369,44 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">Reivindique o seu Perfil para Desbloquear Funcionalidades Premium:</div>
+                    <div class="benefits-title">Reivindique a sua página para desbloquear funcionalidades premium:</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Destaque Prioritário:</strong> Apareça nos primeiros lugares dos resultados e atraia mais visitantes
+                        <strong>Destaque prioritário:</strong> Apareça no topo dos resultados de pesquisa e atraia mais visitantes.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Personalização Total:</strong> Atualize dados de contacto, imagens, preços, política de adoção (se aplicável) e comodidades a qualquer momento
+                        <strong>Personalização total:</strong> Atualize os dados de contacto, imagens, preços, política de adoção (se aplicável) e comodidades do seu café a qualquer momento.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Interaja com a sua Comunidade:</strong> Responda a avaliações e ligue-se a potenciais visitantes
+                        <strong>Interaja com a sua comunidade:</strong> Responda a avaliações e ligue-se diretamente a potenciais clientes.
                     </div>
                 </div>
 
                 <div class="benefit-item">
                     <div class="benefit-icon">✓</div>
                     <div class="benefit-text">
-                        <strong>Ferramentas Promocionais:</strong> Aceda a funcionalidades especiais de promoção para aumentar o seu público e visibilidade
+                        <strong>Ferramentas promocionais:</strong> Aceda a recursos de promoção exclusivos para aumentar o seu público e melhorar a sua visibilidade.
                     </div>
                 </div>
             </div>
 
             {% include 'listing_card.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                O seu café reivindicado terá um selo de "Verificado" e será priorizado nos resultados.
+                O seu café reivindicado terá um selo de "Verificado" e terá prioridade nos resultados de pesquisa.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">Reivindique o seu Cat Café Agora</a>
+                <a href="{{ listing_url }}" class="cta-button">Reivindicar o seu cat café agora</a>
             </div>
 
             <div class="benefits">
@@ -427,14 +426,31 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">Cresçamos juntos:</div>
+                    <div class="benefits-title">Vamos crescer juntos:</div>
                 </div>
                 <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        Acreditamos em colaborações. Como uma receção calorosa, gostaríamos de começar com uma troca simples: adicione um link de volta para nós e <strong>promoveremos o seu café com agrado por um mês, de forma gratuita</strong>.
+                        Acreditamos no poder das parcerias. Como boas-vindas, gostaríamos de começar com uma troca simples: adicione um link para o nosso site e, em troca, <strong>promoveremos o seu café durante um mês de forma totalmente gratuita</strong>.
                     </p>
                 </div>
+
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Resta {{ max_free_slots }} vaga de promoção em {{ location_name }}
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Restam {{ max_free_slots }} vagas de promoção em {{ location_name }}
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Devido à alta demanda local, as promoções gratuitas em {{ location_name }} são limitadas.
+                    </p>
+                </div>
+                {% endif %}
 
                 <!-- Premium Benefits -->
                 <h3
@@ -450,13 +466,13 @@
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Primeira Posição com Selo Especial</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Sempre listado no topo dos resultados de pesquisa com um selo especial de <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Destaque"</strong> que sobressai.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Posição
+                                de topo com selo especial</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Listado sempre no topo dos resultados de pesquisa com um selo exclusivo de <strong style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Destaque"</strong> que chama a atenção.</div>
                         </div>
                     </div>
 
-                    <!-- Benefit 2: Blog & Email Recommendations -->
+                    <!-- Benefit 2: Recomendações no blog e e-mails -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -464,13 +480,15 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Recomendações em Blog e E-mail</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Frequentemente destacado nos nossos <strong>artigos diários no blog</strong> e <strong>newsletters semanais</strong> enviadas a milhares de amantes de gatos.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Recomendações
+                                no blog e e-mails</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Destaque frequente nos nossos <strong>artigos diários do blog</strong> e <strong>newsletters semanais</strong> enviadas a milhares de amantes de gatos.</div>
                         </div>
                     </div>
 
                     <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
+
                 </div>
 
                 <!-- Action Steps Guide -->
@@ -478,7 +496,7 @@
                     style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
                     <h3
                         style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        Como ser Promovido em 2 Passos Simples:
+                        Consiga promoção em 2 passos simples:
                     </h3>
 
                     <!-- Step 1: Add Badge or Text -->
@@ -488,13 +506,13 @@
                             <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Dê-nos um backlink</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Adicione um link para o nosso site</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                Apoie nossa crescente rede adicionando um backlink referenciando-nos em uma de suas páginas.<br>
-                                <i>Alternativamente, por conveniência, você pode decorar seu cabeçalho, rodapé ou qualquer página da web com um dos seguintes itens:</i>
+                                Apoie a nossa rede em crescimento adicionando um link (backlink) para nós numa das suas páginas.<br>
+                                <i>Se preferir, para sua conveniência, pode decorar o seu cabeçalho, rodapé ou qualquer página do seu site com uma das seguintes opções:</i>
                             </div>
 
-                            <!-- Option 1: Badge -->
+                            <!-- Opção 1: Selo -->
                             <div
                                 style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
                                 <div
@@ -518,12 +536,13 @@
                                 <div>
                                     <div
                                         style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Copie este código HTML:</div>
+                                        📋 Copiar este código HTML:</div>
                                     <div
                                         style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ badge_html_code }}
-                                    </div>                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Selecione e copie o código acima e depois cole-o no HTML do seu website.</div>
+                                    </div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                        Copie o código acima e cole-o no HTML do seu site.</div>
                                 </div>
                             </div>
 
@@ -533,7 +552,7 @@
                                 <div
                                     style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 16px;">📝</span>
-                                    Opção 2: Texto de Âncora
+                                    Opção 2: Texto com link
                                 </div>
 
                                 <!-- Visual Preview -->
@@ -551,13 +570,13 @@
                                 <div>
                                     <div
                                         style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Copie este código HTML:</div>
+                                        📋 Copiar este código HTML:</div>
                                     <div
                                         style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
 {{ text_html_code }}
                                     </div>
                                     <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Selecione e copie o código acima e depois cole-o no HTML do seu website.</div>
+                                        Copie o código acima e cole-o no HTML do seu site.</div>
                                 </div>
                             </div>
                         </div>
@@ -566,15 +585,13 @@
                     <!-- Step 2: Email Us -->
                     <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
                         <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
                             <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verificar e ser Promovido 🎉</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verificar link e ativar promoção 🎉</div>
                             <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Visite o seguinte <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> no nosso website para validar rapidamente o seu backlink para nós e ser promovido imediatamente!
+                                Visite o seguinte <a href="{{ referral_promotion_url }}" style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> no nosso site para verificar rapidamente o seu backlink e ativar a sua promoção imediatamente!
                             </div>
                         </div>
                     </div>
@@ -584,11 +601,22 @@
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                O café promovido terá um selo de "Destaque" e aparecerá sempre no topo dos resultados.
+                Os cafés promovidos terão um selo de "Destaque" e aparecerão sempre no topo dos resultados de pesquisa.
             </p>
 
-            <div class="signature">
-                <div>Atenciosamente,</div>
+{% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Devido à alta demanda local, todas as {{ max_free_slots }} vagas de promoção gratuita em {{ location_name }} estão preenchidas no momento.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Você ainda pode adicionar o link para entrar na lista de espera ou fazer o upgrade para uma promoção paga para garantir seus benefícios.
+                    </p>
+                </div>
+            {% endif %}
+
+                        <div class="signature">
+                <div>Com os melhores cumprimentos,</div>
                 <div class="signature-name">Cat Cafe Directory Team</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
                     <a href="https://catcafecircle.com"
@@ -599,7 +627,7 @@
             <div class="stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_studios_count }}</span>
-                    <span class="stat-label">Cafés Listados</span>
+                    <span class="stat-label">Cafés registados</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_cities_count }}</span>
@@ -607,7 +635,7 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">{{ platform_active_users_count }}</span>
-                    <span class="stat-label">Utilizadores Ativos</span>
+                    <span class="stat-label">Utilizadores ativos</span>
                 </div>
             </div>
         </div>
@@ -617,11 +645,11 @@
                 Está a receber este e-mail porque o seu café está listado no nosso diretório público. Estamos empenhados em construir uma comunidade global para ligar proprietários de cafés a amantes de gatos em todo o mundo.
             </p>
             <div class="footer-links">
-                <a href="https://catcafecircle.com/about" class="footer-link">Sobre Nós</a>
+                <a href="https://catcafecircle.com/about" class="footer-link">Sobre nós</a>
                 <span style="color: #d1d5db;">|</span>
                 <a href="https://catcafecircle.com/contact" class="footer-link">Contacto</a>
                 <span style="color: #d1d5db;">|</span>
-                <a href="mailto:directorynexus@gmail.com?subject=Unsubscribe" class="footer-link">Cancelar subscrição</a>
+                <a href="mailto:directorynexus@gmail.com?subject=Cancelar subscrição" class="footer-link">Cancelar subscrição</a>
             </div>
             <p class="footer-text" style="font-size: 12px;">
                 © 2026 CatCafeCircle.com. Todos os direitos reservados.

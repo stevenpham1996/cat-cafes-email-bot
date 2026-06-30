@@ -222,6 +222,13 @@
             margin-top: 5px;
         }
 
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+
         .signature {
             margin-top: 25px;
             font-size: 15px;
@@ -312,30 +319,32 @@
 <body>
     <div class="email-wrapper">
         <div class="header">
+            <!-- Logo Image - Centered on top -->
             <div style="text-align: center; margin-bottom: 10px;">
                 <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
                     style="height: 85px; display: inline-block;">
             </div>
+            <!-- Brand Name -->
             <div class="logo" style="margin-bottom: 10px;">
                 Cat Cafe Circle
             </div>
-            <div class="tagline">Direktori Kafe Kucing Terbesar di Dunia</div>
+            <!-- Tagline -->
+            <div class="tagline">Direktori kafe kucing terbesar di dunia</div>
         </div>
 
         <div class="content">
             <div class="greeting">Halo {{ title }},</div>
 
             <p class="intro">
-                Kami dengan senang hati menyampaikan bahwa kafe Anda telah terpilih untuk ditampilkan di <strong>Cat Cafe Circle</strong>,
-                direktori global utama kami yang menghubungkan pecinta kucing dengan kafe-kafe di seluruh dunia.
+                Kami senang mengabarkan bahwa kafe Anda telah terdaftar di <strong>Cat Cafe Circle</strong> — direktori global utama kami yang menghubungkan para pecinta kucing dengan berbagai kafe kucing di seluruh dunia.
             </p>
 
             <p class="caveat">
-                Kami ingin meyakinkan Anda bahwa semua informasi yang digunakan untuk mendaftarkan kafe Anda bersumber secara eksklusif dan hati-hati dari saluran publik dan resmi, memastikan rasa hormat dan akurasi terhadap bisnis Anda.
+                Kami ingin memastikan bahwa seluruh informasi yang digunakan untuk profil kafe Anda dikumpulkan secara cermat dan hanya dari sumber publik resmi, guna menjamin keakuratan dan rasa hormat terhadap bisnis Anda.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">Lihat Kafe Kucing Anda</a>
+                <a href="{{ listing_url }}" class="cta-button">Lihat profil kafe kucing Anda</a>
             </div>
 
 
@@ -356,19 +365,39 @@
                             </g>
                         </g>
                     </svg>
-                    <div class="benefits-title">Mari Tumbuh Bersama:</div>
+                    <div class="benefits-title">Mari berkembang bersama:</div>
                 </div>
+                <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        Kami percaya pada kolaborasi. Sebagai sambutan hangat, kami ingin memulai dengan pertukaran sederhana: tambahkan backlink ke kami, kami akan dengan senang hati <strong>mempromosikan Anda selama satu bulan, gratis</strong>.
+                        Kami sangat percaya pada kolaborasi. Sebagai sambutan hangat, kami ingin menawarkan kerja sama sederhana: cukup pasang link situs kami di website Anda, dan sebagai imbalannya, <strong>kami akan mempromosikan kafe Anda di posisi premium selama satu bulan secara gratis</strong>.
                     </p>
                 </div>
 
+                {% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> 【Kuota Terbatas】Tersisa {{ max_free_slots }} slot promosi gratis di {{ location_name }}
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Sisa kuota promosi gratis di {{ location_name }}: {{ max_free_slots }} slot
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Karena tingginya permintaan dari kafe lokal, slot promosi gratis di {{ location_name }} sangat terbatas.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Premium Benefits -->
                 <h3
                     style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
                     Manfaat Premium:
                 </h3>
                 <div style="margin-top: 10px;">
+                    <!-- Benefit 1: Top Position with Badge -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -376,12 +405,13 @@
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Posisi Teratas dengan Lencana Khusus</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Selalu terdaftar di bagian atas hasil pencarian dengan lencana khusus <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Sorotan"</strong> yang menonjol.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Posisi teratas dengan lencana khusus</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Kafe Anda akan selalu tampil di bagian paling atas hasil pencarian dengan lencana khusus <strong
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">"Sorotan"</strong> yang sangat menonjol.</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 2: Blog & Email Recommendations -->
                     <div
                         style="display: flex; align-items: flex-start; margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, #f8f9ff 0%, #fff5fb 100%); border-radius: 10px; border: 1px solid rgba(118, 75, 162, 0.1);">
                         <div
@@ -389,123 +419,145 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Rekomendasi Blog & Email</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Sering ditampilkan dalam <strong>postingan blog harian</strong> kami dan <strong>buletin mingguan</strong> yang dikirimkan ke ribuan pecinta kucing.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Rekomendasi di blog & email newsletter</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Kafe Anda akan sering direkomendasikan dalam <strong>artikel harian blog</strong> dan <strong>newsletter mingguan</strong> kami yang dikirimkan ke ribuan pecinta kucing.</div>
                         </div>
                     </div>
 
+                    <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
                 </div>
+            </div>
 
-                <div
-                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
-                    <h3
-                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        Cara Mendapatkan Promosi dalam 2 Langkah Mudah:
-                    </h3>
+            <!-- Action Steps Guide -->
+            <div
+                style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                <h3
+                    style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                    Mulai promosi Anda dalam 2 langkah mudah:
+                </h3>
 
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Beri kami backlink</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                Dukung jaringan kami yang berkembang dengan menambahkan backlink yang merujuk ke kami di salah satu halaman Anda.<br>
-                                <i>Sebagai alternatif, untuk kenyamanan, Anda dapat menghias Header, Footer, atau halaman web mana pun Anda dengan salah satu dari yang berikut:</i>
-                            </div>
-
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">🏷️</span>
-                                    Opsi 1: Lencana
-                                </div>
-
-                                <div
-                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Pratinjau:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_badge.html' %}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Salin kode HTML ini:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ badge_html_code }}
-                                    </div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Pilih dan salin kode di atas, lalu tempelkan ke HTML situs web Anda.</div>
-                                </div>
-                            </div>
-
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">📝</span>
-                                    Opsi 2: Teks dengan Tautan
-                                </div>
-
-                                <div
-                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Pratinjau:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_text.html' %}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Salin kode HTML ini:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ text_html_code }}
-                                    </div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Pilih dan salin kode di atas, lalu tempelkan ke HTML situs web Anda.</div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Step 1: Add Badge or Text -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                     </div>
-
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Pasang link situs kami di website Anda</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
+                            Dukung jaringan kami yang terus berkembang dengan menambahkan link yang merujuk ke kami di salah satu halaman Anda.<br>
+                            <i>Untuk kenyamanan Anda, Anda dapat menghias Header, Footer, or halaman web mana pun dengan salah satu opsi berikut:</i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verifikasi dan Dapatkan Promosi 🎉</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Kunjungi <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">tautan<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> berikut di situs web kami untuk memvalidasi backlink Anda kepada kami dengan cepat dan segera dapatkan promosi!
+
+                        <!-- Option 1: Badge -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">🏷️</span>
+                                Opsi 1: Lencana gambar
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Pratinjau:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_badge.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 Salin kode HTML ini:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ badge_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Pilih dan salin kode di atas, lalu tempelkan ke dalam kode HTML website Anda.</div>
+                            </div>
+                        </div>
+
+                        <!-- Option 2: Text Link -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">📝</span>
+                                Opsi 2: Tautan teks (Anchor Text)
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Pratinjau:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_text.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 Salin kode HTML ini:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ text_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Pilih dan salin kode di atas, lalu tempelkan ke dalam kode HTML website Anda.</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Step 2: Email Us -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verifikasi link dan aktifkan 🎉</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
+                            Setelah memasang link, silakan kunjungi <a href="{{ referral_promotion_url }}"
+                                style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
+                                style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">tautan<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> berikut di situs kami untuk melakukan pengecekan cepat. Setelah terverifikasi, promosi Anda akan segera aktif.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div style="margin-bottom: 20px;"> </div>
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Kafe yang dipromosikan akan memiliki lencana "Sorotan" dan selalu muncul di bagian atas hasil daftar.
+                Kafe yang dipromosikan akan mendapatkan lencana "Sorotan" dan selalu tampil di bagian paling atas hasil pencarian.
             </p>
+
+            {% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Saat ini, semua {{ max_free_slots }} slot promosi gratis di {{ location_name }} sudah terisi penuh.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Anda tetap dapat memasang link untuk bergabung dalam daftar tunggu, atau melakukan upgrade ke promosi berbayar untuk mengaktifkan manfaat promosi Anda segera.
+                    </p>
+                </div>
+            {% endif %}
 
             <div class="signature">
                 <div>Salam hangat,</div>
-                <div class="signature-name">Tim Lingkaran Kafe Kucing</div>
+                <div class="signature-name">Tim Cat Cafe Circle</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
                     <a href="https://catcafecircle.com"
                         style="color: #248f84; text-decoration: none;">catcafecircle.com</a>
@@ -530,7 +582,7 @@
 
         <div class="footer">
             <p class="footer-text">
-                Anda menerima email ini karena kafe Anda terdaftar di direktori publik kami. Kami berkomitmen untuk membangun komunitas global untuk menghubungkan pemilik kafe dengan pecinta kucing di seluruh dunia.
+                Anda menerima email ini karena kafe Anda terdaftar di direktori publik kami. Kami berkomitmen untuk membangun komunitas global guna menghubungkan pemilik kafe dengan pecinta kucing di seluruh dunia.
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">Tentang Kami</a>

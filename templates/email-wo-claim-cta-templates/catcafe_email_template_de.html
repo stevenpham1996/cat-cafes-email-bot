@@ -32,7 +32,7 @@
 
         .logo {
             font-size: 28px;
-            font-weight: 700;            
+            font-weight: 700;
             color: #ffffff;
             letter-spacing: -0.5px;
             margin-bottom: 10px;
@@ -103,33 +103,30 @@
         }
 
         .cta-text {
-            /* Removed padding and border-radius as they conflict with text-only styling */
             background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent; /* Makes the text color transparent to show the background clip */
-            text-decoration: none; /* Remove default underline */
+            color: transparent;
+            text-decoration: none;
             font-weight: 600;
             font-size: 18px;
             transition: transform 0.2s;
-            display: inline-block; /* Allows transform to work */
-            position: relative; /* For custom underline */
+            display: inline-block;
+            position: relative;
         }
 
         .cta-text::after {
             content: '';
             position: absolute;
             left: 0;
-            bottom: -2px; /* Adjust position of the underline */
+            bottom: -2px;
             width: 100%;
-            height: 2px; /* Thickness of the underline */
-            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
-            /* Underline is now always present by default */
+            height: 2px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
         }
 
         .cta-text:hover {
             transform: translateY(-2px);
-            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
         }
 
         .cta-button {
@@ -291,7 +288,6 @@
             }
         }
 
-        /* Listing Card Styles */
         .listing-card {
             background-color: #ffffff;
             border-radius: 8px;
@@ -333,23 +329,22 @@
                 Cat Cafe Circle
             </div>
             <!-- Tagline -->
-            <div class="tagline">Das weltweit größte Verzeichnis für Katzen-Cafés</div>
+            <div class="tagline">Das weltweit größte Verzeichnis für Katzencafés</div>
         </div>
 
         <div class="content">
             <div class="greeting">Hallo {{ title }},</div>
 
             <p class="intro">
-                Wir freuen uns, Ihnen mitteilen zu können, dass Ihr Café für <strong>Cat Cafe Circle</strong> ausgewählt wurde,
-                unser führendes globales Verzeichnis, das Katzenliebhaber mit Cafés auf der ganzen Welt verbindet.
+                wir freuen uns, Ihnen mitzuteilen, dass Ihr Café für <strong>Cat Cafe Circle</strong> ausgewählt wurde – unser führendes globales Verzeichnis, das Katzenliebhaber mit Cafés auf der ganzen Welt verbindet.
             </p>
 
             <p class="caveat">
-                Wir möchten Ihnen versichern, dass alle für Ihren Café-Eintrag verwendeten Informationen sorgfältig und ausschließlich aus öffentlich zugänglichen und offiziellen Quellen stammen, um Genauigkeit und Respekt für Ihr Geschäft zu gewährleisten.
+                Wir möchten Ihnen versichern, dass alle für den Eintrag Ihres Cafés verwendeten Informationen sorgfältig und ausschließlich aus öffentlich zugänglichen und offiziellen Quellen stammen. So gewährleisten wir Genauigkeit und den nötigen Respekt für Ihr Unternehmen.
             </p>
 
             <div class="cta-section">
-                <a href="{{ listing_url }}" class="cta-button">Ihr Katzen-Café ansehen</a>
+                <a href="{{ listing_url }}" class="cta-button">Ihr Katzencafé ansehen</a>
             </div>
 
 
@@ -375,14 +370,31 @@
                 <!-- Launch Offer Subtitle -->
                 <div style="display: flex; align-items: center; padding: 0px 6px;">
                     <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
-                        Wir glauben an Zusammenarbeit. Als herzliches Willkommen möchten wir mit einem einfachen Austausch beginnen: Fügen Sie einen Backlink zu uns hinzu, und wir werden <strong>Sie gerne einen Monat lang kostenlos bewerben</strong>.
+                        Wir glauben an die Kraft von Kooperationen. Als herzliches Willkommen möchten wir Ihnen einen einfachen Austausch vorschlagen: Verlinken Sie uns auf Ihrer Website, und als Dankeschön <strong>heben wir Ihr Café einen Monat lang völlig kostenlos auf unserer Plattform hervor</strong>.
                     </p>
                 </div>
+
+                {% if location_name and max_free_slots is not none and remaining_free_slots is not none and 0 < remaining_free_slots < 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Noch {{ max_free_slots }} kostenlose Promotion in {{ location_name }} verfügbar
+                    </div>
+                </div>
+                {% elif location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots >= 2%}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; letter-spacing: 0.8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚡</span> Noch {{ max_free_slots }} kostenlose Promotionen in {{ location_name }} verfügbar
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Aufgrund der hohen lokalen Nachfrage sind die kostenlosen Promotionen in {{ location_name }} begrenzt.
+                    </p>
+                </div>
+                {% endif %}
 
                 <!-- Premium Benefits -->
                 <h3
                     style="margin-top: 20px; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                    Premium-Vorteile:
+                    Ihre Premium-Vorteile:
                 </h3>
                 <div style="margin-top: 10px;">
                     <!-- Benefit 1: Top Position with Badge -->
@@ -393,9 +405,9 @@
                             <span style="font-size: 24px;">👑</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Top-Position mit speziellem Abzeichen</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Immer ganz oben in den Suchergebnissen gelistet mit einem speziellen <strong
-                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">„Rampenlicht“</strong>-Abzeichen, das auffällt.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Top-Position mit speziellem Spotlight-Badge</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Ihr Café wird stets ganz oben in den Suchergebnissen angezeigt, versehen mit einer auffälligen <strong
+                                    style="background: linear-gradient(135deg, #f68d1dea, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">„Spotlight“</strong>-Kennzeichnung, die sofort ins Auge fällt.</div>
                         </div>
                     </div>
 
@@ -407,132 +419,145 @@
                             <span style="font-size: 24px;">📧</span>
                         </div>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Blog- & E-Mail-Empfehlungen</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Häufig vorgestellt in unseren <strong>täglichen Blogbeiträgen</strong> und <strong>wöchentlichen Newsletters</strong> an Tausende von Katzenliebhabern.</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px;">Empfehlungen in Blog & Newslettern</div>
+                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">Wir stellen Ihr Café regelmäßig in unseren <strong>täglichen Blogbeiträgen</strong> und <strong>wöchentlichen Newslettern</strong> vor, die an Tausende von Katzenliebhabern gesendet werden.</div>
                         </div>
                     </div>
 
                     <!-- Benefit 3: Premium Insights Dashboard -->
                     {% include 'premium_insights_email.html' %}
                 </div>
+            </div>
 
-                <!-- Action Steps Guide -->
-                <div
-                    style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
-                    <h3
-                        style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
-                        So werden Sie in 2 einfachen Schritten gefördert:
-                    </h3>
+            <!-- Action Steps Guide -->
+            <div
+                style="background: linear-gradient(135deg, #f0f4ff 0%, #fef3ff 100%); padding: 25px; border-radius: 12px; margin: 30px 0; border: 2px solid rgba(118, 75, 162, 0.2);">
+                <h3
+                    style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-decoration: underline; color: #1a1a1a; text-align: center; letter-spacing: -0.3px;">
+                    In 2 einfachen Schritten zur Promotion:
+                </h3>
 
-                    <!-- Step 1: Add Badge or Text -->
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Geben Sie uns einen Backlink</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
-                                Unterstützen Sie unser wachsendes Netzwerk, indem Sie auf einer Ihrer Seiten einen Backlink zu uns einfügen.<br>
-                                <i>Alternativ können Sie bequem Ihren Header, Footer oder eine beliebige Webseite mit einer der folgenden Möglichkeiten gestalten:</i>
-                            </div>
-
-                            <!-- Option 1: Badge -->
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">🏷️</span>
-                                    Option 1: Abzeichen
-                                </div>
-
-                                <!-- Visual Preview -->
-                                <div
-                                    style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Vorschau:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_badge.html' %}
-                                    </div>
-                                </div>
-
-                                <!-- HTML Code Section -->
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Kopieren Sie diesen HTML-Code:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ badge_html_code }}
-                                    </div>                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Markieren und kopieren Sie den Code oben und fügen Sie ihn in den HTML-Code Ihrer Website ein.</div>
-                                </div>
-                            </div>
-
-                            <!-- Option 2: Text Link -->
-                            <div
-                                style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
-                                <div
-                                    style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">📝</span>
-                                    Option 2: Ankertext
-                                </div>
-
-                                <!-- Visual Preview -->
-                                <div
-                                    style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
-                                    <div
-                                        style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Vorschau:</div>
-                                    <div style="text-align: center;">
-                                        {% include 'catcafe_referral_text.html' %}
-                                    </div>
-                                </div>
-
-                                <!-- HTML Code Section -->
-                                <div>
-                                    <div
-                                        style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        📋 Kopieren Sie diesen HTML-Code:</div>
-                                    <div
-                                        style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
-{{ text_html_code }}
-                                    </div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
-                                        Markieren und kopieren Sie den Code oben und fügen Sie ihn in den HTML-Code Ihrer Website ein.</div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Step 1: Add Badge or Text -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">1</span>
                     </div>
-
-                    <!-- Step 2: Email Us -->
-                    <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
-                        <div
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
-                            <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px;">Verlinken Sie uns</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px;">
+                            Unterstützen Sie unser wachsendes Netzwerk, indem Sie einen Link zu uns auf einer Ihrer Seiten einfügen.<br>
+                            <i>Alternativ können Sie Ihren Header, Ihren Footer oder eine beliebige andere Seite mit einer der folgenden Optionen gestalten:</i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Verifiziert und gefördert werden 🎉</div>
-                            <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
-                                Besuchen Sie den folgenden <a href="{{ referral_promotion_url }}"
-                                    style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
-                                    style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">Link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> auf unserer Website, um Ihren Backlink zu uns schnell zu validieren und direkt beworben zu werden!
+
+                        <!-- Option 1: Badge -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 16px; border: 2px solid #e0e7ff; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #667eea; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">🏷️</span>
+                                Option 1: Badge
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #c7d2fe;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Vorschau:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_badge.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 HTML-Code kopieren:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ badge_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Kopieren Sie den obigen Code und fügen Sie ihn in den HTML-Code Ihrer Website ein.</div>
+                            </div>
+                        </div>
+
+                        <!-- Option 2: Text Link -->
+                        <div
+                            style="background: white; padding: 18px; border-radius: 10px; margin-bottom: 12px; border: 2px solid #f3e8ff; box-shadow: 0 2px 8px rgba(118, 75, 162, 0.1);">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #764ba2; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">📝</span>
+                                Option 2: Textlink
+                            </div>
+
+                            <!-- Visual Preview -->
+                            <div
+                                style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 20px; border-radius: 8px; margin-bottom: 14px; border: 1px dashed #e9d5ff;">
+                                <div
+                                    style="font-size: 12px; font-weight: 600; color: black; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Vorschau:</div>
+                                <div style="text-align: center;">
+                                    {% include 'catcafe_referral_text.html' %}
+                                </div>
+                            </div>
+
+                            <!-- HTML Code Section -->
+                            <div>
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    📋 HTML-Code kopieren:</div>
+                                <div
+                                    style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.6; color: #1f2937; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">
+{{ text_html_code }}
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    Kopieren Sie den obigen Code und fügen Sie ihn in den HTML-Code Ihrer Website ein.</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Step 2: Email Us -->
+                <div style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="width: 36px; height: 36px; background: linear-gradient(135deg, #248f84 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(36, 143, 132, 0.3);">
+                        <span style="color: white; font-size: 16px; font-weight: 700;">2</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px;">Prüfen lassen und starten! 🎉</div>
+                        <div style="font-size: 14px; color: #4a4a4a; line-height: 1.6;">
+                            Besuchen Sie einfach folgenden <a href="{{ referral_promotion_url }}"
+                                style="color: #667eea; font-weight: 600; text-decoration: none; position: relative;"><strong
+                                style="font-weight: 900; font-size: 18px; position: relative; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">Link<span style="position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(135deg, #667eea, #764ba2);"></span></strong></a> auf unserer Website, um Ihre Verlinkung schnell zu überprüfen und Ihre Promotion sofort zu aktivieren.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div style="margin-bottom: 20px;"> </div>
 
             {% include 'listing_card_featured_badge.html' %}
             <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
-                Geförderte Cafés erhalten ein „Rampenlicht“-Abzeichen und erscheinen immer ganz oben in den Ergebnissen.
+                Hervorgehobene Cafés erhalten ein „Spotlight“-Badge und erscheinen immer ganz oben in den Suchergebnissen.
             </p>
 
+            {% if location_name and max_free_slots is not none and remaining_free_slots is not none and remaining_free_slots == 0 %}
+                <div style="background: linear-gradient(135deg, #fffcf6 0%, #fff3e0 100%); border-left: 4px solid #ff9800; padding: 15px; margin: 25px 0; border-radius: 6px; border: 1px solid rgba(255, 152, 0, 0.2);">
+                    <p style="margin: 0; font-size: 15px; color: #3e2723; line-height: 1.6;">
+                        Aufgrund der hohen lokalen Nachfrage sind derzeit alle {{ max_free_slots }} kostenlosen Promotionsplätze in {{ location_name }} belegt.
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #5d4037; font-style: italic;">
+                        Sie können dennoch Ihren Link einrichten, um sich auf die Warteliste setzen zu lassen, oder auf eine kostenpflichtige Promotion upgraden, um sich Ihre Vorteile sofort zu sichern.
+                    </p>
+                </div>
+            {% endif %}
+
             <div class="signature">
-                <div>Herzliche Grüße,</div>
-                <div class="signature-name">Cat Cafe Circle Team</div>
+                <div>Mit freundlichen Grüßen</div>
+                <div class="signature-name">Ihr Team von Cat Cafe Circle</div>
                 <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
                     <a href="https://catcafecircle.com"
                         style="color: #248f84; text-decoration: none;">catcafecircle.com</a>
@@ -557,7 +582,7 @@
 
         <div class="footer">
             <p class="footer-text">
-                Sie erhalten diese E-Mail, weil Ihr Café in unserem öffentlichen Verzeichnis gelistet ist. Wir engagieren uns für den Aufbau einer globalen Gemeinschaft, um Café-Besitzer mit Katzenliebhabern weltweit zu verbinden.
+                Sie erhalten diese E-Mail, da Ihr Café in unserem öffentlichen Verzeichnis gelistet ist. Wir möchten eine weltweite Gemeinschaft aufbauen, um Café-Betreiber mit Katzenliebhabern rund dem Globus zu verbinden.
             </p>
             <div class="footer-links">
                 <a href="https://catcafecircle.com/about" class="footer-link">Über uns</a>
