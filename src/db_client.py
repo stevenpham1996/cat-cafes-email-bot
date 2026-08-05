@@ -18,7 +18,8 @@ def get_supabase_client() -> Client:
 
 def _base_fields():
     """Shared scalar fields for all listing queries."""
-    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range, city_id, state_id"
+    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range, city_id, state_id, status, is_referral_promotion, referral_promotion_expires_at"
+
 
 # Query for Cases 1 & 2 (city-based listings). cities join can be !inner or plain.
 _QUERY_CITY = _base_fields() + """,
@@ -101,9 +102,33 @@ def resolve_country_ids(terms: list[str]) -> list[str]:
 
     return resolved_ids
 
+from datetime import datetime, timezone
+
+def is_active_referral_promotion(listing: dict) -> bool:
+    """
+    Evaluates whether a listing has an active referral promotion:
+    Condition 1: is_referral_promotion is True
+    Condition 2: OR referral_promotion_expires_at is in the future (> NOW)
+    """
+    if listing.get("is_referral_promotion") is True:
+        return True
+
+    expires_at_str = listing.get("referral_promotion_expires_at")
+    if expires_at_str:
+        try:
+            clean_ts = str(expires_at_str).replace("Z", "+00:00")
+            expires_at = datetime.fromisoformat(clean_ts)
+            if expires_at > datetime.now(timezone.utc):
+                return True
+        except Exception:
+            pass
+    return False
+
 def fetch_listings(country_ids: list[str] = None) -> list[dict]:
     """
-    Fetches listings from the database with their associated location data.
+    Fetches active (status = 'approved') listings that have an active referral promotion
+    (is_referral_promotion is True OR referral_promotion_expires_at > NOW)
+    from the database with their associated location data.
     Joins with cities, states, and countries tables.
     Filters for listings with a valid email address and optionally by country.
     Uses pagination to retrieve all records beyond the default 1000 limit.
@@ -112,6 +137,7 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
     all_listings = []
     start = 0
     batch_size = 1000
+    now_iso = datetime.now(timezone.utc).isoformat()
 
     while True:
         print(f"Fetching listings batch: {start} to {start + batch_size}...")
@@ -122,20 +148,26 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
                     supabase.table("coworking_places")
                     .select(_QUERY_CITY.format(cities_join="cities!inner"))
                     .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
                     .in_("cities.country_id", country_ids)
                     .range(start, start + batch_size - 1)
                     .execute().data
                 )
+
                 # Query B: Case 3 — states!inner forces country match via states.country_id
                 batch_b = (
                     supabase.table("coworking_places")
                     .select(_QUERY_STATE)
                     .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
                     .is_("city_id", "null")
                     .in_("states.country_id", country_ids)
                     .range(start, start + batch_size - 1)
                     .execute().data
                 )
+
                 seen = {r["id"] for r in batch_a}
                 batch = batch_a + [r for r in batch_b if r["id"] not in seen]
             else:
@@ -143,9 +175,14 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
                     supabase.table("coworking_places")
                     .select(_QUERY_ALL)
                     .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
                     .range(start, start + batch_size - 1)
                     .execute().data
                 )
+
+            # Validate active referral promotion status in Python
+            batch = [l for l in batch if is_active_referral_promotion(l)]
 
             all_listings.extend(batch)
             if len(batch) < batch_size:
@@ -160,37 +197,48 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
 
 def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> list[dict]:
     """
-    Fetches a limited number of listings for dry-run/testing purposes.
-    Does not use pagination; strictly limits the query to the specified count.
+    Fetches a limited number of active approved listings with an active referral promotion
+    for dry-run/testing purposes.
     """
     supabase = get_supabase_client()
     print(f"Fetching preview batch of {limit} listings...")
+    now_iso = datetime.now(timezone.utc).isoformat()
 
     if country_ids:
         batch_a = (
             supabase.table("coworking_places")
             .select(_QUERY_CITY.format(cities_join="cities!inner"))
             .not_.is_("email", "null").neq("email", "")
+            .eq("status", "approved")
+            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
             .in_("cities.country_id", country_ids)
             .limit(limit).execute().data
         )
+
         batch_b = (
             supabase.table("coworking_places")
             .select(_QUERY_STATE)
             .not_.is_("email", "null").neq("email", "")
+            .eq("status", "approved")
+            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
             .is_("city_id", "null")
             .in_("states.country_id", country_ids)
             .limit(limit).execute().data
         )
-        seen = {r["id"] for r in batch_a}
-        return batch_a + [r for r in batch_b if r["id"] not in seen]
 
-    return (
-        supabase.table("coworking_places")
-        .select(_QUERY_ALL)
-        .not_.is_("email", "null").neq("email", "")
-        .limit(limit).execute().data
-    )
+        seen = {r["id"] for r in batch_a}
+        batch = batch_a + [r for r in batch_b if r["id"] not in seen]
+    else:
+        batch = (
+            supabase.table("coworking_places")
+            .select(_QUERY_ALL)
+            .not_.is_("email", "null").neq("email", "")
+            .eq("status", "approved")
+            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+            .limit(limit).execute().data
+        )
+
+    return [l for l in batch if is_active_referral_promotion(l)]
 
 def get_platform_stats() -> dict:
     """
