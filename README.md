@@ -8,7 +8,7 @@ The bot relies on environment variables defined in the `.env` file. You must pop
 
 ### Database Credentials
 -   `SUPABASE_URL`: Your Supabase project URL.
--   `SUPABASE_KEY`: Your Supabase service_role key (required for reading/writing to the DB).
+-   `SUPABASE_SECRET_KEY`: Your Supabase service_role key (required for reading/writing to the DB).
 
 ### Email Configuration (SMTP)
 -   `SMTP_HOST`: Your SMTP server address (e.g., `smtp.gmail.com`).

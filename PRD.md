@@ -1,7 +1,7 @@
 # Product Requirement Document (PRD): Email Marketing Bot
 
 ## 1. Introduction
-This document outlines the requirements and technical specifications for an Email Marketing Bot designed for the Hot Yoga Studios directory. The bot's primary purpose is to automate the process of fetching business listings, constructing unique listing URLs, and sending targeted marketing emails to business owners.
+This document outlines the requirements and technical specifications for an Email Marketing Bot designed for the Cat Cafes directory. The bot's primary purpose is to automate the process of fetching business listings, constructing unique listing URLs, and sending targeted marketing emails to business owners.
 
 ## 2. Core Objectives
 -   **Data Retrieval**: Efficiently fetch listing data and related location information from the Supabase database.
@@ -39,7 +39,7 @@ The Listing Detail Page URL must be constructed dynamically based on the locatio
 -   **Recipient**: The email address from `coworking_places.email`.
 -   **Sender**: Configurable sender address (e.g., `marketing@hotyogastudios.com`).
 -   **Content**:
-    -   Subject: (To be defined, e.g., "Partnership Opportunity with Hot Yoga Studios")
+    -   Subject: (To be defined, e.g., "Partnership Opportunity with Cat Cafes")
     -   Body: Eloquent, call-to-action style template.
     -   **Format**: HTML (primary) with Plain Text fallback.
     -   **Templating Engine**: `Jinja2` for dynamic content insertion.

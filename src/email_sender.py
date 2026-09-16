@@ -125,7 +125,7 @@ def send_email(recipient: str, subject: str, context: dict, template_name: str, 
             Claiming your listing allows you to update your information, add photos, and connect with our community.
 
             Best regards,
-            The Cat Cafe Directory Team
+            The CatCafeCircle Team
         """
 
         # Create MIME message

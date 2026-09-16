@@ -407,7 +407,7 @@ def main():
         platform_stats = {
             "platform_studios_count": 1857,
             "platform_cities_count": 293,
-            "platform_active_users_count": "2033+"
+            "platform_active_users_count": "20503"
         }
     else:
         print("Fetching platform stats...")
@@ -419,7 +419,7 @@ def main():
             platform_stats = {
                 "platform_studios_count": 1857,
                 "platform_cities_count": 293,
-                "platform_active_users_count": "2033+"
+                "platform_active_users_count": "20503"
             }
 
     emails_sent_count = 0
