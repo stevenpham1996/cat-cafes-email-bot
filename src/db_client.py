@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -102,8 +103,6 @@ def resolve_country_ids(terms: list[str]) -> list[str]:
 
     return resolved_ids
 
-from datetime import datetime, timezone
-
 def is_active_referral_promotion(listing: dict) -> bool:
     """
     Evaluates whether a listing has an active referral promotion:
@@ -126,8 +125,7 @@ def is_active_referral_promotion(listing: dict) -> bool:
 
 def fetch_listings(country_ids: list[str] = None) -> list[dict]:
     """
-    Fetches active (status = 'approved') listings that have an active referral promotion
-    (is_referral_promotion is True OR referral_promotion_expires_at > NOW)
+    Fetches active (status = 'approved') listings that DO NOT have an active referral promotion
     from the database with their associated location data.
     Joins with cities, states, and countries tables.
     Filters for listings with a valid email address and optionally by country.
@@ -149,7 +147,8 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
                     .select(_QUERY_CITY.format(cities_join="cities!inner"))
                     .not_.is_("email", "null").neq("email", "")
                     .eq("status", "approved")
-                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+                    .eq("is_referral_promotion", False)
+                    .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
                     .in_("cities.country_id", country_ids)
                     .range(start, start + batch_size - 1)
                     .execute().data
@@ -161,7 +160,8 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
                     .select(_QUERY_STATE)
                     .not_.is_("email", "null").neq("email", "")
                     .eq("status", "approved")
-                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+                    .eq("is_referral_promotion", False)
+                    .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
                     .is_("city_id", "null")
                     .in_("states.country_id", country_ids)
                     .range(start, start + batch_size - 1)
@@ -176,13 +176,14 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
                     .select(_QUERY_ALL)
                     .not_.is_("email", "null").neq("email", "")
                     .eq("status", "approved")
-                    .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+                    .eq("is_referral_promotion", False)
+                    .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
                     .range(start, start + batch_size - 1)
                     .execute().data
                 )
 
-            # Validate active referral promotion status in Python
-            batch = [l for l in batch if is_active_referral_promotion(l)]
+            # Skip listings that already have an active referral promotion
+            batch = [l for l in batch if not is_active_referral_promotion(l)]
 
             all_listings.extend(batch)
             if len(batch) < batch_size:
@@ -197,7 +198,7 @@ def fetch_listings(country_ids: list[str] = None) -> list[dict]:
 
 def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> list[dict]:
     """
-    Fetches a limited number of active approved listings with an active referral promotion
+    Fetches a limited number of active approved listings without an active referral promotion
     for dry-run/testing purposes.
     """
     supabase = get_supabase_client()
@@ -210,7 +211,8 @@ def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> l
             .select(_QUERY_CITY.format(cities_join="cities!inner"))
             .not_.is_("email", "null").neq("email", "")
             .eq("status", "approved")
-            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+            .eq("is_referral_promotion", False)
+            .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
             .in_("cities.country_id", country_ids)
             .limit(limit).execute().data
         )
@@ -220,7 +222,8 @@ def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> l
             .select(_QUERY_STATE)
             .not_.is_("email", "null").neq("email", "")
             .eq("status", "approved")
-            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+            .eq("is_referral_promotion", False)
+            .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
             .is_("city_id", "null")
             .in_("states.country_id", country_ids)
             .limit(limit).execute().data
@@ -234,11 +237,12 @@ def fetch_preview_listings(limit: int = 100, country_ids: list[str] = None) -> l
             .select(_QUERY_ALL)
             .not_.is_("email", "null").neq("email", "")
             .eq("status", "approved")
-            .or_(f"is_referral_promotion.eq.true,referral_promotion_expires_at.gt.{now_iso}")
+            .eq("is_referral_promotion", False)
+            .or_(f"referral_promotion_expires_at.is.null,referral_promotion_expires_at.lte.{now_iso}")
             .limit(limit).execute().data
         )
 
-    return [l for l in batch if is_active_referral_promotion(l)]
+    return [l for l in batch if not is_active_referral_promotion(l)]
 
 def get_platform_stats() -> dict:
     """
