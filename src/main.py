@@ -14,9 +14,12 @@ from src.db_client import (
     get_platform_stats,
     resolve_country_ids,
     fetch_approved_listings_for_cache,
-    calculate_capacity_limits_cache
+    calculate_capacity_limits_cache,
+    fetch_follow_up_listings,
+    fetch_email_tracking_history,
+    fetch_pending_claim_listing_ids
 )
-from src.url_constructor import construct_listing_url
+from src.url_constructor import construct_listing_url, construct_location_url
 from src.email_sender import send_email, render_email_html, load_dashboard_translations
 from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
@@ -42,6 +45,38 @@ EMAIL_SUBJECT_TRANSLATIONS = {
     "it": "Cat Cafe Circle ti dà il benvenuto a bordo!"
 }
 
+CLAIM_FOLLOW_UP_SUBJECTS = {
+    "en": "Action required: Verify and manage your business profile on our cat cafe directory",
+    "de": "Handlungsbedarf: Bestätigen und verwalten Sie Ihren Eintrag in unserem Katzencafé-Verzeichnis",
+    "es": "Acción requerida: Verifique y gestione la ficha de su cafetería en nuestro directorio de cat cafes",
+    "fr": "Action requise : Vérifiez et gérez la fiche de votre établissement sur notre annuaire de bars à chats",
+    "nl": "Actie vereist: Bevestig en beheer uw vermelding in onze kattencafégids",
+    "pt": "Ação necessária: Reivindique e gerencie a página do seu negócio no nosso diretório de cat cafés",
+    "ru": "Требуется действие: подтвердите права и управляйте страницей вашего заведения в нашем каталоге котокафе",
+    "ja": "要確認: 猫カフェ専門ポータルで貴店の店舗ページを認証・管理してください",
+    "ko": "확인 필요: 고양이 카페 전문 디렉토리에서 귀사의 매장 페이지를 인증하고 관리하세요",
+    "zh": "需要确认：在我们的猫咪咖啡馆平台中认证并管理您的门店主页",
+    "id": "Tindakan diperlukan: Verifikasi dan kelola profil bisnis Anda di direktori cat cafe kami",
+    "vi": "Hành động cần thiết: Xác minh và quản lý trang doanh nghiệp của bạn trên diễn đàn cat cafe",
+    "it": "Azione richiesta: Rivendica e gestisci la scheda del tuo locale sulla nostra directory di cat cafè"
+}
+
+PROMOTION_FOLLOW_UP_SUBJECTS = {
+    "en": "Spotlight your cat cafe: Exclusive 30-day free promotion on our directory",
+    "de": "Heben Sie Ihr Katzencafé hervor: Exklusive 30-Tage-Aktion in unserem Verzeichnis",
+    "es": "Destaque su cat cafe: Promoción exclusiva de 30 días gratis en nuestro directorio",
+    "fr": "Mettez votre bar à chats en avant : 30 jours de promotion gratuite sur notre annuaire",
+    "nl": "Zet uw kattencafé in de kijker: Exclusieve 30 dagen gratis promotie in onze gids",
+    "pt": "Destaque o seu cat café: Promoção exclusiva de 30 dias grátis no nosso diretório",
+    "ru": "Выделите ваше котокафе: 30 дней бесплатного продвижения в нашем каталоге",
+    "ja": "貴店の猫カフェを注目掲載: 当ポータル限定・30日間無料プロモーションのご案内",
+    "ko": "고양이 카페 추천 등록: 당사 디렉토리 30일 무료 프로모션 혜택",
+    "zh": "提升猫咖门店曝光：在我们的平台享受专属 30 天免费精选推荐",
+    "id": "Tingkatkan eksposur cat cafe Anda: Promosi gratis 30 hari di direktori kami",
+    "vi": "Đưa quán cat cafe của bạn lên vị trí nổi bật: Ưu đãi 30 ngày quảng bá miễn phí trên diễn đàn",
+    "it": "Metti in evidenza il tuo cat cafè: Promozione esclusiva di 30 giorni gratuiti sulla nostra directory"
+}
+
 PRICE_RANGE_TRANSLATIONS = {
     "en": "Menu starts from <strong>{price}</strong>",
     "de": "Menü ab <strong>{price}</strong>",
@@ -59,24 +94,27 @@ PRICE_RANGE_TRANSLATIONS = {
 }
 
     
-def setup_dry_run_directory() -> str:
+def setup_dry_run_directory(campaign_name: str = "initial") -> str:
     """Creates a timestamped directory for dry run outputs."""
-    path = os.path.join("dry-run", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
+    path = os.path.join("dry-run", f"{campaign_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}")
     os.makedirs(path, exist_ok=True)
     return path
 
 
-def get_translated_subjects(title_en: str) -> dict:
+def get_translated_subjects(title_en: str, fallback_dict: dict = None) -> dict:
     """
     Translates an English subject to 9 other languages using Gemini API.
     Returns a dictionary of translations.
     """
+    if fallback_dict is None:
+        fallback_dict = EMAIL_SUBJECT_TRANSLATIONS
+
     api_key = os.getenv("GEMINI_API_KEY")
     model = os.getenv("GEMINI_MODEL")
     
     if not api_key or not model:
         print("Error: GEMINI_API_KEY or GEMINI_MODEL not found in .env. Falling back to defaults.")
-        return EMAIL_SUBJECT_TRANSLATIONS
+        return fallback_dict
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
@@ -133,7 +171,7 @@ def get_translated_subjects(title_en: str) -> dict:
         
     except Exception as e:
         print(f"Error during subject translation: {e}. Falling back to defaults.")
-        return EMAIL_SUBJECT_TRANSLATIONS
+        return fallback_dict
 
 
 def extract_localized_string(data: any, target_lang: str) -> str:
@@ -185,12 +223,13 @@ def get_template_name(lang: str) -> str:
     return f"catcafe_email_template_{lang}.html"
 
 
-def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
+def setup_session_log(resume_path: str = None, campaign_name: str = "initial") -> tuple[str | None, set, int]:
     """
     Sets up the session logging.
-    1. Creates a new timestamped log file in log/.
-    2. If resume_path is provided, reads processed IDs from it (handling both CSV and legacy formats).
-    3. Writes the resumed IDs to the new log file with CSV indexing (History Preservation).
+    1. Creates a new timestamped log file in log/ with campaign prefix (e.g. session_followup_claim_TIMESTAMP.txt).
+    2. Writes campaign metadata header (# campaign: <campaign_name>).
+    3. If resume_path is provided, validates that the resume file matches campaign_name.
+    4. Reads processed IDs from it and writes them to the new log file with CSV indexing (History Preservation).
     
     Returns:
         tuple: (new_log_path, processed_ids_set, next_index)
@@ -199,7 +238,8 @@ def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
     os.makedirs("log", exist_ok=True)
     
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    new_log_path = os.path.join("log", f"session_{timestamp}.txt")
+    prefix = f"session_{campaign_name}"
+    new_log_path = os.path.join("log", f"{prefix}_{timestamp}.txt")
     processed_ids = set()
     history_list = [] # Maintain order for re-indexing
 
@@ -209,21 +249,32 @@ def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
             print(f"Resuming from log: {resume_path}")
             try:
                 with open(resume_path, "r", encoding="utf-8") as f:
+                    first_line = True
                     for line in f:
                         line = line.strip()
                         if not line:
+                            continue
+
+                        # Check campaign header
+                        if first_line and line.startswith("# campaign:"):
+                            resumed_campaign = line.split(":", 1)[1].strip()
+                            first_line = False
+                            if resumed_campaign != campaign_name:
+                                print(f"ERROR: Resume campaign mismatch! Log file is for '{resumed_campaign}', but current run is '{campaign_name}'.")
+                                print("Aborting to prevent cross-campaign state corruption.")
+                                return None, set(), 0
+                            continue
+                        first_line = False
+                        if line.startswith("#"):
                             continue
                             
                         # Parse line (handles legacy "id" and new "index,id")
                         parts = line.split(',')
                         if len(parts) > 1:
-                            # Likely CSV: try to detect if first part is index or header
-                            # If header "index", skip
                             if parts[0].lower() == "index":
                                 continue
                             lid = parts[-1].strip()
                         else:
-                            # Legacy: just the ID
                             lid = line
                         
                         if lid:
@@ -241,7 +292,8 @@ def setup_session_log(resume_path: str = None) -> tuple[str, set, int]:
     next_index = 1
     try:
         with open(new_log_path, "w", encoding="utf-8") as f:
-            # Write Header
+            # Write Campaign Header & CSV Header
+            f.write(f"# campaign: {campaign_name}\n")
             f.write("index,listing_id\n")
             
             # Write History
@@ -287,17 +339,38 @@ def main():
         help="Custom English email subject line to be translated and used."
     )
     parser.add_argument(
-        "--wo-claim",
-        action="store_true",
-        help="Use email templates without the initial claim CTA section."
-    )
-    parser.add_argument(
         "--countries",
         type=str,
         default=None,
         help="Comma-separated country codes, slugs, or names (e.g., 'vn,us,germany')."
     )
+    parser.add_argument(
+        "--follow-up",
+        nargs='?',
+        const="all",
+        choices=["all", "claim", "promotion"],
+        default=None,
+        help="Run follow-up campaign for listings that received initial outreach. "
+             "Choices: 'all' (smart routing: claim unverified, then promo), "
+             "'claim' (unverified only), 'promotion' (unpromoted only)."
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=3,
+        help="Minimum cooling-off days elapsed since previous email before follow-up (default: 3)."
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Bypass the cooling-off interval check (for staging/testing)."
+    )
     args = parser.parse_args()
+
+    # Determine campaign mode
+    is_follow_up = args.follow_up is not None
+    follow_up_type = args.follow_up if is_follow_up else None
+    campaign_name = f"followup_{follow_up_type}" if is_follow_up else "initial"
 
     # Resolve Country Filters
     country_ids = []
@@ -311,11 +384,12 @@ def main():
             return
         print(f"Resolved {len(country_ids)} countries.")
 
-    # If a custom title is provided, translate it and override the defaults
+    # Custom title translation
+    custom_title_translations = None
     if args.title:
         print(f"Custom title provided: '{args.title}'. Translating...")
-        global EMAIL_SUBJECT_TRANSLATIONS
-        EMAIL_SUBJECT_TRANSLATIONS = get_translated_subjects(args.title)
+        fallback = CLAIM_FOLLOW_UP_SUBJECTS if follow_up_type == "claim" else (PROMOTION_FOLLOW_UP_SUBJECTS if follow_up_type == "promotion" else EMAIL_SUBJECT_TRANSLATIONS)
+        custom_title_translations = get_translated_subjects(args.title, fallback_dict=fallback)
 
     # Determine dry run mode and limit
     is_dry_run = args.dry_run is not False
@@ -327,7 +401,7 @@ def main():
     production_limit = args.limit
     
     # Template Directory
-    template_dir = "templates/email-wo-claim-cta-templates" if args.wo_claim else "templates"
+    template_dir = "templates"
 
     # Rate Limit Configuration
     try:
@@ -343,8 +417,8 @@ def main():
     print(f"Rate Limit: {rate_limit} emails/min (Sleep: {sleep_interval:.2f}s)")
 
     if is_dry_run:
-        dry_run_dir = setup_dry_run_directory()
-        print("--- DRY RUN MODE ACTIVATED ---")
+        dry_run_dir = setup_dry_run_directory(campaign_name=campaign_name)
+        print(f"--- DRY RUN MODE ACTIVATED ({campaign_name.upper()}) ---")
         print(f"Output directory: {dry_run_dir}")
         if dry_run_limit:
             print(f"Limit: {dry_run_limit} emails")
@@ -353,7 +427,17 @@ def main():
     elif production_limit:
         print(f"--- PRODUCTION LIMIT: {production_limit} emails ---")
 
-    print("Starting Email Marketing Bot...")
+    print(f"Starting Email Marketing Bot ({campaign_name})...")
+
+    # Build regional capacity limits cache
+    print("Building regional capacity limits cache...")
+    try:
+        approved_listings = fetch_approved_listings_for_cache()
+        capacity_cache = calculate_capacity_limits_cache(approved_listings)
+        print(f"Capacity cache built successfully (Cities: {len(capacity_cache['city'])}, States: {len(capacity_cache['state'])}).")
+    except Exception as e:
+        print(f"Error building capacity cache: {e}. Using empty cache.")
+        capacity_cache = {"city": {}, "state": {}}
 
     # Fetch Listings (Bifurcated Logic)
     listings = []
@@ -365,10 +449,24 @@ def main():
 
     if is_dry_run:
         # --- DRY RUN PATH ---
-        print("--- DRY RUN: Fetching preview batch (fast mode) ---")
-        listings = fetch_preview_listings(limit=500, country_ids=country_ids)
+        if is_follow_up:
+            print(f"--- DRY RUN: Fetching follow-up candidates ({follow_up_type}) ---")
+            tracking_hist = fetch_email_tracking_history()
+            pending_claims = fetch_pending_claim_listing_ids() if follow_up_type in ("claim", "all") else set()
+            listings = fetch_follow_up_listings(
+                pursuit_type=follow_up_type,
+                country_ids=country_ids,
+                min_days=args.interval,
+                force=args.force,
+                capacity_cache=capacity_cache,
+                tracking_history=tracking_hist,
+                pending_claims=pending_claims
+            )
+        else:
+            print("--- DRY RUN: Fetching preview batch (fast mode) ---")
+            listings = fetch_preview_listings(limit=500, country_ids=country_ids)
         total_available = len(listings)
-        print(f"Preview fetched: {total_available} listings.")
+        print(f"Candidates fetched: {total_available} listings.")
         
         # Determine target count
         dry_run_limit = dry_run_limit if dry_run_limit else 5
@@ -379,27 +477,33 @@ def main():
     else:
         # --- PRODUCTION PATH ---
         # 1. Setup Session
-        session_log_path, processed_ids, current_index = setup_session_log(args.resume)
-        
-        # 2. Fetch All
-        print("Fetching listings (Production Mode)...")
-        listings = fetch_listings(country_ids=country_ids)
-        print(f"Found {len(listings)} total listings.")
-        
+        session_log_path, processed_ids, current_index = setup_session_log(args.resume, campaign_name=campaign_name)
+        if session_log_path is None:
+            return
+
+        # 2. Fetch Listings
+        if is_follow_up:
+            print(f"Fetching follow-up candidates ({follow_up_type}, Production Mode)...")
+            tracking_hist = fetch_email_tracking_history()
+            pending_claims = fetch_pending_claim_listing_ids() if follow_up_type in ("claim", "all") else set()
+            listings = fetch_follow_up_listings(
+                pursuit_type=follow_up_type,
+                country_ids=country_ids,
+                min_days=args.interval,
+                force=args.force,
+                capacity_cache=capacity_cache,
+                tracking_history=tracking_hist,
+                pending_claims=pending_claims
+            )
+        else:
+            print("Fetching listings (Production Mode)...")
+            listings = fetch_listings(country_ids=country_ids)
+        print(f"Found {len(listings)} total candidate listings.")
+
         # 3. Filter
         if processed_ids:
             listings = [l for l in listings if str(l.get("id")) not in processed_ids]
             print(f"Filtered down to {len(listings)} listings (removed {len(processed_ids)} processed).")
-
-    # Build regional capacity limits cache
-    print("Building regional capacity limits cache...")
-    try:
-        approved_listings = fetch_approved_listings_for_cache()
-        capacity_cache = calculate_capacity_limits_cache(approved_listings)
-        print(f"Capacity cache built successfully (Cities: {len(capacity_cache['city'])}, States: {len(capacity_cache['state'])}).")
-    except Exception as e:
-        print(f"Error building capacity cache: {e}. Using empty cache.")
-        capacity_cache = {"city": {}, "state": {}}
 
     # Fetch Platform Stats
     if is_dry_run:
@@ -461,7 +565,38 @@ def main():
             # Determine Language early for content and template resolution
             target_lang = get_locale_for_listing(listing)
 
-            print(f"\nProcessing listing: {title} ({listing_id}) in {target_lang}")
+            # Determine pursuit type, template dir, email description, and subject
+            assigned_pursuit = listing.get("assigned_pursuit", follow_up_type if is_follow_up else "initial")
+
+            if not is_follow_up:
+                template_dir = "templates"
+                email_description = "Marketing Outreach"
+                if custom_title_translations:
+                    subject = custom_title_translations.get(target_lang, custom_title_translations["en"])
+                else:
+                    dashboard_translations = load_dashboard_translations()
+                    lang_t = dashboard_translations.get(target_lang, dashboard_translations.get("en", {}))
+                    subject = lang_t.get("email_subject", EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"]))
+            elif assigned_pursuit == "claim":
+                template_dir = "templates/follow-up/claim"
+                email_description = "Follow-up Claim Outreach"
+                if custom_title_translations:
+                    subject = custom_title_translations.get(target_lang, custom_title_translations["en"])
+                else:
+                    subject = CLAIM_FOLLOW_UP_SUBJECTS.get(target_lang, CLAIM_FOLLOW_UP_SUBJECTS["en"])
+            elif assigned_pursuit == "promotion":
+                template_dir = "templates/follow-up/promotion"
+                email_description = "Follow-up Promotion Outreach"
+                if custom_title_translations:
+                    subject = custom_title_translations.get(target_lang, custom_title_translations["en"])
+                else:
+                    subject = PROMOTION_FOLLOW_UP_SUBJECTS.get(target_lang, PROMOTION_FOLLOW_UP_SUBJECTS["en"])
+            else:
+                template_dir = "templates"
+                email_description = "Marketing Outreach"
+                subject = EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"])
+
+            print(f"\nProcessing listing [{email_description}]: {title} ({listing_id}) in {target_lang}")
 
             # 2. Construct URL
             url = construct_listing_url(listing)
@@ -472,7 +607,7 @@ def main():
                     log_email_attempt(
                         recipient=recipient,
                         listing_id=listing_id,
-                        description="Marketing Outreach",
+                        description=email_description,
                         sender=os.environ.get("SENDER_EMAIL"),
                         status="failed",
                         error_message=("Failed to construct URL (missing location"
@@ -484,6 +619,8 @@ def main():
             # Prepend Domain
             domain = os.environ.get("WEBSITE_DOMAIN", "https://catcafecircle.com")
             full_url = f"{domain}{url}"
+            location_path = construct_location_url(listing)
+            full_location_url = f"{domain}{location_path}" if location_path else None
             referral_promotion_url = f"{domain}/{target_lang}/referral-promotion/{listing_id}"
 
             # Resolve location name and capacity limits from cache
@@ -523,6 +660,7 @@ def main():
             context = {
                 "title": title,
                 "listing_url": full_url,
+                "location_url": full_location_url,
                 "referral_promotion_url": referral_promotion_url,
                 "thumbnail_url": listing.get("thumbnail_url", ""),
                 "street_address": listing.get("street_address", ""),
@@ -535,15 +673,12 @@ def main():
                 "menu_starting_price_html": menu_starting_price_html,
                 "location_name": location_name,
                 "max_free_slots": max_free_slots,
-                "remaining_free_slots": remaining_free_slots
+                "remaining_free_slots": remaining_free_slots,
+                "target_lang": target_lang,
+                "lang": target_lang
             }
             # Add platform stats to context
             context.update(platform_stats)
-
-            # Load dashboard translations to get localized subject
-            dashboard_translations = load_dashboard_translations()
-            lang_t = dashboard_translations.get(target_lang, dashboard_translations.get("en", {}))
-            subject = lang_t.get("email_subject", EMAIL_SUBJECT_TRANSLATIONS.get(target_lang, EMAIL_SUBJECT_TRANSLATIONS["en"]))
 
             # 5. Send Email (or Simulate)
             sender_email = os.environ.get("SENDER_EMAIL")
@@ -577,7 +712,7 @@ def main():
             log_email_attempt(
                 recipient=recipient,
                 listing_id=listing_id,
-                description="Marketing Outreach",
+                description=email_description,
                 sender=sender_email,
                 status=status,
                 error_message=error_msg

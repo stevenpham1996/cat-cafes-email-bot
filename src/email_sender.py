@@ -42,20 +42,22 @@ def load_dashboard_translations():
 
 def get_template_env(template_dir: str):
     """Gets or creates a Jinja2 environment for the given template directory."""
-    if template_dir in _ENV_CACHE:
-        return _ENV_CACHE[template_dir]
+    norm_dir = os.path.normpath(template_dir)
+    if norm_dir in _ENV_CACHE:
+        return _ENV_CACHE[norm_dir]
     
     # Always include the base 'templates' directory for shared partials
-    search_paths = [template_dir]
-    if template_dir != "templates":
-        search_paths.append("templates")
+    search_paths = [norm_dir]
+    base_templates_dir = os.path.normpath("templates")
+    if norm_dir != base_templates_dir and base_templates_dir not in search_paths:
+        search_paths.append(base_templates_dir)
     
     loader = FileSystemLoader(searchpath=search_paths)
     env = Environment(
         loader=loader,
         autoescape=select_autoescape(['html', 'xml'])
     )
-    _ENV_CACHE[template_dir] = env
+    _ENV_CACHE[norm_dir] = env
     return env
 
 def render_email_html(context: dict, template_name: str, template_dir: str = "templates", target_lang: str = "en") -> str:

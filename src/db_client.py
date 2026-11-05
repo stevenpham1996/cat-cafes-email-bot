@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -19,7 +19,7 @@ def get_supabase_client() -> Client:
 
 def _base_fields():
     """Shared scalar fields for all listing queries."""
-    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range, city_id, state_id, status, is_referral_promotion, referral_promotion_expires_at"
+    return "id, title, email, slug, street_address, average_rating, review_count, description, filters, thumbnail_url, price_range, city_id, state_id, status, is_referral_promotion, referral_promotion_expires_at, verified_by_owner"
 
 
 # Query for Cases 1 & 2 (city-based listings). cities join can be !inner or plain.
@@ -332,7 +332,7 @@ def calculate_capacity_limits_cache(listings_data: list[dict]) -> dict:
     }
     """
     import math
-    from datetime import datetime, timezone
+    from datetime import datetime, timezone, timedelta
 
     # Current time in UTC for checking promotion expiration
     now = datetime.now(timezone.utc)
@@ -410,4 +410,297 @@ def calculate_capacity_limits_cache(listings_data: list[dict]) -> dict:
         "city": compute_limits(city_stats),
         "state": compute_limits(state_stats)
     }
+
+
+def _parse_sent_at(ts: any) -> datetime | None:
+    """Safely parses timestamp string or datetime object into timezone-aware datetime."""
+    if not ts:
+        return None
+    if isinstance(ts, datetime):
+        return ts if ts.tzinfo else ts.replace(tzinfo=timezone.utc)
+    try:
+        clean_ts = str(ts).replace("Z", "+00:00")
+        dt = datetime.fromisoformat(clean_ts)
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except Exception:
+        return None
+
+
+def fetch_email_tracking_history() -> dict[str, dict[str, datetime]]:
+    """
+    Fetches all successful email tracking records (status = 'sent')
+    and returns an in-memory dictionary mapping:
+        { listing_id: { email_description: sent_at_datetime } }
+    Uses pagination to retrieve all records and avoids N+1 queries.
+    """
+    supabase = get_supabase_client()
+    tracking_history: dict[str, dict[str, datetime]] = {}
+    start = 0
+    batch_size = 1000
+
+    while True:
+        try:
+            response = (
+                supabase.table("email_tracking")
+                .select("listing_id, email_description, sent_at, status")
+                .eq("status", "sent")
+                .not_.is_("listing_id", "null")
+                .range(start, start + batch_size - 1)
+                .execute()
+            )
+            rows = response.data or []
+            for row in rows:
+                lid = str(row.get("listing_id"))
+                desc = row.get("email_description") or ""
+                sent_at = _parse_sent_at(row.get("sent_at"))
+                if not lid or not desc or not sent_at:
+                    continue
+                if lid not in tracking_history:
+                    tracking_history[lid] = {}
+                existing = tracking_history[lid].get(desc)
+                if not existing or sent_at > existing:
+                    tracking_history[lid][desc] = sent_at
+
+            if len(rows) < batch_size:
+                break
+            start += batch_size
+        except Exception as e:
+            print(f"Error fetching email tracking history batch starting at {start}: {e}")
+            break
+
+    return tracking_history
+
+
+def fetch_pending_claim_listing_ids() -> set[str]:
+    """
+    Fetches IDs of listings that have active claims currently undergoing review
+    (status in 'pending' or 'needs_more_info') to prevent sending claim follow-up
+    reminders to business owners who have already submitted verification documents.
+    """
+    supabase = get_supabase_client()
+    pending_ids: set[str] = set()
+    start = 0
+    batch_size = 1000
+
+    while True:
+        try:
+            response = (
+                supabase.table("listing_claims")
+                .select("coworking_place_id, status")
+                .in_("status", ["pending", "needs_more_info"])
+                .not_.is_("coworking_place_id", "null")
+                .range(start, start + batch_size - 1)
+                .execute()
+            )
+            rows = response.data or []
+            for row in rows:
+                c_id = row.get("coworking_place_id")
+                if c_id:
+                    pending_ids.add(str(c_id))
+
+            if len(rows) < batch_size:
+                break
+            start += batch_size
+        except Exception as e:
+            print(f"Error fetching pending listing claims batch starting at {start}: {e}")
+            break
+
+    return pending_ids
+
+
+def fetch_all_approved_candidate_listings(country_ids: list[str] = None) -> list[dict]:
+    """
+    Fetches all approved listings with a valid email address across the 3 location patterns,
+    regardless of promotion status, to serve as the candidate pool for follow-up evaluation.
+    """
+    supabase = get_supabase_client()
+    all_listings = []
+    start = 0
+    batch_size = 1000
+
+    while True:
+        try:
+            if country_ids:
+                # Query A: Cases 1 & 2 — cities!inner forces country match via cities.country_id
+                batch_a = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_CITY.format(cities_join="cities!inner"))
+                    .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .in_("cities.country_id", country_ids)
+                    .range(start, start + batch_size - 1)
+                    .execute().data or []
+                )
+
+                # Query B: Case 3 — states!inner forces country match via states.country_id
+                batch_b = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_STATE)
+                    .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .is_("city_id", "null")
+                    .in_("states.country_id", country_ids)
+                    .range(start, start + batch_size - 1)
+                    .execute().data or []
+                )
+
+                seen = {r["id"] for r in batch_a}
+                batch = batch_a + [r for r in batch_b if r["id"] not in seen]
+            else:
+                batch = (
+                    supabase.table("coworking_places")
+                    .select(_QUERY_ALL)
+                    .not_.is_("email", "null").neq("email", "")
+                    .eq("status", "approved")
+                    .range(start, start + batch_size - 1)
+                    .execute().data or []
+                )
+
+            all_listings.extend(batch)
+            if len(batch) < batch_size:
+                break
+            start += batch_size
+
+        except Exception as e:
+            print(f"Error fetching candidate listings starting at {start}: {e}")
+            break
+
+    return all_listings
+
+
+def _get_location_remaining_slots(listing: dict, capacity_cache: dict) -> int:
+    """Helper to extract remaining free promotion slots from the capacity cache for a listing."""
+    if not capacity_cache:
+        return 999  # Default if cache not provided
+
+    city_data = listing.get("cities")
+    state_data = listing.get("states")
+
+    if city_data and isinstance(city_data, dict):
+        city_id = city_data.get("id")
+        if city_id and capacity_cache.get("city"):
+            stats = capacity_cache["city"].get(city_id)
+            if stats:
+                return stats.get("remaining_free_slots", 0)
+    elif state_data and isinstance(state_data, dict):
+        state_id = state_data.get("id")
+        if state_id and capacity_cache.get("state"):
+            stats = capacity_cache["state"].get(state_id)
+            if stats:
+                return stats.get("remaining_free_slots", 0)
+
+    return 0
+
+
+def fetch_follow_up_listings(
+    pursuit_type: str = "all",
+    country_ids: list[str] = None,
+    min_days: int = 3,
+    force: bool = False,
+    capacity_cache: dict = None,
+    tracking_history: dict[str, dict[str, datetime]] = None,
+    pending_claims: set[str] = None
+) -> list[dict]:
+    """
+    Fetches approved listings that are eligible for a follow-up campaign
+    based on pursuit_type ('claim', 'promotion', or 'all').
+
+    Eligibility criteria:
+    1. Must have already received Initial Outreach ('Marketing Outreach').
+    2. Must satisfy cooldown interval (now - initial_sent_at >= min_days) unless force=True.
+    3. For 'claim':
+       - verified_by_owner is False
+       - Has not already received 'Follow-up Claim Outreach'
+       - Not in pending_claims set (status in 'pending' or 'needs_more_info')
+    4. For 'promotion':
+       - is_active_referral_promotion is False
+       - Has not already received 'Follow-up Promotion Outreach'
+       - Location has remaining_free_slots > 0
+    5. For 'all':
+       - Smart routing prioritizing claim first (if unverified and not pending),
+         then promotion (if unpromoted, capacity available, and cooled off from claim follow-up).
+    """
+    if tracking_history is None:
+        tracking_history = fetch_email_tracking_history()
+
+    if pending_claims is None and pursuit_type in ("claim", "all"):
+        pending_claims = fetch_pending_claim_listing_ids()
+    elif pending_claims is None:
+        pending_claims = set()
+
+    raw_candidates = fetch_all_approved_candidate_listings(country_ids=country_ids)
+    eligible_listings = []
+    now = datetime.now(timezone.utc)
+    cooldown = timedelta(days=min_days)
+
+    for listing in raw_candidates:
+        listing_id = str(listing.get("id"))
+        history = tracking_history.get(listing_id, {})
+
+        # Rule 1: Initial outreach must have been sent
+        initial_sent_at = history.get("Marketing Outreach")
+        if not initial_sent_at:
+            continue
+
+        # Rule 2: Minimum cooling-off days since initial outreach
+        if not force and (now - initial_sent_at) < cooldown:
+            continue
+
+        assigned_pursuit = None
+
+        if pursuit_type == "claim":
+            # Must not have received claim follow-up yet
+            if "Follow-up Claim Outreach" in history:
+                continue
+            # Must not already be verified
+            if listing.get("verified_by_owner") is True:
+                continue
+            # Must not be undergoing claim review
+            if listing_id in pending_claims:
+                continue
+            assigned_pursuit = "claim"
+
+        elif pursuit_type == "promotion":
+            # Must not have received promotion follow-up yet
+            if "Follow-up Promotion Outreach" in history:
+                continue
+            # Must not currently have an active referral promotion
+            if listing.get("is_referral_promotion") is True:
+                continue
+            # Must have remaining free promotion slots in its location
+            remaining_slots = _get_location_remaining_slots(listing, capacity_cache)
+            if remaining_slots <= 0:
+                continue
+            assigned_pursuit = "promotion"
+
+        elif pursuit_type == "all":
+            # Smart Routing:
+            # 1. First priority: Claim (if unverified, not in pending claims, and no claim follow-up sent yet)
+            has_claim_followup = "Follow-up Claim Outreach" in history
+            is_verified = listing.get("verified_by_owner") is True
+            is_pending_claim = listing_id in pending_claims
+
+            if not is_verified and not is_pending_claim and not has_claim_followup:
+                assigned_pursuit = "claim"
+            else:
+                # 2. Second priority: Promotion
+                has_promo_followup = "Follow-up Promotion Outreach" in history
+                is_promoted = listing.get("is_referral_promotion") is True
+
+                if not is_promoted and not has_promo_followup:
+                    # Check cooling-off interval from claim follow-up if it was sent
+                    claim_followup_at = history.get("Follow-up Claim Outreach")
+                    if claim_followup_at and not force and (now - claim_followup_at) < cooldown:
+                        continue  # Wait for cooldown after claim follow-up
+
+                    # Check location remaining capacity
+                    remaining_slots = _get_location_remaining_slots(listing, capacity_cache)
+                    if remaining_slots > 0:
+                        assigned_pursuit = "promotion"
+
+        if assigned_pursuit:
+            listing["assigned_pursuit"] = assigned_pursuit
+            eligible_listings.append(listing)
+
+    return eligible_listings
 

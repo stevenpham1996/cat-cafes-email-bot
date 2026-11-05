@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+        }
+
+        .email-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .h2 {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .intro {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-left: 4px solid #248f84;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box p {
+            font-size: 15px;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 35px;
+        }
+
+        .cta-text {
+            /* Removed padding and border-radius as they conflict with text-only styling */
+            background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* Makes the text color transparent to show the background clip */
+            text-decoration: none; /* Remove default underline */
+            font-weight: 600;
+            font-size: 18px;
+            transition: transform 0.2s;
+            display: inline-block; /* Allows transform to work */
+            position: relative; /* For custom underline */
+        }
+
+        .cta-text::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px; /* Adjust position of the underline */
+            width: 100%;
+            height: 2px; /* Thickness of the underline */
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
+            /* Underline is now always present by default */
+        }
+
+        .cta-text:hover {
+            transform: translateY(-2px);
+            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .benefits {
+            margin: 30px 0;
+        }
+
+        .benefits-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .svg-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            font-size: 15px;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 35px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #248f84;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+
+        .signature {
+            margin-top: 25px;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .signature-name {
+            font-weight: 600;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-link {
+            color: #248f84;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 30px;
+                font-size: 15px;
+            }
+        }
+
+        /* Listing Card Styles */
+        .listing-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .listing-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            line-height: 1.2;
+        }
+
+        .listing-card-address {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .star-rating {
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="email-wrapper">
+        <div class="header">
+            <!-- Logo Image - Centered on top -->
+            <div style="text-align: center; margin-bottom: 10px;">
+                <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
+                    style="height: 85px; display: inline-block;">
+            </div>
+            <!-- Brand Name -->
+            <div class="logo" style="margin-bottom: 10px;">
+                Cat Cafe Circle
+            </div>
+            <!-- Tagline -->
+            <div class="tagline">Direktori Cat Cafe Terbesar di Dunia</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">Halo {{ title }},</div>
+
+            <p class="intro">
+                Ini adalah email tindak lanjut mengenai profil aktif kafe Anda, {{ title }}, di CatCafeCircle.com. Profil ini saat ini belum diklaim; klaim sekarang untuk mengelola informasi bisnis, menambahkan saluran kontak, dan membuka visibilitas prioritas kepada lebih banyak pecinta kucing.
+            </p>
+
+            <p class="caveat">
+                Kami ingin memastikan bahwa semua informasi yang digunakan untuk profil kafe Anda dikumpulkan secara eksklusif dan hati-hati dari saluran resmi yang tersedia untuk umum, guna menjaga akurasi dan menghormati bisnis Anda.
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-text">Lihat Halaman Kafe Kucing Anda</a>
+            </div>
+
+
+            <div class="benefits">
+                <div class="h2">
+                    <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 155.139 155.139" xml:space="preserve" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <g>
+                                    <path style="fill:#010002;"
+                                        d="M109.719,114.588v28.17l45.42-45.42l-45.42-45.42v28.516C56.202,76.4,12.966,48.529,2.452,12.381 C0.847,17.895,0,23.605,0,29.452C0,73.601,48.027,109.94,109.719,114.588z">
+                                    </path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <div class="benefits-title">Langkah Selanjutnya: Klaim Profil Anda untuk Membuka Fitur Eksklusif</div>
+                </div>
+
+                <div style="display: flex; align-items: center; padding: 0px 6px; margin-bottom: 20px;">
+                    <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
+                        Kunjungi halaman profil kafe Anda dan klik tombol "Klaim Profil Ini" untuk memverifikasi kepemilikan dengan dokumen usaha resmi
+                    </p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Penempatan Prioritas:</strong> Tampil lebih tinggi di hasil pencarian dan tarik lebih banyak pengunjung.
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Kustomisasi Penuh:</strong> Perbarui detail kontak kafe, foto, harga, kebijakan adopsi (jika ada), dan fasilitas kapan saja.
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Interaksi dengan Komunitas:</strong> Tanggapi ulasan dan terhubung langsung dengan calon pengunjung.
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>Alat Promosi:</strong> Akses fitur promosi khusus untuk mengembangkan audiens dan meningkatkan visibilitas Anda.
+                    </div>
+                </div>
+            </div>
+
+            {% include 'listing_card.html' %}
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
+                
+                {% if location_name and location_url %}
+                Kafe yang telah diklaim akan mendapatkan lencana "Terverifikasi" dan diprioritaskan dalam hasil pencarian di <a href="{{ location_url }}" style="color: #248f84; text-decoration: underline;">{{ location_name }}</a>.
+                {% else %}
+                Kafe yang telah diklaim akan mendapatkan lencana "Terverifikasi" dan diprioritaskan dalam hasil pencarian.
+                {% endif %}
+            
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-button">Klaim Kafe Kucing Anda Sekarang</a>
+            </div>
+
+<div class="signature">
+                <div>Salam hangat,</div>
+                <div class="signature-name">CatCafeCircle Team</div>
+                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                    <a href="https://catcafecircle.com"
+                        style="color: #248f84; text-decoration: none;">catcafecircle.com</a>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_studios_count }}</span>
+                    <span class="stat-label">Kafe Terdaftar</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_cities_count }}</span>
+                    <span class="stat-label">Kota</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
+                    <span class="stat-label">Pengguna Aktif</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                Anda menerima email ini karena kafe Anda terdaftar di direktori publik kami. Kami berkomitmen untuk membangun komunitas global guna menghubungkan pemilik kafe dengan pencinta kucing di seluruh dunia.
+            </p>
+            <div class="footer-links">
+                <a href="https://catcafecircle.com/about" class="footer-link">Tentang Kami</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="https://catcafecircle.com/contact" class="footer-link">Kontak</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="mailto:directorynexus@gmail.com?subject=Berhenti Berlangganan" class="footer-link">Berhenti Berlangganan</a>
+            </div>
+            <p class="footer-text" style="font-size: 12px;">
+                © 2026 CatCafeCircle.com. Hak cipta dilindungi undang-undang.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

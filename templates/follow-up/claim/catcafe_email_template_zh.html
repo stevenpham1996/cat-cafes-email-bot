@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+        }
+
+        .email-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .h2 {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .intro {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .caveat {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-style: italic;
+            padding-left: 20px;
+            border-left: 4px solid #248f84;
+            margin-left: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-left: 4px solid #248f84;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box p {
+            font-size: 15px;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 35px;
+        }
+
+        .cta-text {
+            /* Removed padding and border-radius as they conflict with text-only styling */
+            background-image: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* Makes the text color transparent to show the background clip */
+            text-decoration: none; /* Remove default underline */
+            font-weight: 600;
+            font-size: 18px;
+            transition: transform 0.2s;
+            display: inline-block; /* Allows transform to work */
+            position: relative; /* For custom underline */
+        }
+
+        .cta-text::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px; /* Adjust position of the underline */
+            width: 100%;
+            height: 2px; /* Thickness of the underline */
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%); /* Gradient underline */
+            /* Underline is now always present by default */
+        }
+
+        .cta-text:hover {
+            transform: translateY(-2px);
+            /* box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5); */
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .benefits {
+            margin: 30px 0;
+        }
+
+        .benefits-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .svg-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #248f84 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            font-size: 15px;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 35px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #248f84;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .closing {
+            font-size: 15px;
+            color: #4a4a4a;
+            margin-top: 30px;
+            line-height: 1.7;
+        }
+
+        .signature {
+            margin-top: 25px;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .signature-name {
+            font-weight: 600;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-link {
+            color: #248f84;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 30px;
+                font-size: 15px;
+            }
+        }
+
+        /* Listing Card Styles */
+        .listing-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .listing-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            line-height: 1.2;
+        }
+
+        .listing-card-address {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .star-rating {
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="email-wrapper">
+        <div class="header">
+            <!-- Logo Image - Centered on top -->
+            <div style="text-align: center; margin-bottom: 10px;">
+                <img src="https://catcafecircle.com/_next/image?url=%2Flogo-medium.png&w=128&q=75" alt="CatCafeCircle.com"
+                    style="height: 85px; display: inline-block;">
+            </div>
+            <!-- Brand Name -->
+            <div class="logo" style="margin-bottom: 10px;">
+                Cat Cafe Circle
+            </div>
+            <!-- Tagline -->
+            <div class="tagline">全球最大的猫咪咖啡馆名录</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">{{ title }} 您好：</div>
+
+            <p class="intro">
+                这是关于您在 CatCafeCircle.com 上的猫咖页面 {{ title }} 的跟进邮件。该页面目前尚未认领；立即完成认领即可管理您的门店详情、添加联系渠道，并向更多爱猫人士获得优先展示权益。
+            </p>
+
+            <p class="caveat">
+                请您放心，我们用于收录您咖啡馆的所有信息均来自公开的官方渠道，经过精挑细选与严格核对，旨在确保信息准确无误，并充分尊重您的商业权益。
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-text">查看您的猫咖页面</a>
+            </div>
+
+
+            <div class="benefits">
+                <div class="h2">
+                    <svg class="svg-icon" height="64px" width="64px" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 155.139 155.139" xml:space="preserve" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <g>
+                                    <path style="fill:#010002;"
+                                        d="M109.719,114.588v28.17l45.42-45.42l-45.42-45.42v28.516C56.202,76.4,12.966,48.529,2.452,12.381 C0.847,17.895,0,23.605,0,29.452C0,73.601,48.027,109.94,109.719,114.588z">
+                                    </path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <div class="benefits-title">下一步：认领您的专属页面以解锁专属权益</div>
+                </div>
+
+                <div style="display: flex; align-items: center; padding: 0px 6px; margin-bottom: 20px;">
+                    <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">
+                        前往您的门店主页并点击“认领此商户”按钮，上传营业凭据以完成所有权认证
+                    </p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>优先展示：</strong> 在搜索结果中名列前茅，吸引更多爱猫人士点击访问。
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>全面自主编辑：</strong> 随时更新联系方式、营业照片、价目表、领养政策（如适用）及店内设施。
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>互动与社群运营：</strong> 回复顾客评价，与潜在的到店顾客建立直接联系。
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <strong>专属推广工具：</strong> 获取特邀推广功能，快速提升曝光率并扩大您的受众群体。
+                    </div>
+                </div>
+            </div>
+
+            {% include 'listing_card.html' %}
+            <p style="font-size: 12px; font-style: italic; text-align: center; color: #413f3f;">
+                
+                {% if location_name and location_url %}
+                认领后的咖啡馆将获得“已验证”专属徽章，并在 <a href="{{ location_url }}" style="color: #248f84; text-decoration: underline;">{{ location_name }}</a> 的搜索结果中优先展示。
+                {% else %}
+                认领后的咖啡馆将获得“已验证”专属徽章，并在搜索结果中优先展示。
+                {% endif %}
+            
+            </p>
+
+            <div class="cta-section">
+                <a href="{{ listing_url }}" class="cta-button">立即认领您的猫咪咖啡馆</a>
+            </div>
+
+<div class="signature">
+                <div>顺祝商祺，</div>
+                <div class="signature-name">CatCafeCircle Team</div>
+                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                    <a href="https://catcafecircle.com"
+                        style="color: #248f84; text-decoration: none;">catcafecircle.com</a>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_studios_count }}</span>
+                    <span class="stat-label">已收录咖啡馆</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_cities_count }}</span>
+                    <span class="stat-label">覆盖城市</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ platform_active_users_count }}</span>
+                    <span class="stat-label">活跃用户</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                您收到此邮件是因为您的咖啡馆已被收录在我们的公开名录中。我们致力于构建一个全球性的桥梁，将咖啡馆主与世界各地的爱猫人士相连。
+            </p>
+            <div class="footer-links">
+                <a href="https://catcafecircle.com/about" class="footer-link">关于我们</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="https://catcafecircle.com/contact" class="footer-link">联系我们</a>
+                <span style="color: #d1d5db;">|</span>
+                <a href="mailto:directorynexus@gmail.com?subject=取消订阅" class="footer-link">取消订阅</a>
+            </div>
+            <p class="footer-text" style="font-size: 12px;">
+                © 2026 CatCafeCircle.com. 保留所有权利。
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
