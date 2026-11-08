@@ -92,7 +92,17 @@ uv run python -m src.main --follow-up claim --force
 
 # Custom English subject line (automatically translated into all 13 locales)
 uv run python -m src.main --follow-up claim --title "Important update regarding your Cat Cafe Circle listing"
+
+# Custom delay time (manual override in seconds; must be >= 1.0s)
+uv run python -m src.main --follow-up claim --delay-time 2.5
 ```
+
+#### Smart Time Delay & Rate Limiting (`--delay-time`)
+The bot supports both dynamic auto-detection and manual configuration for dispatch delay intervals:
+- **Smart Dynamic Mode (Default with Prepaid Credits)**: When `--delay-time` is not passed and your Brevo account contains prepaid email credits (`payAsYouGo`), the bot automatically activates **Smart Delay**, shortening the delay period to `1.0s` (the shortest allowed period) for maximum sending efficiency.
+- **Real-Time Free-Plan Reversion**: The bot tracks available prepaid credits in real-time as messages are dispatched. When prepaid credits reach `0`, it automatically transitions back to the safe Free-Plan default delay period (`60.0 / RATE_LIMIT * 3`, e.g., 22.50s) to protect the account against Brevo queue overflows.
+- **Manual Mode (`--delay-time SECONDS`)**: Explicitly overrides the delay period in seconds (e.g., `--delay-time 5` or `--delay-time 1`). For system safety, any value below `1.0s` is strictly rejected.
+- **Free-Plan Default Mode**: When `--delay-time` is not passed and no prepaid credits exist, the bot uses the long default delay (`60.0 / RATE_LIMIT * 3`).
 
 ## 3. What to Expect
 
@@ -110,7 +120,10 @@ uv run python -m src.main --follow-up claim --title "Important update regarding 
     -   **Conditional State Commit**:
         - **If Dispatched**: Inserts `status: 'sent'` into `email_tracking` with the confirmed Brevo message ID and appends `current_index,listing_id` to the session log file.
         - **If Queued (Quota Exceeded)**: When daily credits are exhausted (e.g. Free Tier 300/day limit), Brevo pauses messages in its internal queue instead of rejecting them. The bot detects this, logs `status: 'queued'`, **does NOT** write the listing ID to the session file, and **immediately halts execution (fail-fast)** to prevent dumping additional listings into Brevo's 72-hour discard buffer.
-5.  **Rate Limiting**: Pauses between emails according to `RATE_LIMIT` environment variable (automatically deducting verification elapsed time).
+5.  **Smart Time Delay & Rate Limiting**: 
+    - In **Smart Dynamic Mode**, pauses for `1.0s` while prepaid credits are available, then dynamically reverts to Free-Plan long delay (`60.0 / RATE_LIMIT * 3`) when prepaid credits deplete to `0`.
+    - In **Manual Mode** (`--delay-time`), adheres strictly to the user-specified interval (minimum `1.0s`).
+    - Verification elapsed time is subtracted from the target sleep duration to ensure smooth, non-accumulating pacing.
 6.  **Output**: Displays console progress, sent counts, skips, errors, and session log paths.
 
 ## 4. Troubleshooting

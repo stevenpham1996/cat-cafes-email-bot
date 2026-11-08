@@ -21,7 +21,7 @@ from src.db_client import (
 )
 from src.url_constructor import construct_listing_url, construct_location_url
 from src.email_sender import send_email, render_email_html, load_dashboard_translations
-from src.brevo_verifier import verify_email_dispatched, check_account_credits
+from src.brevo_verifier import verify_email_dispatched, check_account_credits, get_account_credits_detail
 from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
 from src.localization import get_locale_for_listing
@@ -309,7 +309,7 @@ def setup_session_log(resume_path: str = None, campaign_name: str = "initial") -
     return new_log_path, processed_ids, next_index
 
 
-def main():
+def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Email Marketing Bot")
     parser.add_argument(
         "--dry-run",
@@ -366,7 +366,30 @@ def main():
         action="store_true",
         help="Bypass the cooling-off interval check (for staging/testing)."
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--delay-time",
+        type=float,
+        default=None,
+        metavar="SECONDS",
+        help="Specific delay time duration in seconds between each email request (minimum 1.0s)."
+    )
+    return parser
+
+
+def parse_arguments(cli_args=None) -> argparse.Namespace:
+    parser = create_parser()
+    args = parser.parse_args(cli_args)
+    if args.delay_time is not None:
+        if args.delay_time < 1.0:
+            parser.error(
+                f"Invalid --delay-time: {args.delay_time}s. "
+                "Delay time must be greater than or equal to 1.0 second (shortest allowed period)."
+            )
+    return args
+
+
+def main():
+    args = parse_arguments()
 
     # Determine campaign mode
     is_follow_up = args.follow_up is not None
@@ -404,7 +427,7 @@ def main():
     # Template Directory
     template_dir = "templates"
 
-    # Rate Limit Configuration
+    # Rate Limit & Delay Configuration
     try:
         rate_limit = int(os.environ.get("RATE_LIMIT", 5))
         if rate_limit <= 0:
@@ -414,8 +437,63 @@ def main():
         print("Warning: RATE_LIMIT must be an larger than 0. Using default 5.")
         rate_limit = 5
     
-    sleep_interval = 60.0 / rate_limit * 3
-    print(f"Rate Limit: {rate_limit} emails/min (Sleep: {sleep_interval:.2f}s)")
+    default_free_plan_delay = 60.0 / rate_limit * 3
+    MIN_ALLOWED_DELAY = 1.0
+
+    delay_mode = "free_plan"
+    available_prepaid_credits = 0
+    current_delay = default_free_plan_delay
+
+    if args.delay_time is not None:
+        delay_mode = "manual"
+        current_delay = float(args.delay_time)
+        print(f"Delay Configuration: Manual mode ({current_delay:.2f}s delay between requests)")
+    elif is_dry_run:
+        print(f"Delay Configuration: Dry-run mode ({current_delay:.2f}s delay)")
+    else:
+        # Check Brevo account credits and IP security pre-flight for dynamic smart delay
+        brevo_key = os.environ.get("BREVO_API_KEY")
+        if brevo_key:
+            print("Checking Brevo account status and credits...")
+            credits_detail, credit_err = get_account_credits_detail(brevo_key)
+            if credit_err:
+                print(f"[Brevo Account Alert] {credit_err}")
+                print(f"Delay Configuration: Free-Plan default mode (fallback delay: {current_delay:.2f}s, Rate Limit: {rate_limit} emails/min)")
+            elif credits_detail:
+                total_credits = credits_detail.get("total_credits", 0)
+                prepaid = credits_detail.get("prepaid_credits", 0)
+                sub_credits = credits_detail.get("subscription_credits", 0)
+                print(f"Brevo account verified. Available credits: {total_credits} (Prepaid: {prepaid}, Subscription: {sub_credits})")
+                if total_credits == 0:
+                    print("CRITICAL WARNING: Brevo account reports 0 credits remaining.")
+
+                if credits_detail.get("has_prepaid") and prepaid > 0:
+                    delay_mode = "dynamic_smart"
+                    available_prepaid_credits = prepaid
+                    current_delay = MIN_ALLOWED_DELAY
+                    print(f"Delay Configuration: Smart dynamic mode activated ({available_prepaid_credits} prepaid credits detected -> {current_delay:.2f}s delay)")
+                else:
+                    delay_mode = "free_plan"
+                    current_delay = default_free_plan_delay
+                    print(f"Delay Configuration: Free-Plan default mode (no prepaid credits -> {current_delay:.2f}s delay, Rate Limit: {rate_limit} emails/min)")
+        else:
+            print("Note: BREVO_API_KEY not configured. Post-send dispatch verification will be skipped.")
+            print(f"Delay Configuration: Free-Plan default mode ({current_delay:.2f}s delay, Rate Limit: {rate_limit} emails/min)")
+
+    # If manual mode was selected and not dry-run, still run credit pre-flight check if key is available
+    if not is_dry_run and delay_mode == "manual":
+        brevo_key = os.environ.get("BREVO_API_KEY")
+        if brevo_key:
+            print("Checking Brevo account status and credits...")
+            credits, credit_err = check_account_credits(brevo_key)
+            if credit_err:
+                print(f"[Brevo Account Alert] {credit_err}")
+            else:
+                print(f"Brevo account verified. Available credits: {credits}")
+                if credits == 0:
+                    print("CRITICAL WARNING: Brevo account reports 0 credits remaining.")
+        else:
+            print("Note: BREVO_API_KEY not configured. Post-send dispatch verification will be skipped.")
 
     if is_dry_run:
         dry_run_dir = setup_dry_run_directory(campaign_name=campaign_name)
@@ -429,21 +507,6 @@ def main():
         print(f"--- PRODUCTION LIMIT: {production_limit} emails ---")
 
     print(f"Starting Email Marketing Bot ({campaign_name})...")
-
-    # Check Brevo account credits and IP security pre-flight
-    if not is_dry_run:
-        brevo_key = os.environ.get("BREVO_API_KEY")
-        if brevo_key:
-            print("Checking Brevo account status and credits...")
-            credits, credit_err = check_account_credits(brevo_key)
-            if credit_err:
-                print(f"[Brevo Account Alert] {credit_err}")
-            else:
-                print(f"Brevo account verified. Available credits: {credits}")
-                if credits == 0:
-                    print("CRITICAL WARNING: Brevo account reports 0 credits remaining.")
-        else:
-            print("Note: BREVO_API_KEY not configured. Post-send dispatch verification will be skipped.")
 
     # Build regional capacity limits cache
     print("Building regional capacity limits cache...")
@@ -771,9 +834,25 @@ def main():
                     except Exception as e:
                         print(f"CRITICAL ERROR: Failed to write to log file: {e}")
 
-                # 7. Rate Limit (subtract verification elapsed time to prevent excessive delay)
+                # Real-time prepaid credit countdown & transition handling
+                if delay_mode == "dynamic_smart":
+                    available_prepaid_credits -= 1
+                    if available_prepaid_credits <= 0:
+                        # Quick refresh check to verify if external top-up occurred
+                        brevo_key = os.environ.get("BREVO_API_KEY")
+                        refreshed, _ = get_account_credits_detail(brevo_key) if brevo_key else (None, None)
+                        if refreshed and refreshed.get("prepaid_credits", 0) > 0:
+                            available_prepaid_credits = refreshed["prepaid_credits"]
+                            print(f"\n[Smart Delay] Refreshed prepaid credits: {available_prepaid_credits} available.")
+                        else:
+                            print(f"\n[Smart Delay Transition] Available prepaid credits exhausted. "
+                                  f"Reverting delay duration to Free-Plan default ({default_free_plan_delay:.2f}s).")
+                            current_delay = default_free_plan_delay
+                            delay_mode = "free_plan"
+
+                # 7. Rate Limit / Delay (subtract verification elapsed time to prevent excessive delay)
                 elapsed = (datetime.datetime.now(datetime.timezone.utc) - sent_attempt_time).total_seconds()
-                remaining_sleep = max(1.0, sleep_interval - elapsed)
+                remaining_sleep = max(MIN_ALLOWED_DELAY, current_delay - elapsed)
                 time.sleep(remaining_sleep)
             else:
                 # Brevo Free Tier limit reached or message queued: Halt immediately to prevent queue flooding

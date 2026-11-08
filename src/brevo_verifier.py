@@ -22,13 +22,21 @@ def parse_iso_datetime(dt_str: str) -> datetime.datetime:
         return datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
 
 
-def check_account_credits(api_key: str = None) -> tuple[int | None, str | None]:
+def get_account_credits_detail(api_key: str = None) -> tuple[dict | None, str | None]:
     """
-    Checks the remaining email credits from Brevo account details.
+    Retrieves detailed credit allocation from Brevo account details, distinguishing
+    between prepaid/payAsYouGo credits and subscription/free tier limits.
     
     Returns:
-        tuple: (credits_count, error_message)
-               credits_count is an integer if successful, or None if failed.
+        tuple: (credit_info_dict, error_message)
+               credit_info_dict format:
+               {
+                   "prepaid_credits": int,
+                   "subscription_credits": int,
+                   "total_credits": int,
+                   "has_prepaid": bool,
+                   "plans": list
+               }
     """
     key = api_key or os.environ.get("BREVO_API_KEY")
     if not key:
@@ -45,13 +53,33 @@ def check_account_credits(api_key: str = None) -> tuple[int | None, str | None]:
         if response.status_code == 200:
             data = response.json()
             plans = data.get("plan", [])
+            
+            prepaid_credits = 0
+            subscription_credits = 0
+            
             for plan in plans:
-                # Free tier uses 'sendLimit'; paid plans use 'transactional' or 'marketing'
+                plan_type = str(plan.get("type", "")).lower()
+                credits_val = int(plan.get("credits", 0))
                 credits_type = plan.get("creditsType")
-                if credits_type in ("sendLimit", "transactional", "marketing"):
-                    return int(plan.get("credits", 0)), None
-            # If no matching plan type found, fallback to 0 credits
-            return 0, None
+                
+                # Check for payAsYouGo / prepaid credits
+                if plan_type in ("payasyougo", "prepaid") or (credits_type == "transactional" and plan_type != "free"):
+                    prepaid_credits += credits_val
+                elif credits_type in ("sendlimit", "subscription") or plan_type in ("subscription", "free"):
+                    subscription_credits += credits_val
+                else:
+                    subscription_credits += credits_val
+
+            total_credits = prepaid_credits + subscription_credits
+            
+            result = {
+                "prepaid_credits": prepaid_credits,
+                "subscription_credits": subscription_credits,
+                "total_credits": total_credits,
+                "has_prepaid": prepaid_credits > 0,
+                "plans": plans
+            }
+            return result, None
         
         error_msg = f"HTTP {response.status_code}: {response.text}"
         try:
@@ -70,6 +98,20 @@ def check_account_credits(api_key: str = None) -> tuple[int | None, str | None]:
 
     except Exception as e:
         return None, f"Network error checking Brevo credits: {e}"
+
+
+def check_account_credits(api_key: str = None) -> tuple[int | None, str | None]:
+    """
+    Checks the remaining email credits from Brevo account details.
+    
+    Returns:
+        tuple: (credits_count, error_message)
+               credits_count is total available credits (prepaid + subscription).
+    """
+    detail, err = get_account_credits_detail(api_key=api_key)
+    if err:
+        return None, err
+    return detail.get("total_credits", 0), None
 
 
 def verify_email_dispatched(
