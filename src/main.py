@@ -21,6 +21,7 @@ from src.db_client import (
 )
 from src.url_constructor import construct_listing_url, construct_location_url
 from src.email_sender import send_email, render_email_html, load_dashboard_translations
+from src.brevo_verifier import verify_email_dispatched, check_account_credits
 from src.email_logger import log_email_attempt
 from src.referral_code_generator import get_badge_html_code, get_text_link_html_code
 from src.localization import get_locale_for_listing
@@ -429,6 +430,21 @@ def main():
 
     print(f"Starting Email Marketing Bot ({campaign_name})...")
 
+    # Check Brevo account credits and IP security pre-flight
+    if not is_dry_run:
+        brevo_key = os.environ.get("BREVO_API_KEY")
+        if brevo_key:
+            print("Checking Brevo account status and credits...")
+            credits, credit_err = check_account_credits(brevo_key)
+            if credit_err:
+                print(f"[Brevo Account Alert] {credit_err}")
+            else:
+                print(f"Brevo account verified. Available credits: {credits}")
+                if credits == 0:
+                    print("CRITICAL WARNING: Brevo account reports 0 credits remaining.")
+        else:
+            print("Note: BREVO_API_KEY not configured. Post-send dispatch verification will be skipped.")
+
     # Build regional capacity limits cache
     print("Building regional capacity limits cache...")
     try:
@@ -703,25 +719,45 @@ def main():
                     errors_count += 1
                 continue
 
+            sent_attempt_time = datetime.datetime.now(datetime.timezone.utc)
             success = send_email(recipient, subject, context, template_name, template_dir=template_dir, target_lang=target_lang)
 
-            # 6. Log Result
-            status = "sent" if success else "failed"
-            error_msg = None if success else "SMTP sending failed"
+            if not success:
+                print(f"Failed to send email to {recipient} (SMTP transmission failed).")
+                log_email_attempt(
+                    recipient=recipient,
+                    listing_id=listing_id,
+                    description=email_description,
+                    sender=sender_email,
+                    status="failed",
+                    error_message="SMTP sending failed"
+                )
+                errors_count += 1
+                continue
 
-            log_email_attempt(
+            # 6. Post-Send Verification (Method 2: Verify actual dispatch via Brevo API)
+            print(f"Verifying dispatch with Brevo API for {recipient}...")
+            is_verified, brevo_meta, verify_error = verify_email_dispatched(
                 recipient=recipient,
-                listing_id=listing_id,
-                description=email_description,
-                sender=sender_email,
-                status=status,
-                error_message=error_msg
+                sent_after=sent_attempt_time,
+                max_retries=4,
+                retry_delay=3.0
             )
 
-            if success:
-                print(f"Email sent successfully to {recipient}.")
+            if is_verified:
+                message_id = brevo_meta.get("messageId") if brevo_meta else "N/A"
+                print(f"Verified dispatched by Brevo: {recipient} (Message ID: {message_id}).")
                 emails_sent_count += 1
-                
+
+                log_email_attempt(
+                    recipient=recipient,
+                    listing_id=listing_id,
+                    description=email_description,
+                    sender=sender_email,
+                    status="sent",
+                    error_message=None
+                )
+
                 # REAL-TIME LOGGING (Critical for Resume/Data Safety)
                 if log_file:
                     try:
@@ -732,11 +768,32 @@ def main():
                     except Exception as e:
                         print(f"CRITICAL ERROR: Failed to write to log file: {e}")
 
-                # 7. Rate Limit
-                time.sleep(sleep_interval)
+                # 7. Rate Limit (subtract verification elapsed time to prevent excessive delay)
+                elapsed = (datetime.datetime.now(datetime.timezone.utc) - sent_attempt_time).total_seconds()
+                remaining_sleep = max(1.0, sleep_interval - elapsed)
+                time.sleep(remaining_sleep)
             else:
-                print(f"Failed to send email to {recipient}.")
+                # Brevo Free Tier limit reached or message queued: Halt immediately to prevent queue flooding
+                print(f"\n[ALERT] Brevo Dispatch Verification Failed for {recipient}!")
+                print(f"Reason: {verify_error}")
+                print(f"Email was accepted by SMTP relay but NOT confirmed as dispatched by Brevo.")
+                print(f"Recording listing {listing_id} as 'queued' in tracking and halting execution.")
+
+                log_email_attempt(
+                    recipient=recipient,
+                    listing_id=listing_id,
+                    description=email_description,
+                    sender=sender_email,
+                    status="queued",
+                    error_message=verify_error
+                )
                 errors_count += 1
+
+                print(f"\n[ABORT] Pausing campaign execution to protect Brevo queue.")
+                print(f"Session log preserved up to index {current_index - 1}.")
+                if session_log_path:
+                    print(f"You can safely resume with: --resume {session_log_path}\n")
+                break
 
     except KeyboardInterrupt:
         print("\n\n--- Process Interrupted by User ---")
