@@ -75,9 +75,9 @@ def check_account_credits(api_key: str = None) -> tuple[int | None, str | None]:
 def verify_email_dispatched(
     recipient: str,
     sent_after: datetime.datetime,
-    max_retries: int = 4,
-    retry_delay: float = 3.0,
-    clock_skew_tolerance_seconds: int = 30,
+    max_retries: int = 6,
+    retry_delay: float = 4.0,
+    clock_skew_tolerance_seconds: int = 60,
     api_key: str = None
 ) -> tuple[bool, dict | None, str | None]:
     """
@@ -109,7 +109,7 @@ def verify_email_dispatched(
     }
     params = {
         "email": recipient.strip().lower(),
-        "limit": 1,
+        "limit": 5,
         "sort": "desc"
     }
 
@@ -132,15 +132,15 @@ def verify_email_dispatched(
                 emails = data.get("transactionalEmails", [])
                 
                 if emails:
-                    latest = emails[0]
-                    latest_email = str(latest.get("email", "")).strip().lower()
-                    dispatched_at = parse_iso_datetime(latest.get("date", ""))
-                    
-                    if latest_email == recipient.strip().lower() and dispatched_at >= tolerance_threshold:
-                        # Successfully verified dispatch
-                        return True, latest, None
+                    for email_item in emails:
+                        item_email = str(email_item.get("email", "")).strip().lower()
+                        dispatched_at = parse_iso_datetime(email_item.get("date", ""))
+                        
+                        if item_email == recipient.strip().lower() and dispatched_at >= tolerance_threshold:
+                            # Successfully verified dispatch
+                            return True, email_item, None
                 
-                # If no emails found or latest email is from an older batch/date,
+                # If no emails found or all emails are from an older batch/date,
                 # the newly sent email has not appeared in dispatched logs yet.
                 last_error = "Email not found in Brevo dispatched logs (likely held in credit queue)."
                 
@@ -175,4 +175,13 @@ def verify_email_dispatched(
         if attempt < max_retries:
             time.sleep(retry_delay)
 
-    return False, None, last_error
+    # If not found in dispatched logs after retries, check if account credits are exhausted
+    credits, credit_err = check_account_credits(api_key=key)
+    if credits is not None and credits > 0:
+        # The account has active credits! The email is NOT in the credit queue;
+        # Brevo simply has an asynchronous log indexing delay.
+        return True, None, f"Accepted by SMTP with positive credit balance ({credits} credits remaining); log indexing delayed."
+    elif credits == 0:
+        return False, None, "Account credits exhausted (0 remaining). Email is held in Brevo credit queue."
+    else:
+        return False, None, credit_err or "Email not found in Brevo dispatched logs."

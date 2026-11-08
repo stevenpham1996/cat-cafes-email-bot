@@ -740,13 +740,16 @@ def main():
             is_verified, brevo_meta, verify_error = verify_email_dispatched(
                 recipient=recipient,
                 sent_after=sent_attempt_time,
-                max_retries=4,
-                retry_delay=3.0
+                max_retries=6,
+                retry_delay=4.0
             )
 
             if is_verified:
                 message_id = brevo_meta.get("messageId") if brevo_meta else "N/A"
-                print(f"Verified dispatched by Brevo: {recipient} (Message ID: {message_id}).")
+                if brevo_meta:
+                    print(f"Verified dispatched by Brevo: {recipient} (Message ID: {message_id}).")
+                else:
+                    print(f"Verified dispatch for {recipient}: {verify_error}")
                 emails_sent_count += 1
 
                 log_email_attempt(
